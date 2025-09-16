@@ -1,0 +1,61 @@
+---
+alwaysApply: true
+---
+
+description: "Reglas de desarrollo completas para el proyecto Laravel de la Casa del Profesor UNET. Estas reglas son de cumplimiento obligatorio para garantizar la calidad, consistencia y mantenibilidad del código."
+globs: ["**/*.php", "**/changelog.md"]
+
+# Reglas de Desarrollo para el Agente de IA
+
+## 1. Mantenimiento del Changelog (Regla Maestra)
+
+**OBLIGACIÓN:** Por cada operación que modifique el sistema de archivos (crear, editar, eliminar), **DEBES** añadir una entrada al final del archivo `changelog.md`.
+
+**FORMATO:**
+```markdown
+### [YYYY-MM-DD HH:MM:SS] - TIPO: Breve descripción
+*   **Acción:** Descripción detallada de lo que se hizo.
+*   **Archivos Modificados:**
+    *   `CREATE: ruta/al/nuevo/archivo.php`
+    *   `UPDATE: ruta/al/archivo/modificado.php`
+    *   `DELETE: ruta/al/archivo/eliminado.php`
+```
+**PROPÓSITO:** Este `changelog` es tu "caja negra" para la recuperación de contexto. Si pierdes el contexto, tu primera acción será leer este archivo.
+
+## 1.1 Principios rectores
+
+1. **Código limpio, sólido y consistente**: SOLID, DRY, KISS, YAGNI.
+2. **Fuertemente tipado**: Tipos explícitos en parámetros y retornos de métodos.
+3. **Capas bien separadas**: Controladores delgados, **Form Requests** (validación), **Services** (lógica), **Policies** (autorización), **Resources** (formato de salida).
+4. **Autenticación**: **SSO/LDAP CETI** (docentes/personal) y **Laravel Sanctum** como **fallback** y para SPA tokens (invitados/operadores).
+5. **Terminología institucional**: usar **aportes**/**solvencia** (no “alquiler”, no “membresía”).
+6. **API estable** y versionada: prefijo `/api/v1/*`. Cambios incompatibles ⇒ nueva versión.
+7. **Base de datos como fuente de verdad**; cache como acelerador (nunca única fuente).
+8. **Auditoría**: operaciones sensibles se registran en `audit_logs`.
+
+## 2. Arquitectura Estricta por Capas (Patrón de Diseño)
+
+*   **Controladores:** Prohibido contener lógica de negocio. Su única función es: 1) Recibir la petición HTTP, 2) Delegar la acción a una clase de **Servicio**, 3) Devolver una `JsonResource`.
+*   **Servicios (`app/Services`):** Toda la lógica de negocio, orquestación de modelos y transacciones residen aquí.
+*   **Form Requests (`app/Http/Requests`):** Toda la validación de datos de entrada **DEBE** estar aquí.
+*   **Policies (`app/Policies`):** Toda la lógica de autorización y permisos **DEBE** estar aquí.
+*   **API Resources (`app/Http/Resources`):** Todas las respuestas de la API **DEBEN** ser envueltas y formateadas a través de estas clases.
+
+## 3. Calidad y Estilo de Código
+
+*   **Tipado Explícito:** Todos los argumentos, propiedades y tipos de retorno deben estar explícitamente tipados.
+*   **Inmutabilidad:** Usa `final` para clases no extensibles y `readonly` para propiedades inmutables.
+
+## 4. Integridad de la Base de Datos
+
+*   **Transacciones:** Operaciones multi-tabla o cambios de estado atómicos **DEBEN** usar `DB::transaction()`.
+*   **Rendimiento:** Evita problemas N+1 usando `with()` para `eager loading` de relaciones.
+
+## 6. API y Documentación
+
+*   **Versionado:** Todas las rutas de la API deben estar bajo el prefijo `/api/v1/`.
+*   **Documentación:** Los nuevos endpoints deben ser documentados usando atributos de PHP compatibles con Scribe/OpenAPI.
+
+## 7. Gestión de Commits
+
+*   Los commits de Git **DEBEN** seguir la especificación de [Conventional Commits](https://www.conventionalcommits.org/) (ej. `feat:`, `fix:`, `refactor:`).
