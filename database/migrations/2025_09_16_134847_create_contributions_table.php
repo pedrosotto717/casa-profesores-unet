@@ -22,7 +22,7 @@ return new class extends Migration
             $table->timestamps();
             
             // Único compuesto para evitar duplicados por usuario y período
-            $table->unique(['user_id', 'period']);
+            $table->unique(['user_id', 'period'], 'contributions_unique');
             $table->index('user_id');
         });
     }

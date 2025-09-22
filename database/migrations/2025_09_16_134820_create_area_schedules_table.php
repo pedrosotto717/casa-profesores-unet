@@ -21,7 +21,7 @@ return new class extends Migration
             $table->timestamps();
             
             // Único compuesto para evitar duplicados
-            $table->unique(['area_id', 'day_of_week', 'start_time', 'end_time']);
+            $table->unique(['area_id', 'day_of_week', 'start_time', 'end_time'], 'area_schedules_unique');
             $table->index('area_id');
         });
     }

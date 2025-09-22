@@ -21,7 +21,7 @@ return new class extends Migration
             $table->timestamps();
             
             // Único recomendado para evitar duplicados generales
-            $table->unique(['academy_id', 'user_id']);
+            $table->unique(['academy_id', 'user_id'], 'academy_enrollments_unique');
             $table->index('academy_id');
             $table->index('user_id');
         });

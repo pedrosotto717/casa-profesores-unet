@@ -22,7 +22,7 @@ return new class extends Migration
             $table->timestamps();
             
             // Único para evitar duplicados
-            $table->unique(['academy_id', 'day_of_week', 'start_time', 'end_time']);
+            $table->unique(['academy_id', 'day_of_week', 'start_time', 'end_time'], 'academy_schedules_unique');
             $table->index('academy_id');
             $table->index('area_id');
         });

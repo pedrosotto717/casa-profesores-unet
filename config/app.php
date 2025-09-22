@@ -17,6 +17,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Initial Admin Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configuration for creating the initial administrator user.
+    | Only used when running the InitialAdminSeeder.
+    |
+    */
+
+    'initial_admin_email'    => env('INITIAL_ADMIN_EMAIL'),
+    'initial_admin_name'     => env('INITIAL_ADMIN_NAME', 'CPU Admin'),
+    'initial_admin_password' => env('INITIAL_ADMIN_PASSWORD'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Environment
     |--------------------------------------------------------------------------
     |

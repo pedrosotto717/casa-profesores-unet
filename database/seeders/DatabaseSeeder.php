@@ -13,11 +13,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Create initial administrator if environment variables are set
+        $this->call(InitialAdminSeeder::class);
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // // Create test user for development
+        // if (app()->environment('local', 'testing')) {
+        //     User::factory()->create([
+        //         'name' => 'Test User',
+        //         'email' => 'test@example.com',
+        //     ]);
+        // }
     }
 }

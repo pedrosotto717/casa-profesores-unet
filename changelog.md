@@ -74,3 +74,45 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
     *   `UPDATE: specs/development_rules.md` - Modificado principio rector de tipado estricto y ejemplos de código
     *   `UPDATE: .cursor/rules/laravel-project-rules.mdc` - Modificado principio rector de tipado estricto
 
+### [2025-01-27 17:00:00] - FIX: Corrección de nombres de índices únicos en migraciones
+*   **Acción:** Se corrigieron los nombres de índices únicos que eran demasiado largos para MySQL, especificando nombres personalizados más cortos.
+*   **Archivos Modificados:**
+    *   `UPDATE: database/migrations/2025_09_16_134820_create_area_schedules_table.php` - Añadido nombre personalizado 'area_schedules_unique' para índice único
+    *   `UPDATE: database/migrations/2025_09_16_134831_create_academy_schedules_table.php` - Añadido nombre personalizado 'academy_schedules_unique' para índice único
+    *   `UPDATE: database/migrations/2025_09_16_134836_create_academy_enrollments_table.php` - Añadido nombre personalizado 'academy_enrollments_unique' para índice único
+    *   `UPDATE: database/migrations/2025_09_16_134847_create_contributions_table.php` - Añadido nombre personalizado 'contributions_unique' para índice único
+
+### [2025-01-27 17:30:00] - FEAT: Complete user registration system implementation
+*   **Action:** Implemented a complete kit for user registration with layered architecture, initial admin seeder and CLI commands for role management.
+*   **Files Modified:**
+    *   `CREATE: app/Http/Requests/Auth/RegisterUserRequest.php` - Form Request for registration validation
+    *   `CREATE: app/Services/UserService.php` - Service with business logic for user registration and promotion
+    *   `CREATE: app/Http/Controllers/Api/V1/Auth/RegisterController.php` - Controller for registration endpoint
+    *   `CREATE: database/seeders/InitialAdminSeeder.php` - Seeder to create first administrator
+    *   `CREATE: app/Console/Commands/UserPromote.php` - CLI command for role promotion
+    *   `CREATE: app/Http/Middleware/EnsureRole.php` - Middleware for role-based access control
+    *   `UPDATE: routes/api.php` - Added POST /api/v1/auth/register endpoint
+    *   `UPDATE: config/app.php` - Added configuration variables for initial administrator
+    *   `UPDATE: bootstrap/app.php` - Registered 'role' middleware for access control
+
+### [2025-01-27 17:45:00] - REFACTOR: Convert all comments and code to English
+*   **Action:** Updated all comments, documentation strings and error messages to English for consistency and best practices.
+*   **Files Modified:**
+    *   `UPDATE: app/Http/Requests/Auth/RegisterUserRequest.php` - Added English PHPDoc comments
+    *   `UPDATE: app/Services/UserService.php` - Converted comments and error messages to English
+    *   `UPDATE: app/Http/Controllers/Api/V1/Auth/RegisterController.php` - Added English PHPDoc comments
+    *   `UPDATE: database/seeders/InitialAdminSeeder.php` - Converted comments to English
+    *   `UPDATE: app/Console/Commands/UserPromote.php` - Converted comments and messages to English
+    *   `UPDATE: app/Http/Middleware/EnsureRole.php` - Added English PHPDoc comments and fixed typo
+
+### [2025-01-27 18:00:00] - REFACTOR: Use UserRole enum instead of hardcoded role values
+*   **Action:** Replaced hardcoded role arrays with UserRole enum values to eliminate code duplication and ensure consistency.
+*   **Files Modified:**
+    *   `UPDATE: app/Services/UserService.php` - Use UserRole::Docente for default role and array_column(UserRole::cases(), 'value') for validation
+    *   `UPDATE: database/seeders/InitialAdminSeeder.php` - Use UserRole::Docente and UserRole::Administrador enum values
+
+### [2025-01-27 18:15:00] - CHORE: Update DatabaseSeeder and disable test user creation
+*   **Action:** Updated DatabaseSeeder to call InitialAdminSeeder and commented out test user creation for cleaner production setup.
+*   **Files Modified:**
+    *   `UPDATE: database/seeders/DatabaseSeeder.php` - Added call to InitialAdminSeeder and commented out test user factory
+
