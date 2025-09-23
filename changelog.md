@@ -116,3 +116,17 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
 *   **Files Modified:**
     *   `UPDATE: database/seeders/DatabaseSeeder.php` - Added call to InitialAdminSeeder and commented out test user factory
 
+### [2025-01-27 18:30:00] - FEAT: Create idempotent seeders for base catalogs
+*   **Action:** Created comprehensive seeders for areas, services, academies and documents based on database_structure.md and cpu_reglamento_negocio.md specifications.
+*   **Files Modified:**
+    *   `CREATE: database/seeders/AreasSeeder.php` - Seeds all areas from specs with proper slugs and placeholders
+    *   `CREATE: database/seeders/ServicesSeeder.php` - Creates "Reserva [Área]" services only for reservable areas (excludes Restaurant and Parque infantil per reglamento)
+    *   `CREATE: database/seeders/AcademiesSeeder.php` - Seeds institutional academies (natación, karate, yoga, etc.)
+    *   `CREATE: database/seeders/DocumentsSeeder.php` - Creates institutional document placeholder
+    *   `UPDATE: database/seeders/DatabaseSeeder.php` - Added calls to all new seeders in proper order for foreign key dependencies
+
+### [2025-01-27 18:45:00] - ENHANCE: Add capacities and descriptions to AreasSeeder
+*   **Action:** Enhanced AreasSeeder with detailed capacity and description data extracted from cpu_reglamento_negocio.md specifications.
+*   **Files Modified:**
+    *   `UPDATE: database/seeders/AreasSeeder.php` - Added associative array with capacities and descriptions for all areas based on reglamento data
+
