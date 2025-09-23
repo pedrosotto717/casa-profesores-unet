@@ -27,6 +27,7 @@ class User extends Authenticatable
         'sso_uid',
         'is_solvent',
         'solvent_until',
+        'email_verification_token',
     ];
 
     /**
@@ -53,5 +54,38 @@ class User extends Authenticatable
             'is_solvent' => 'boolean',
             'solvent_until' => 'date',
         ];
+    }
+
+    /**
+     * Check if the user's email is verified.
+     */
+    public function hasVerifiedEmail(): bool
+    {
+        return !is_null($this->email_verified_at);
+    }
+
+    /**
+     * Mark the user's email as verified.
+     */
+    public function markEmailAsVerified(): bool
+    {
+        return $this->forceFill([
+            'email_verified_at' => $this->freshTimestamp(),
+            'email_verification_token' => null,
+        ])->save();
+    }
+
+    /**
+     * Generate a new email verification token.
+     */
+    public function generateEmailVerificationToken(): string
+    {
+        $token = hash('sha256', random_bytes(32));
+        
+        $this->forceFill([
+            'email_verification_token' => $token,
+        ])->save();
+
+        return $token;
     }
 }

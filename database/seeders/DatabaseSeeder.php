@@ -16,7 +16,13 @@ class DatabaseSeeder extends Seeder
         // Create initial administrator if environment variables are set
         $this->call(InitialAdminSeeder::class);
 
-        // // Create test user for development
+        // Seed base catalogs (order matters for foreign keys)
+        $this->call(AreasSeeder::class);
+        $this->call(ServicesSeeder::class);
+        $this->call(AcademiesSeeder::class);
+        $this->call(DocumentsSeeder::class);
+
+        // Create test user for development
         // if (app()->environment('local', 'testing')) {
         //     User::factory()->create([
         //         'name' => 'Test User',

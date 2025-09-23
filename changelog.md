@@ -116,3 +116,86 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
 *   **Files Modified:**
     *   `UPDATE: database/seeders/DatabaseSeeder.php` - Added call to InitialAdminSeeder and commented out test user factory
 
+### [2025-01-27 18:30:00] - FEAT: Create idempotent seeders for base catalogs
+*   **Action:** Created comprehensive seeders for areas, services, academies and documents based on database_structure.md and cpu_reglamento_negocio.md specifications.
+*   **Files Modified:**
+    *   `CREATE: database/seeders/AreasSeeder.php` - Seeds all areas from specs with proper slugs and placeholders
+    *   `CREATE: database/seeders/ServicesSeeder.php` - Creates "Reserva [Área]" services only for reservable areas (excludes Restaurant and Parque infantil per reglamento)
+    *   `CREATE: database/seeders/AcademiesSeeder.php` - Seeds institutional academies (natación, karate, yoga, etc.)
+    *   `CREATE: database/seeders/DocumentsSeeder.php` - Creates institutional document placeholder
+    *   `UPDATE: database/seeders/DatabaseSeeder.php` - Added calls to all new seeders in proper order for foreign key dependencies
+
+### [2025-01-27 18:45:00] - ENHANCE: Add capacities and descriptions to AreasSeeder
+*   **Action:** Enhanced AreasSeeder with detailed capacity and description data extracted from cpu_reglamento_negocio.md specifications.
+*   **Files Modified:**
+    *   `UPDATE: database/seeders/AreasSeeder.php` - Added associative array with capacities and descriptions for all areas based on reglamento data
+
+### [2025-01-27 19:00:00] - FEAT: Complete email verification system implementation
+*   **Action:** Implemented a complete email verification system for user registration with secure token-based verification, email notifications, and API endpoints.
+*   **Files Modified:**
+    *   `CREATE: database/migrations/2025_01_27_190000_add_email_verification_token_to_users_table.php` - Added email_verification_token field to users table
+    *   `CREATE: app/Mail/EmailVerificationNotification.php` - Mailable class for sending verification emails with queue support
+    *   `CREATE: resources/views/emails/email-verification.blade.php` - HTML email template for verification with institutional branding
+    *   `CREATE: app/Http/Controllers/Api/V1/EmailVerificationController.php` - Controller for email verification endpoint
+    *   `UPDATE: app/Models/User.php` - Added email_verification_token to fillable, added hasVerifiedEmail(), markEmailAsVerified(), and generateEmailVerificationToken() methods
+    *   `UPDATE: app/Services/UserService.php` - Enhanced register() method to send verification email, added sendEmailVerification() and verifyEmail() methods
+    *   `UPDATE: routes/api.php` - Added POST /api/v1/email/verify route for email verification
+
+### [2025-01-27 19:15:00] - REFACTOR: Remove resend email verification functionality
+*   **Action:** Removed the resend email verification functionality to simplify the system and keep only essential verification features.
+*   **Files Modified:**
+    *   `UPDATE: app/Http/Controllers/Api/V1/EmailVerificationController.php` - Removed resend() method
+    *   `UPDATE: app/Services/UserService.php` - Removed resendEmailVerification() method
+    *   `UPDATE: routes/api.php` - Removed POST /api/v1/email/resend route
+
+### [2025-01-27 19:30:00] - CONFIG: Configure Resend email service integration
+*   **Action:** Configured Laravel to use Resend as the default email service and created a test command for email verification.
+*   **Files Modified:**
+    *   `UPDATE: config/mail.php` - Changed default mailer from 'log' to 'resend'
+    *   `CREATE: app/Console/Commands/TestEmailCommand.php` - Command to test email sending with Resend service
+
+### [2025-01-27 19:45:00] - REFACTOR: Simplify email verification to use direct Resend approach
+*   **Action:** Simplified email verification implementation to use Resend directly without unnecessary route dependencies and URL generation complexity.
+*   **Files Modified:**
+    *   `UPDATE: app/Services/UserService.php` - Simplified sendEmailVerification() method to use Resend::emails()->send() directly
+    *   `UPDATE: app/Mail/EmailVerificationNotification.php` - Added render() method for Resend compatibility
+    *   `UPDATE: app/Console/Commands/TestEmailCommand.php` - Updated to use Resend directly instead of Mail facade
+
+### [2025-01-27 20:00:00] - FIX: Correct Resend 'from' field format
+*   **Action:** Fixed the 'from' field format in Resend email sending to use only the email address instead of the combined name and email format.
+*   **Files Modified:**
+    *   `UPDATE: app/Services/UserService.php` - Changed 'from' field from 'Name <email>' to just 'email' format
+    *   `UPDATE: app/Console/Commands/TestEmailCommand.php` - Updated 'from' field format for Resend compatibility
+
+### [2025-01-27 20:15:00] - REFACTOR: Switch from Resend facade to Mail facade for email sending
+*   **Action:** Changed email sending implementation to use Laravel's Mail facade instead of Resend facade directly, maintaining existing try-catch blocks and logging for testing purposes.
+*   **Files Modified:**
+    *   `UPDATE: app/Services/UserService.php` - Replaced Resend::emails()->send() with Mail::to()->send() while keeping existing logging and error handling
+    *   `UPDATE: app/Console/Commands/TestEmailCommand.php` - Updated to use Mail facade instead of Resend facade
+
+### [2025-09-23 22:31:00] - REFACTOR: Update user roles enum and database schema
+*   **Action:** Updated user roles system to change 'Docente' to 'Profesor', added new 'Instructor' role for academy instructors, and updated default registration role to 'Usuario'.
+*   **Files Modified:**
+    *   `UPDATE: app/Enums/UserRole.php` - Changed Docente to Profesor, added Instructor role, maintained Usuario as basic role
+    *   `CREATE: database/migrations/2025_09_23_223125_update_user_roles_enum.php` - Migration to update users table enum with new roles and default value
+    *   `UPDATE: app/Services/UserService.php` - Changed default registration role from UserRole::Docente to UserRole::Usuario
+
+### [2025-09-23 22:40:00] - FIX: Resolve Resend email configuration error
+*   **Action:** Fixed the Resend email service configuration error that was causing null values in X-Resend-Email headers. Switched from Resend transport to SMTP configuration for better compatibility.
+*   **Files Modified:**
+    *   `UPDATE: .env` - Fixed duplicate mail configuration entries, switched to SMTP configuration for Resend service
+    *   `UPDATE: config/mail.php` - Added key configuration to resend transport settings
+    *   `UPDATE: app/Mail/EmailVerificationNotification.php` - Temporarily removed ShouldQueue interface for testing, then restored it
+
+### [2025-09-23 23:15:00] - FIX: Fix null header values in Resend email service
+*   **Action:** Fixed the "Headers::addTextHeader(): Argument #2 must be of type string, null given" error by adding default values to mail configuration and improving error handling in email sending.
+*   **Files Modified:**
+    *   `UPDATE: config/mail.php` - Added default values for from.address, from.name, and resend.key to prevent null values
+    *   `UPDATE: app/Mail/EmailVerificationNotification.php` - Added explicit from configuration in constructor to ensure values are set
+    *   `UPDATE: app/Services/UserService.php` - Enhanced error logging and added configuration validation in sendEmailVerification() method
+
+### [2025-09-24 10:05:00] - FIX: Simplify email verification mailable build process
+*   **Action:** Simplified the email verification mailable to use the classic `build()` method, ensuring consistent from/subject/view configuration and avoiding duplicated rendering logic that could trigger null header values with Resend.
+*   **Files Modified:**
+    *   `UPDATE: app/Mail/EmailVerificationNotification.php`
+
