@@ -24,7 +24,7 @@ final class InitialAdminSeeder extends Seeder
         $user = User::firstOrCreate(['email' => $email], [
             'name'     => $name,
             'password' => Hash::make($pass),
-            'role'     => UserRole::Docente, // create as docente for security
+            'role'     => UserRole::Usuario, // create as profesor for security
             'email_verified_at' => now(),
             'remember_token' => Str::random(10),
             'sso_uid' => null,
