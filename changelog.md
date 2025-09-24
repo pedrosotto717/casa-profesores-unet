@@ -199,3 +199,14 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
 *   **Files Modified:**
     *   `UPDATE: app/Mail/EmailVerificationNotification.php`
 
+### [2025-01-27 20:30:00] - REMOVE: Complete email verification system removal
+*   **Action:** Completely removed all email verification functionality from the user registration system as requested. This includes all related files, methods, routes, and database migrations.
+*   **Files Modified:**
+    *   `UPDATE: app/Services/UserService.php` - Removed email verification logic from register() method, deleted sendEmailVerification() and verifyEmail() methods
+    *   `DELETE: app/Mail/EmailVerificationNotification.php` - Deleted mailable class
+    *   `DELETE: app/Http/Controllers/Api/V1/EmailVerificationController.php` - Deleted controller
+    *   `UPDATE: routes/api.php` - Removed email verification routes and imports
+    *   `UPDATE: app/Models/User.php` - Removed email_verification_token from fillable, deleted hasVerifiedEmail(), markEmailAsVerified(), and generateEmailVerificationToken() methods
+    *   `DELETE: database/migrations/2025_01_27_190000_add_email_verification_token_to_users_table.php` - Deleted migration
+    *   `DELETE: resources/views/emails/email-verification.blade.php` - Deleted email template
+
