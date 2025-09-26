@@ -210,3 +210,73 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
     *   `DELETE: database/migrations/2025_01_27_190000_add_email_verification_token_to_users_table.php` - Deleted migration
     *   `DELETE: resources/views/emails/email-verification.blade.php` - Deleted email template
 
+### [2025-01-27 20:45:00] - DOCS: Create updated system documentation
+*   **Action:** Created comprehensive updated documentation reflecting current system state, including new user roles, frontend changes, and complete model reference.
+*   **Files Modified:**
+    *   `CREATE: specs/main_updated.md` - Updated main documentation with current roles, frontend architecture (React+TypeScript), and system changes
+    *   `CREATE: specs/models.md` - Complete reference of all models, data structures, enums, and base data currently registered in the system
+
+### [2025-01-27 21:00:00] - FEAT: Complete Cloudflare R2 integration for file storage
+*   **Action:** Implemented complete Cloudflare R2 integration with Laravel 12, including S3-compatible disk configuration, upload controller with presigned URLs, and centralized storage helper.
+*   **Files Modified:**
+    *   `UPDATE: config/filesystems.php` - Added 'r2' disk configuration with S3 driver, R2 endpoint, public visibility, and checksum validation
+    *   `CREATE: app/Support/R2Storage.php` - Static helper class for centralized R2 operations (upload, delete, exists, url, size, metadata)
+    *   `CREATE: app/Http/Controllers/UploadController.php` - Complete upload controller with store, destroy, presign, and info endpoints
+    *   `UPDATE: routes/api.php` - Added protected routes for file upload operations under /api/v1/uploads with path parameter support
+    *   `CREATE: docs/r2-integration-notes.md` - Comprehensive documentation with usage examples, security considerations, and suggested improvements
+
+### [2025-01-27 21:15:00] - DOCS: Establish mandatory documentation rules for reusable functionalities
+*   **Action:** Added mandatory documentation requirements for all reusable functionalities and methods in the development rules, establishing the `docs/` folder as the standard location for technical documentation.
+*   **Files Modified:**
+    *   `UPDATE: specs/development_rules.md` - Added section 19.1 with mandatory documentation requirements for helpers, integrations, services, and reusable methods, including structure guidelines and format specifications
+
+### [2025-01-27 21:30:00] - DOCS: Create comprehensive API testing guide for Postman
+*   **Action:** Created a complete testing guide for all API endpoints using Postman, including authentication flows, file upload testing, and automated test scripts.
+*   **Files Modified:**
+    *   `CREATE: docs/api-testing-guide.md` - Comprehensive guide with step-by-step instructions for testing all endpoints, environment setup, authentication flows, file upload testing, error handling, and troubleshooting
+
+### [2025-01-27 22:00:00] - FEAT: Implement comprehensive file management system with database integration
+*   **Action:** Enhanced the file upload system to store file information in the database, avoiding data duplication and providing fast access to file metadata. Modified the existing documents table to handle both institutional documents and user-uploaded files.
+*   **Files Modified:**
+    *   `CREATE: database/migrations/2025_09_26_000005_modify_documents_table_for_file_management.php` - Migration to enhance documents table with file metadata, hash for deduplication, and performance indexes
+    *   `UPDATE: app/Models/Document.php` - Enhanced model with file management methods, accessors, scopes, and automatic file cleanup on deletion
+    *   `UPDATE: app/Support/R2Storage.php` - Added database integration methods, deduplication by hash, and comprehensive file management utilities
+    *   `CREATE: app/Http/Resources/DocumentResource.php` - API resource for consistent file data formatting
+    *   `UPDATE: app/Http/Controllers/UploadController.php` - Enhanced controller with database integration, user authorization, and new endpoints for file management
+    *   `UPDATE: routes/api.php` - Updated routes to use document IDs instead of file paths for better security and management
+    *   `CREATE: docs/file-management-system.md` - Comprehensive documentation of the file management system architecture, features, and usage examples
+
+### [2025-01-27 22:30:00] - REFACTOR: Create separate generic files table and model for better architecture
+*   **Action:** Refactored the file management system to use a separate generic `files` table instead of modifying the existing `documents` table. This provides better separation of concerns and allows for proper handling of all file types (images, documents, receipts, etc.) while keeping documents table for institutional documents only.
+*   **Files Modified:**
+    *   `DELETE: database/migrations/2025_09_26_000005_modify_documents_table_for_file_management.php` - Removed migration that modified documents table
+    *   `CREATE: database/migrations/2025_09_26_000354_create_files_table.php` - New migration for generic files table with comprehensive metadata and indexes
+    *   `CREATE: app/Models/File.php` - New generic File model with file management methods, accessors, scopes, and automatic cleanup
+    *   `UPDATE: app/Models/Document.php` - Reverted to original state for institutional documents only
+    *   `UPDATE: app/Support/R2Storage.php` - Updated to use File model instead of Document, with improved method names and functionality
+    *   `DELETE: app/Http/Resources/DocumentResource.php` - Removed document resource
+    *   `CREATE: app/Http/Resources/FileResource.php` - New resource for file data formatting
+    *   `UPDATE: app/Http/Controllers/UploadController.php` - Updated to use File model and FileResource
+    *   `UPDATE: specs/models.md` - Added File model documentation and updated system specifications
+    *   `UPDATE: docs/file-management-system.md` - Updated documentation to reflect new architecture with separate files and documents tables
+
+### [2025-01-27 22:45:00] - FIX: Simplify R2Storage helper and improve file storage structure
+*   **Action:** Applied corrections to the R2Storage helper based on user feedback: removed strict typing, simplified file paths to use only hash names (no folder structure), and improved parameter handling in UploadController.
+*   **Files Modified:**
+    *   `UPDATE: app/Support/R2Storage.php` - Simplified putPublicWithRecord method: removed strict typing, eliminated folder structure (uploads/YYYY/MM/DD/), now stores files directly in bucket root with hash names, removed prefix parameter, updated cleanup method to work with root-level files
+    *   `UPDATE: app/Http/Controllers/UploadController.php` - Updated call to putPublicWithRecord to match new simplified signature (removed prefix parameter)
+
+### [2025-01-27 23:00:00] - FEAT: Implement audit logging for PDF and Word file operations
+*   **Action:** Added automatic audit logging system for PDF and Word file operations using the existing audit_logs table. This provides complete traceability of file uploads and deletions for compliance and review purposes. Only logging functionality implemented, no query endpoints.
+*   **Files Modified:**
+    *   `UPDATE: app/Support/R2Storage.php` - Added audit logging functionality: logFileUpload() and logFileDeletion() methods, automatic logging for PDF and Word file uploads and deletions (application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document)
+    *   `UPDATE: docs/file-management-system.md` - Added documentation for audit logging system covering PDF and Word files
+
+### [2025-01-27 23:15:00] - REFACTOR: Consolidate and reorganize documentation files
+*   **Action:** Consolidated three separate documentation files into a single unified file, eliminating redundancy and inconsistencies. Removed API testing guide for future recreation with complete Postman collection.
+*   **Files Modified:**
+    *   `DELETE: docs/file-management-system.md` - Removed original file
+    *   `DELETE: docs/r2-integration-notes.md` - Removed original file  
+    *   `DELETE: docs/api-testing-guide.md` - Removed incomplete guide for future recreation
+    *   `CREATE: docs/file-management-system.md` - New unified documentation combining R2 integration and file management system information, organized with R2 info first, then configuration, then file system details
+

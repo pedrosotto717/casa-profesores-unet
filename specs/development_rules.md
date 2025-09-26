@@ -312,6 +312,48 @@ return response()->json([
 * Cada endpoint enlaza su **FormRequest** y **Resource**.
 * Tablas/estados sincronizados con `database_structure.md`.
 
+### 19.1 Documentación de funcionalidades reutilizables
+
+**OBLIGATORIO**: Toda funcionalidad o método reutilizable que se implemente **DEBE** ser documentado dentro de la carpeta `docs/`. Esta documentación debe incluir:
+
+* **Descripción detallada** de la funcionalidad o método
+* **Instrucciones de uso** paso a paso
+* **Ejemplos de implementación** con código
+* **Configuración requerida** (variables de entorno, dependencias, etc.)
+* **Consideraciones de seguridad** y mejores prácticas
+* **Casos de uso comunes** y ejemplos del frontend
+* **Mejoras sugeridas** y optimizaciones futuras
+
+**Criterios para documentar:**
+- **Helpers/Utilities**: Clases estáticas como `R2Storage`, `FileHelper`, etc.
+- **Integraciones externas**: Servicios de terceros como Cloudflare R2, email providers, etc.
+- **Funcionalidades complejas**: Sistemas de autenticación, procesamiento de archivos, etc.
+- **Métodos reutilizables**: Funciones que se usan en múltiples controladores o servicios
+
+**Estructura recomendada en `docs/`:**
+```
+docs/
+├── integrations/          # Integraciones externas
+│   ├── r2-integration-notes.md
+│   └── email-service-notes.md
+├── helpers/              # Helpers y utilities
+│   ├── file-storage-helper.md
+│   └── validation-helpers.md
+├── services/             # Servicios complejos
+│   ├── authentication-service.md
+│   └── notification-service.md
+└── api/                  # Documentación de endpoints complejos
+    ├── file-upload-api.md
+    └── reservation-api.md
+```
+
+**Formato de documentación:**
+- Usar Markdown con estructura clara
+- Incluir ejemplos de código con sintaxis highlighting
+- Documentar variables de entorno requeridas
+- Incluir consideraciones de seguridad
+- Proporcionar ejemplos de uso desde el frontend
+
 ---
 
 ## 20) Reglas específicas por módulo
