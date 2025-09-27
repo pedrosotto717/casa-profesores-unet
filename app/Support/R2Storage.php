@@ -37,7 +37,7 @@ final class R2Storage
         $path = $file->hashName();
         
         // Store file with public visibility
-        Storage::disk('r2')->put($path, $file->getContent(), 'public');
+        Storage::disk('r2')->put($path, $file->getContent());
         
         // Calculate file hash for reference (not for deduplication)
         $fileHash = hash('sha256', $file->getContent());
@@ -85,7 +85,7 @@ final class R2Storage
         $path = $file->hashName();
         
         // Store file with public visibility
-        Storage::disk('r2')->put($path, $file->getContent(), 'public');
+        Storage::disk('r2')->put($path, $file->getContent());
         
         return [
             'path' => $path,

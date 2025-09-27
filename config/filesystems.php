@@ -69,9 +69,9 @@ return [
             'endpoint' => env('R2_ENDPOINT'),
             'url' => env('R2_PUBLIC_BASE_URL'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
-            'visibility' => 'public',
-            'request_checksum_calculation' => 'when_required',
-            'response_checksum_validation' => 'when_required',
+            'visibility' => 'R2_VISIBILITY',
+            'request_checksum_calculation' => env('R2_REQUEST_CHECKSUM_CALCULATION', 'when_required'),
+            'response_checksum_validation' => env('R2_RESPONSE_CHECKSUM_VALIDATION', 'when_required'),
             'throw' => true,
         ],
 
