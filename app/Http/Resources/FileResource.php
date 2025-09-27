@@ -35,6 +35,11 @@ final class FileResource extends JsonResource
             ],
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),
+            
+            // Pivot data (when attached via EntityFile)
+            'caption' => $this->when(isset($this->pivot), $this->pivot?->caption),
+            'is_cover' => $this->when(isset($this->pivot), $this->pivot?->is_cover),
+            'sort_order' => $this->when(isset($this->pivot), $this->pivot?->sort_order),
         ];
     }
 }

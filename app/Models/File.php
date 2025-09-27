@@ -47,6 +47,10 @@ final class File extends Model
      */
     public function getUrlAttribute(): string
     {
+        if (!$this->storage_disk || !$this->file_path) {
+            return '';
+        }
+        
         return Storage::disk($this->storage_disk)->url($this->file_path);
     }
 
@@ -67,6 +71,19 @@ final class File extends Model
         }
         
         return round($bytes, 2) . ' ' . $units[$i];
+    }
+
+    /**
+     * Get only the essential image attributes for API responses.
+     */
+    public function getImageAttributesAttribute(): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->title,
+            'type' => $this->file_type,
+            'url' => $this->url,
+        ];
     }
 
     /**
@@ -106,9 +123,17 @@ final class File extends Model
 
     /**
      * Scope for filtering by user uploads.
+     * If userId is null, returns public files (uploaded_by is null).
+     * If userId is provided, returns files uploaded by that user.
      */
-    public function scopeByUser($query, int $userId)
+    public function scopeByUser($query, ?int $userId)
     {
+        if ($userId === null) {
+            // Return public files (no specific user)
+            return $query->whereNull('uploaded_by');
+        }
+        
+        // Return files uploaded by the specific user
         return $query->where('uploaded_by', $userId);
     }
 

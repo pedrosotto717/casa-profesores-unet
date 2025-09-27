@@ -115,8 +115,8 @@ $fileRecord = R2Storage::putPublicWithRecord(
     'Descripción'
 );
 
-// Buscar por hash
-$file = R2Storage::findFileByHash($hash);
+// Buscar por hash (retorna todos los archivos con el mismo contenido)
+$files = R2Storage::findFilesByHash($hash);
 
 // Eliminar completamente
 R2Storage::deleteFile($file);

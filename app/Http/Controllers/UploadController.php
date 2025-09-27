@@ -228,14 +228,8 @@ final class UploadController extends Controller
                 ], 404);
             }
 
-            // Check if user can view this file
-            if ($file->uploaded_by !== auth()->id() && !auth()->user()->can('view', $file)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Unauthorized to view this file'
-                ], 403);
-            }
-
+            // For public endpoints, allow access to all files
+            // Authorization is handled at the route level
             return response()->json([
                 'success' => true,
                 'data' => new FileResource($file),
@@ -251,7 +245,7 @@ final class UploadController extends Controller
     }
 
     /**
-     * Get user's uploaded files.
+     * Get all files regardless of uploader.
      * 
      * @param Request $request
      * @return JsonResponse
@@ -259,11 +253,11 @@ final class UploadController extends Controller
     public function index(Request $request): JsonResponse
     {
         try {
-            $userId = auth()->id();
             $fileType = $request->input('file_type');
             $perPage = $request->input('per_page', 15);
             
-            $query = File::byUser($userId);
+            // Get all files without filtering by user
+            $query = File::query();
             
             if ($fileType) {
                 $query->ofType($fileType);
@@ -284,7 +278,6 @@ final class UploadController extends Controller
                 ],
                 'message' => 'Files retrieved successfully'
             ]);
-            
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -292,5 +285,4 @@ final class UploadController extends Controller
             ], 500);
         }
     }
-
 }

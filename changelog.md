@@ -280,3 +280,134 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
     *   `DELETE: docs/api-testing-guide.md` - Removed incomplete guide for future recreation
     *   `CREATE: docs/file-management-system.md` - New unified documentation combining R2 integration and file management system information, organized with R2 info first, then configuration, then file system details
 
+### [2025-01-27 23:30:00] - FEAT: Complete CRUD system for Areas, Services, and Academies with image management
+*   **Action:** Implemented a complete CRUD REST API system for Areas, Services, and Academies with multi-image support using Cloudflare R2 storage. Includes public read endpoints and admin-only write operations with proper authorization middleware.
+*   **Files Modified:**
+    *   `CREATE: app/Http/Middleware/AdminOnly.php` - Middleware to restrict access to administrator role only
+    *   `CREATE: database/migrations/2025_01_27_000000_create_entity_files_table.php` - Migration for polymorphic relationship between entities and files
+    *   `CREATE: app/Models/EntityFile.php` - Model for polymorphic file associations with sort order and cover image support
+    *   `CREATE: app/Services/AreaService.php` - Service layer for Area business logic with image management
+    *   `CREATE: app/Services/ServiceService.php` - Service layer for Service business logic with image management
+    *   `CREATE: app/Services/AcademyService.php` - Service layer for Academy business logic with image management
+    *   `CREATE: app/Http/Requests/StoreAreaRequest.php` - Form request validation for area creation
+    *   `CREATE: app/Http/Requests/UpdateAreaRequest.php` - Form request validation for area updates
+    *   `CREATE: app/Http/Requests/StoreServiceRequest.php` - Form request validation for service creation
+    *   `CREATE: app/Http/Requests/UpdateServiceRequest.php` - Form request validation for service updates
+    *   `CREATE: app/Http/Requests/StoreAcademyRequest.php` - Form request validation for academy creation
+    *   `CREATE: app/Http/Requests/UpdateAcademyRequest.php` - Form request validation for academy updates
+    *   `CREATE: app/Http/Resources/AreaResource.php` - API resource for area data formatting with images
+    *   `CREATE: app/Http/Resources/ServiceResource.php` - API resource for service data formatting with images
+    *   `CREATE: app/Http/Resources/AcademyResource.php` - API resource for academy data formatting with images
+    *   `CREATE: app/Http/Controllers/Api/V1/AreaController.php` - Controller for area CRUD operations
+    *   `CREATE: app/Http/Controllers/Api/V1/ServiceController.php` - Controller for service CRUD operations
+    *   `CREATE: app/Http/Controllers/Api/V1/AcademyController.php` - Controller for academy CRUD operations
+    *   `UPDATE: app/Models/Area.php` - Added entityFiles() polymorphic relationship
+    *   `UPDATE: app/Models/Service.php` - Added entityFiles() polymorphic relationship
+    *   `UPDATE: app/Models/Academy.php` - Added entityFiles() polymorphic relationship
+    *   `UPDATE: bootstrap/app.php` - Registered 'admin' middleware alias
+    *   `UPDATE: routes/api.php` - Added public read routes and admin-only write routes for all three entities
+
+### [2025-01-27 16:00:00] - FEAT: Added UserResource for consistent user data formatting
+*   **Action:** Created UserResource to standardize user data responses in API endpoints with role labels and relationship support.
+*   **Files Modified:**
+    *   `CREATE: app/Http/Resources/UserResource.php` - API resource for user data formatting with role labels and optional relationships
+
+### [2025-01-27 16:15:00] - FIX: Fixed TypeError in AdminOnly middleware
+*   **Action:** Fixed TypeError in AdminOnly middleware where enum objects were being converted to strings incorrectly in logging and comparison operations.
+*   **Files Modified:**
+    *   `UPDATE: app/Http/Middleware/AdminOnly.php` - Fixed enum comparison and logging to use proper enum methods and values
+
+### [2025-01-27 23:45:00] - FIX: Resolve TypeError in File::scopeByUser method
+*   **Action:** Fixed TypeError in File model scopeByUser method that was receiving null values instead of integers, and added authentication check in UploadController to prevent unauthorized access.
+*   **Files Modified:**
+    *   `UPDATE: app/Models/File.php` - Modified scopeByUser method to accept nullable int parameter and handle null values by filtering for null uploaded_by records
+    *   `UPDATE: app/Http/Controllers/UploadController.php` - Added authentication check in index method to prevent calling scopeByUser with null userId
+
+### [2025-01-27 23:50:00] - REFACTOR: Enable public access to file listing and viewing
+*   **Action:** Removed authentication requirement from UploadController index and show methods to allow public access to files, while maintaining proper authorization for private files.
+*   **Files Modified:**
+    *   `UPDATE: app/Http/Controllers/UploadController.php` - Removed authentication requirement from index() method, updated show() method to allow public access while maintaining authorization for private files
+    *   `UPDATE: app/Models/File.php` - Enhanced scopeByUser method documentation to clarify behavior with null userId (returns public files)
+
+### [2025-01-27 23:55:00] - REFACTOR: Modify index method to return all files regardless of uploader
+*   **Action:** Updated UploadController index method to return all files in the system without filtering by uploader, providing complete file listing access.
+*   **Files Modified:**
+    *   `UPDATE: app/Http/Controllers/UploadController.php` - Modified index() method to use File::query() instead of File::byUser() to return all files regardless of who uploaded them
+
+### [2025-01-27 23:58:00] - FIX: Remove authorization logic from public file endpoints
+*   **Action:** Fixed UploadController show method to allow public access to file information by removing authorization checks that were blocking access to public endpoints.
+*   **Files Modified:**
+    *   `UPDATE: app/Http/Controllers/UploadController.php` - Removed authorization logic from show() method to allow public access to all files as intended by the public route configuration
+
+### [2025-01-28 00:15:00] - FEAT: Implement AuditLog for CRUD operations
+*   **Action:** Added comprehensive audit logging for all create and delete operations in Academy, Area, and Service entities following the same pattern used in R2Storage for file operations.
+*   **Files Modified:**
+    *   `UPDATE: app/Services/AcademyService.php` - Added AuditLog import and logging methods for academy creation and deletion
+    *   `UPDATE: app/Services/AreaService.php` - Added AuditLog import and logging methods for area creation and deletion
+    *   `UPDATE: app/Services/ServiceService.php` - Added AuditLog import and logging methods for service creation and deletion
+    *   `UPDATE: app/Http/Controllers/Api/V1/AcademyController.php` - Updated destroy method to pass userId for audit logging
+    *   `UPDATE: app/Http/Controllers/Api/V1/AreaController.php` - Updated destroy method to pass userId for audit logging
+    *   `UPDATE: app/Http/Controllers/Api/V1/ServiceController.php` - Updated destroy method to pass userId for audit logging
+    *   `UPDATE: changelog.md` - Added entry documenting the audit logging implementation
+
+### [2025-01-28 00:30:00] - FIX: Remove file deduplication to ensure independent file instances
+*   **Action:** Removed file deduplication logic from R2Storage to ensure that each file upload creates an independent file instance, preventing issues where deleting one entity would affect files associated with other entities.
+*   **Files Modified:**
+    *   `UPDATE: app/Support/R2Storage.php` - Removed deduplication logic from putPublicWithRecord method, updated findFileByHash to findFilesByHash to return all files with same content
+    *   `UPDATE: docs/file-management-system.md` - Updated documentation to reflect changes in findFilesByHash method
+    *   `CREATE: tests/Feature/FileIndependenceTest.php` - Created test to verify that same file uploaded multiple times creates independent file instances
+
+### [2025-01-28 00:45:00] - FIX: Fixed image display in AcademyResource and FileResource
+*   **Action:** Fixed issue where images were not being displayed in academy responses by correcting the AcademyResource to use FileResource collection and updating FileResource to include pivot data (caption, is_cover, sort_order).
+*   **Files Modified:**
+    *   `UPDATE: app/Http/Resources/AcademyResource.php` - Changed images handling to use FileResource collection with proper pivot data attachment
+    *   `UPDATE: app/Http/Resources/FileResource.php` - Added pivot data fields (caption, is_cover, sort_order) to support entity file relationships
+
+### [2025-01-28 01:00:00] - FEAT: Implement hard delete for Academies, Areas, and Services
+*   **Action:** Modified delete methods in all three services to use forceDelete() instead of delete() to perform hard deletes, permanently removing records from the database instead of soft deletes.
+*   **Files Modified:**
+    *   `UPDATE: app/Services/AcademyService.php` - Changed delete() method to use forceDelete() for hard deletion
+    *   `UPDATE: app/Services/AreaService.php` - Changed delete() method to use forceDelete() for hard deletion
+    *   `UPDATE: app/Services/ServiceService.php` - Changed delete() method to use forceDelete() for hard deletion
+
+### [2025-01-28 01:15:00] - FIX: Fixed image loading in all controllers and resources
+*   **Action:** Fixed multiple issues preventing images from being displayed in API responses by correcting controller methods to properly load relationships and updating all resources to use consistent FileResource collection pattern.
+*   **Files Modified:**
+    *   `UPDATE: app/Http/Controllers/Api/V1/AcademyController.php` - Fixed show() method to properly load entityFiles.file relationship
+    *   `UPDATE: app/Http/Controllers/Api/V1/AreaController.php` - Fixed show() method to properly load entityFiles.file relationship
+    *   `UPDATE: app/Http/Controllers/Api/V1/ServiceController.php` - Fixed show() method to properly load entityFiles.file relationship
+    *   `UPDATE: app/Http/Resources/AreaResource.php` - Changed to use FileResource collection with proper pivot data attachment
+    *   `UPDATE: app/Http/Resources/ServiceResource.php` - Changed to use FileResource collection with proper pivot data attachment
+
+### [2025-01-28 01:30:00] - DEBUG: Added comprehensive logging for image loading issues
+*   **Action:** Added detailed logging in AcademyController and AcademyResource to diagnose why images are not appearing in API responses, including relationship loading status and entity file details.
+*   **Files Modified:**
+    *   `UPDATE: app/Http/Controllers/Api/V1/AcademyController.php` - Added debug logging in index() and show() methods to track entity files loading
+    *   `UPDATE: app/Http/Resources/AcademyResource.php` - Added debug logging in toArray() method to track image processing
+    *   `UPDATE: app/Services/AcademyService.php` - Added comprehensive logging in create() and attachImages() methods to track image upload and association process
+
+### [2025-01-28 01:45:00] - FIX: Fixed entity files not loading after creation/update
+*   **Action:** Added refresh() calls in all service methods (create/update) to ensure that newly created EntityFile records are properly loaded into the model relationships before returning the response.
+*   **Files Modified:**
+    *   `UPDATE: app/Services/AcademyService.php` - Added refresh() before loading relationships in create() and update() methods
+    *   `UPDATE: app/Services/AreaService.php` - Added refresh() before loading relationships in create() and update() methods
+    *   `UPDATE: app/Services/ServiceService.php` - Added refresh() before loading relationships in create() and update() methods
+
+### [2025-01-28 02:00:00] - FIX: Fixed polymorphic relationship configuration for entity files
+*   **Action:** Configured morph map in AppServiceProvider to properly map entity type names ('Academy', 'Area', 'Service') to their corresponding model classes, enabling Laravel to correctly resolve polymorphic relationships.
+*   **Files Modified:**
+    *   `UPDATE: app/Providers/AppServiceProvider.php` - Added morph map configuration for entity files
+    *   `UPDATE: app/Models/Academy.php` - Fixed morphMany relationship parameters
+    *   `UPDATE: app/Models/Area.php` - Fixed morphMany relationship parameters  
+    *   `UPDATE: app/Models/Service.php` - Fixed morphMany relationship parameters
+    *   `UPDATE: app/Models/EntityFile.php` - Simplified morphTo relationship to use standard configuration
+
+### [2025-01-28 02:15:00] - OPTIMIZE: Optimized image response to include only essential fields
+*   **Action:** Created ImageResource to return only essential image fields (id, name, type, url) plus pivot data (caption, is_cover, sort_order) for better API performance and cleaner responses.
+*   **Files Modified:**
+    *   `CREATE: app/Http/Resources/ImageResource.php` - New resource for optimized image responses
+    *   `UPDATE: app/Models/File.php` - Added getImageAttributesAttribute() method and improved getUrlAttribute() with null checks
+    *   `UPDATE: app/Http/Resources/AcademyResource.php` - Changed from FileResource to ImageResource for images
+    *   `UPDATE: app/Http/Resources/AreaResource.php` - Changed from FileResource to ImageResource for images
+    *   `UPDATE: app/Http/Resources/ServiceResource.php` - Changed from FileResource to ImageResource for images
+

@@ -33,26 +33,16 @@ final class R2Storage
         $title = null,
         $description = null
     ) {
-        // Generate simple path with just hash name (no folders)
+        // Generate unique path with timestamp to ensure uniqueness
         $path = $file->hashName();
         
         // Store file with public visibility
         Storage::disk('r2')->put($path, $file->getContent(), 'public');
         
-        // Calculate file hash for deduplication
+        // Calculate file hash for reference (not for deduplication)
         $fileHash = hash('sha256', $file->getContent());
         
-        // Check for existing file with same hash
-        $existingFile = File::where('file_hash', $fileHash)->first();
-        if ($existingFile) {
-            // Delete the newly uploaded file since we already have it
-            Storage::disk('r2')->delete($path);
-            
-            // Return reference to existing file
-            return $existingFile;
-        }
-        
-        // Create database record
+        // Create database record - each upload creates a new independent file record
         $fileRecord = File::create([
             'title' => $title ?? $file->getClientOriginalName(),
             'file_path' => $path,
@@ -170,14 +160,14 @@ final class R2Storage
     }
 
     /**
-     * Find file by file hash.
+     * Find files by file hash (returns all files with same content).
      * 
      * @param string $hash The file hash
-     * @return File|null The file model or null if not found
+     * @return \Illuminate\Database\Eloquent\Collection Collection of files with same hash
      */
-    public static function findFileByHash(string $hash): ?File
+    public static function findFilesByHash(string $hash)
     {
-        return File::where('file_hash', $hash)->first();
+        return File::where('file_hash', $hash)->get();
     }
 
     /**
