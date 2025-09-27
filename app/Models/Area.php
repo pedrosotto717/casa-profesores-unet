@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 final class Area extends Model
@@ -56,5 +57,13 @@ final class Area extends Model
     public function reservations(): HasMany
     {
         return $this->hasMany(Reservation::class);
+    }
+
+    /**
+     * Get the entity files associated with the area.
+     */
+    public function entityFiles(): MorphMany
+    {
+        return $this->morphMany(EntityFile::class, 'entity', 'entity_type', 'entity_id');
     }
 }

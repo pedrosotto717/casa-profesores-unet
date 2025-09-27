@@ -19,6 +19,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Configure morph map for entity files
+        \Illuminate\Database\Eloquent\Relations\Relation::morphMap([
+            'Academy' => \App\Models\Academy::class,
+            'Area' => \App\Models\Area::class,
+            'Service' => \App\Models\Service::class,
+        ]);
     }
 }

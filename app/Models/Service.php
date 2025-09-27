@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 final class Service extends Model
@@ -32,5 +33,13 @@ final class Service extends Model
     public function area(): BelongsTo
     {
         return $this->belongsTo(Area::class);
+    }
+
+    /**
+     * Get the entity files associated with the service.
+     */
+    public function entityFiles(): MorphMany
+    {
+        return $this->morphMany(EntityFile::class, 'entity', 'entity_type', 'entity_id');
     }
 }
