@@ -84,6 +84,9 @@ final class AreaService
     public function update(Area $area, array $data, array $images = [], array $removeFileIds = [], array $schedules = [], int $userId = null): Area
     {
         return DB::transaction(function () use ($area, $data, $images, $removeFileIds, $schedules, $userId) {
+            // Store original data for audit log
+            $originalData = $area->toArray();
+            
             // Update area data
             $area->update($data);
 
@@ -100,6 +103,11 @@ final class AreaService
             // Handle schedules update
             if (!empty($schedules)) {
                 $this->updateSchedules($area, $schedules);
+            }
+
+            // Log area update
+            if ($userId) {
+                $this->logAreaUpdate($userId, $area, $originalData, $data);
             }
 
             // Refresh the area to load the newly created entity files and schedules
@@ -284,5 +292,46 @@ final class AreaService
 
         // Create new schedules
         $this->createSchedules($area, $schedules);
+    }
+
+    /**
+     * Log area update action to audit trail.
+     * 
+     * @param int $userId The ID of the user updating the area
+     * @param Area $area The updated area
+     * @param array $originalData The original data before update
+     * @param array $newData The new data that was applied
+     * @return void
+     */
+    private function logAreaUpdate(int $userId, Area $area, array $originalData, array $newData): void
+    {
+        AuditLog::create([
+            'user_id' => $userId,
+            'entity_type' => 'Area',
+            'entity_id' => $area->id,
+            'action' => 'area_updated',
+            'before' => [
+                'area_id' => $area->id,
+                'name' => $originalData['name'],
+                'slug' => $originalData['slug'],
+                'description' => $originalData['description'],
+                'capacity' => $originalData['capacity'],
+                'is_reservable' => $originalData['is_reservable'],
+                'is_active' => $originalData['is_active'],
+                'updated_at' => $originalData['updated_at'],
+            ],
+            'after' => [
+                'area_id' => $area->id,
+                'name' => $area->name,
+                'slug' => $area->slug,
+                'description' => $area->description,
+                'capacity' => $area->capacity,
+                'is_reservable' => $area->is_reservable,
+                'is_active' => $area->is_active,
+                'updated_at' => $area->updated_at->toISOString(),
+                'user_agent' => request()->userAgent(),
+                'ip_address' => request()->ip(),
+            ],
+        ]);
     }
 }

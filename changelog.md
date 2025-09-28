@@ -13,6 +13,12 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
     *   `CREATE: changelog.md`
     *   `CREATE: prompt.md`
 
+### [2025-09-28 19:30:00] - FEAT: Implementación de logging de auditoría para actualizaciones de academias y áreas
+*   **Acción:** Se agregó logging de auditoría completo para las operaciones de actualización de academias y áreas, registrando los datos antes y después del cambio.
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Services/AcademyService.php` - Agregado método logAcademyUpdate() y logging en método update()
+    *   `UPDATE: app/Services/AreaService.php` - Agregado método logAreaUpdate() y logging en método update()
+
 ### [2025-09-28 19:15:00] - FEAT: Implementación completa del sistema de horarios para academias
 *   **Acción:** Se implementó el sistema completo de horarios para academias, permitiendo definir disponibilidad por día de la semana, área donde se dicta y capacidad máxima.
 *   **Archivos Modificados:**
@@ -481,4 +487,41 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
     *   `UPDATE: app/Http/Resources/AcademyResource.php` - Changed from FileResource to ImageResource for images
     *   `UPDATE: app/Http/Resources/AreaResource.php` - Changed from FileResource to ImageResource for images
     *   `UPDATE: app/Http/Resources/ServiceResource.php` - Changed from FileResource to ImageResource for images
+
+### [2025-01-28 10:30:00] - FEAT: Complete user management system implementation
+*   **Action:** Implemented comprehensive user management system with admin-only endpoints for creating, updating, and inviting users. Includes role management, solvency control, audit logging, and protection against admin self-demotion.
+*   **Files Modified:**
+    *   `CREATE: app/Http/Requests/StoreUserRequest.php` - Form request validation for user creation with role, solvency, and email validation
+    *   `CREATE: app/Http/Requests/UpdateUserRequest.php` - Form request validation for user updates with unique email validation excluding current user
+    *   `UPDATE: app/Services/UserService.php` - Extended with createUser(), updateUser(), and inviteUser() methods including solvency calculation, admin self-demotion protection, and comprehensive audit logging
+    *   `UPDATE: app/Http/Controllers/Api/V1/UserController.php` - Added store(), update(), and invite() methods with dependency injection and enhanced index() with search functionality
+    *   `UPDATE: routes/api.php` - Added admin-protected routes for POST /users, PUT /users/{user}, and POST /users/{user}/invite
+
+### [2025-01-28 10:45:00] - FIX: Move user listing endpoints to public routes
+*   **Action:** Moved GET /users and GET /users/{user} endpoints from protected routes to public routes since user listing should be publicly accessible without authentication.
+*   **Files Modified:**
+    *   `UPDATE: routes/api.php` - Moved user index and show routes from auth:sanctum middleware to public routes section
+
+### [2025-01-28 11:00:00] - FEAT: Complete invitation and notification system implementation
+*   **Action:** Implemented comprehensive invitation system where any authenticated user can invite new people to the system, with admin approval workflow. Includes in-system notifications for admins and users, complete audit logging, and proper user creation upon approval.
+*   **Files Modified:**
+    *   `CREATE: database/migrations/2025_01_28_110000_create_notifications_table.php` - Migration for in-system notifications with target_type (user/role) and target_id support
+    *   `CREATE: database/migrations/2025_01_28_110100_update_invitations_table_for_new_flow.php` - Migration to update invitations table: add name field, remove invitee_user_id, add reviewed_by, reviewed_at, rejection_reason
+    *   `CREATE: app/Models/Notification.php` - Model for in-system notifications with scopes for user/role targeting and read/unread status
+    *   `UPDATE: app/Models/Invitation.php` - Updated fillable fields and relationships for new invitation flow
+    *   `CREATE: app/Services/NotificationService.php` - Service for creating and managing notifications for users and roles, with invitation-specific notification methods
+    *   `CREATE: app/Services/InvitationService.php` - Service for invitation workflow: create, approve, reject with user creation, notifications, and audit logging
+    *   `CREATE: app/Http/Controllers/Api/V1/NotificationController.php` - Controller for notification management: list, mark as read, count
+    *   `CREATE: app/Http/Controllers/Api/V1/InvitationController.php` - Controller for invitation management: create, list, approve, reject
+    *   `CREATE: app/Http/Requests/CreateInvitationRequest.php` - Form request validation for invitation creation
+    *   `CREATE: app/Http/Requests/RejectInvitationRequest.php` - Form request validation for invitation rejection with reason
+    *   `CREATE: app/Http/Resources/InvitationResource.php` - API resource for invitation data formatting with relationships and computed fields
+    *   `CREATE: app/Http/Resources/NotificationResource.php` - API resource for notification data formatting
+    *   `UPDATE: routes/api.php` - Added notification routes (authenticated users) and invitation routes (create for authenticated, manage for admin)
+
+### [2025-01-28 11:30:00] - FIX: Correct enum usage in invitation system
+*   **Action:** Fixed enum constant usage in InvitationService and InvitationResource to match the actual enum values defined in InvitationStatus (Spanish values: pendiente, aceptada, rechazada, etc.).
+*   **Files Modified:**
+    *   `UPDATE: app/Services/InvitationService.php` - Changed InvitationStatus::Pending to InvitationStatus::Pendiente, InvitationStatus::Approved to InvitationStatus::Aceptada, InvitationStatus::Rejected to InvitationStatus::Rechazada
+    *   `UPDATE: app/Http/Resources/InvitationResource.php` - Updated getStatusLabel() method to match enum values with Spanish strings (pendiente, aceptada, rechazada, expirada, revocada)
 

@@ -97,6 +97,9 @@ final class AcademyService
     public function update(Academy $academy, array $data, array $images = [], array $removeFileIds = [], array $schedules = [], int $userId = null): Academy
     {
         return DB::transaction(function () use ($academy, $data, $images, $removeFileIds, $schedules, $userId) {
+            // Store original data for audit log
+            $originalData = $academy->toArray();
+            
             // Update academy data
             $academy->update($data);
 
@@ -113,6 +116,11 @@ final class AcademyService
             // Handle schedules
             if (!empty($schedules)) {
                 $this->updateSchedules($academy, $schedules);
+            }
+
+            // Log academy update
+            if ($userId) {
+                $this->logAcademyUpdate($userId, $academy, $originalData, $data);
             }
 
             // Refresh the academy to load the newly created entity files
@@ -330,5 +338,42 @@ final class AcademyService
         
         // Create new schedules
         $this->createSchedules($academy, $schedules);
+    }
+
+    /**
+     * Log academy update action to audit trail.
+     * 
+     * @param int $userId The ID of the user updating the academy
+     * @param Academy $academy The updated academy
+     * @param array $originalData The original data before update
+     * @param array $newData The new data that was applied
+     * @return void
+     */
+    private function logAcademyUpdate(int $userId, Academy $academy, array $originalData, array $newData): void
+    {
+        AuditLog::create([
+            'user_id' => $userId,
+            'entity_type' => 'Academy',
+            'entity_id' => $academy->id,
+            'action' => 'academy_updated',
+            'before' => [
+                'academy_id' => $academy->id,
+                'name' => $originalData['name'],
+                'description' => $originalData['description'],
+                'status' => $originalData['status'],
+                'lead_instructor_id' => $originalData['lead_instructor_id'],
+                'updated_at' => $originalData['updated_at'],
+            ],
+            'after' => [
+                'academy_id' => $academy->id,
+                'name' => $academy->name,
+                'description' => $academy->description,
+                'status' => $academy->status,
+                'lead_instructor_id' => $academy->lead_instructor_id,
+                'updated_at' => $academy->updated_at->toISOString(),
+                'user_agent' => request()->userAgent(),
+                'ip_address' => request()->ip(),
+            ],
+        ]);
     }
 }
