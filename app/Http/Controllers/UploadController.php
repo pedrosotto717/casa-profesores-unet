@@ -28,85 +28,6 @@ final class UploadController extends Controller
      * 
      * @throws ValidationException
      */
-    public function storeWithDebug(Request $request): JsonResponse
-    {
-        $dbg = new DebugLog();
-        $debugEnabled = $request->boolean('debug') || $request->header('X-Debug-R2');
-
-        $request->validate([
-            'file' => ['required', 'file', 'max:51200'], // 50 MB max
-        ]);
-
-        $disk = Storage::disk('r2');
-        $conf = collect(config('filesystems.disks.r2'))
-            ->except(['key', 'secret'])
-            ->all();
-
-        $file = $request->file('file');
-        $path = 'uploads/' . now()->format('Y/m/d/') . $file->hashName();
-
-        $dbg->add('env', [
-            'app_env' => config('app.env'),
-            'php' => PHP_VERSION,
-            'laravel' => app()->version(),
-            'disk_conf' => $conf,
-        ]);
-
-        $dbg->add('incoming_file', [
-            'original' => $file->getClientOriginalName(),
-            'size' => $file->getSize(),
-            'mime' => $file->getMimeType(),
-            'path' => $path,
-        ]);
-
-        try {
-            // IMPORTANT: no ACL/visibility param
-            $disk->put($path, file_get_contents($file->getRealPath()));
-            $url = Storage::disk('r2')->url($path);
-
-            $dbg->add('put_ok', ['path' => $path, 'url' => $url]);
-
-            return response()->json([
-                'ok' => true,
-                'path' => $path,
-                'url' => $url,
-                'debug' => $debugEnabled ? $dbg->all() : null,
-            ], Response::HTTP_CREATED);
-
-        } catch (\Throwable $e) {
-            $prev = $e->getPrevious();
-            $dbg->add('exception', [
-                'msg' => $e->getMessage(),
-                'prev' => $prev?->getMessage(),
-                'class' => get_class($e),
-            ]);
-
-            // If it is an AWS exception, extract code/status if present
-            if ($prev instanceof \Aws\Exception\AwsException) {
-                $dbg->add('aws_exception', [
-                    'aws_code' => $prev->getAwsErrorCode(),
-                    'aws_msg' => $prev->getAwsErrorMessage(),
-                    'aws_type' => $prev->getAwsErrorType(),
-                    'status' => $prev->getStatusCode(),
-                ]);
-            }
-
-            return response()->json([
-                'ok' => false,
-                'error' => $e->getMessage(),
-                'debug' => $dbg->all(),
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    /**
-     * Upload a file to R2 storage and create database record.
-     * 
-     * @param Request $request
-     * @return JsonResponse
-     * 
-     * @throws ValidationException
-     */
     public function store(Request $request): JsonResponse
     {
         // --- START DEBUG INSTRUMENTATION ---
@@ -176,7 +97,7 @@ final class UploadController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    private function storeWithDebug(Request $request): JsonResponse
+    public function storeWithDebug(Request $request): JsonResponse
     {
         $debugInfo = [];
 
