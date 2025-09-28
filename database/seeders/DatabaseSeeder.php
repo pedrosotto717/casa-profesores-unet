@@ -18,7 +18,6 @@ class DatabaseSeeder extends Seeder
 
         // Seed base catalogs (order matters for foreign keys)
         $this->call(AreasSeeder::class);
-        $this->call(ServicesSeeder::class);
         $this->call(AcademiesSeeder::class);
         $this->call(DocumentsSeeder::class);
 

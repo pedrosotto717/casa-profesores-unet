@@ -17,13 +17,13 @@ final class Area extends Model
         'slug',
         'description',
         'capacity',
-        'hourly_rate',
+        'is_reservable',
         'is_active',
     ];
 
     protected $casts = [
         'capacity' => 'integer',
-        'hourly_rate' => 'decimal:2',
+        'is_reservable' => 'boolean',
         'is_active' => 'boolean',
     ];
 
@@ -35,13 +35,6 @@ final class Area extends Model
         return $this->hasMany(AreaSchedule::class);
     }
 
-    /**
-     * Get the services for the area.
-     */
-    public function services(): HasMany
-    {
-        return $this->hasMany(Service::class);
-    }
 
     /**
      * Get the academy schedules for the area.

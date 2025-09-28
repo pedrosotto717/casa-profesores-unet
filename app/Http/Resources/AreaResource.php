@@ -18,7 +18,7 @@ final class AreaResource extends JsonResource
             'slug' => $this->slug,
             'description' => $this->description,
             'capacity' => $this->capacity,
-            'hourly_rate' => $this->hourly_rate,
+            'is_reservable' => $this->is_reservable,
             'is_active' => $this->is_active,
             'images' => ImageResource::collection($this->whenLoaded('entityFiles', function () {
                 return $this->entityFiles->map(function ($entityFile) {
@@ -27,7 +27,17 @@ final class AreaResource extends JsonResource
                     return $file;
                 });
             })),
-            'services_count' => $this->whenCounted('services'),
+            'schedules' => $this->whenLoaded('areaSchedules', function () {
+                return $this->areaSchedules->map(function ($schedule) {
+                    return [
+                        'id' => $schedule->id,
+                        'day_of_week' => $schedule->day_of_week,
+                        'start_time' => $schedule->start_time,
+                        'end_time' => $schedule->end_time,
+                        'is_open' => $schedule->is_open,
+                    ];
+                });
+            }),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

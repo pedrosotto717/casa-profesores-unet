@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Area;
+use App\Models\AreaSchedule;
 use App\Models\AuditLog;
 use App\Models\EntityFile;
 use App\Models\File;
@@ -29,7 +30,7 @@ final class AreaService
             $query->where('is_active', $filters['is_active']);
         }
 
-        return $query->with(['entityFiles.file'])
+        return $query->with(['entityFiles.file', 'areaSchedules'])
                     ->orderBy('name')
                     ->get();
     }
@@ -39,16 +40,16 @@ final class AreaService
      */
     public function getById(int $id): ?Area
     {
-        return Area::with(['entityFiles.file', 'services'])
+        return Area::with(['entityFiles.file', 'areaSchedules'])
                    ->find($id);
     }
 
     /**
-     * Create a new area with optional images.
+     * Create a new area with optional images and schedules.
      */
-    public function create(array $data, array $images = [], int $userId = null): Area
+    public function create(array $data, array $images = [], array $schedules = [], int $userId = null): Area
     {
-        return DB::transaction(function () use ($data, $images, $userId) {
+        return DB::transaction(function () use ($data, $images, $schedules, $userId) {
             // Generate slug if not provided
             if (!isset($data['slug'])) {
                 $data['slug'] = Str::slug($data['name']);
@@ -61,23 +62,28 @@ final class AreaService
                 $this->attachImages($area, $images, $userId);
             }
 
+            // Handle schedules
+            if (!empty($schedules)) {
+                $this->createSchedules($area, $schedules);
+            }
+
             // Log area creation
             if ($userId) {
                 $this->logAreaCreation($userId, $area, $data);
             }
 
-            // Refresh the area to load the newly created entity files
+            // Refresh the area to load the newly created entity files and schedules
             $area->refresh();
-            return $area->load('entityFiles.file');
+            return $area->load(['entityFiles.file', 'areaSchedules']);
         });
     }
 
     /**
-     * Update an area with optional image changes.
+     * Update an area with optional image changes and schedules.
      */
-    public function update(Area $area, array $data, array $images = [], array $removeFileIds = [], int $userId = null): Area
+    public function update(Area $area, array $data, array $images = [], array $removeFileIds = [], array $schedules = [], int $userId = null): Area
     {
-        return DB::transaction(function () use ($area, $data, $images, $removeFileIds, $userId) {
+        return DB::transaction(function () use ($area, $data, $images, $removeFileIds, $schedules, $userId) {
             // Update area data
             $area->update($data);
 
@@ -91,9 +97,14 @@ final class AreaService
                 $this->attachImages($area, $images, $userId);
             }
 
-            // Refresh the area to load the newly created entity files
+            // Handle schedules update
+            if (!empty($schedules)) {
+                $this->updateSchedules($area, $schedules);
+            }
+
+            // Refresh the area to load the newly created entity files and schedules
             $area->refresh();
-            return $area->load('entityFiles.file');
+            return $area->load(['entityFiles.file', 'areaSchedules']);
         });
     }
 
@@ -245,5 +256,33 @@ final class AreaService
             ],
             'after' => null,
         ]);
+    }
+
+    /**
+     * Create schedules for an area.
+     */
+    private function createSchedules(Area $area, array $schedules): void
+    {
+        foreach ($schedules as $schedule) {
+            AreaSchedule::create([
+                'area_id' => $area->id,
+                'day_of_week' => $schedule['day_of_week'],
+                'start_time' => $schedule['start_time'],
+                'end_time' => $schedule['end_time'],
+                'is_open' => $schedule['is_open'],
+            ]);
+        }
+    }
+
+    /**
+     * Update schedules for an area (replace all existing schedules).
+     */
+    private function updateSchedules(Area $area, array $schedules): void
+    {
+        // Delete existing schedules
+        AreaSchedule::where('area_id', $area->id)->delete();
+
+        // Create new schedules
+        $this->createSchedules($area, $schedules);
     }
 }
