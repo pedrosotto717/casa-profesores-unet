@@ -13,6 +13,16 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
     *   `CREATE: changelog.md`
     *   `CREATE: prompt.md`
 
+### [2025-01-27 17:00:00] - CLEANUP: Remoción de archivos y cambios de debug después del testing exitoso
+*   **Acción:** Se removieron todos los archivos y cambios de debug implementados para el diagnóstico de R2, ya que el problema fue resuelto exitosamente.
+*   **Archivos Modificados:**
+    *   `DELETE: app/Support/DebugLog.php` - Clase de logs de debug removida
+    *   `DELETE: app/Support/R2ProbeService.php` - Servicio de pruebas AWS SDK removido
+    *   `DELETE: app/Console/Commands/R2Diagnose.php` - Comando de diagnóstico removido
+    *   `UPDATE: app/Http/Controllers/UploadController.php` - Removido método storeWithDebug e imports de debug
+    *   `UPDATE: routes/api.php` - Removida ruta POST /api/v1/uploads/debug
+    *   `DELETE: docs/debug-changes-to-remove.md` - Documentación de limpieza removida
+
 ### [2025-01-27 16:50:00] - DOCS: Documentación de cambios de debug para limpieza posterior
 *   **Acción:** Se creó documentación detallada de todos los cambios de debug implementados para facilitar su remoción después del testing.
 *   **Archivos Modificados:**
