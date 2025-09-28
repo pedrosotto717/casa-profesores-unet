@@ -13,7 +13,7 @@ final class Invitation extends Model
 
     protected $fillable = [
         'inviter_user_id',
-        'invitee_user_id',
+        'name',
         'email',
         'token',
         'status',
@@ -21,6 +21,7 @@ final class Invitation extends Model
         'message',
         'reviewed_by',
         'reviewed_at',
+        'rejection_reason',
     ];
 
     protected $casts = [
@@ -35,14 +36,6 @@ final class Invitation extends Model
     public function inviterUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'inviter_user_id');
-    }
-
-    /**
-     * Get the user that was invited.
-     */
-    public function inviteeUser(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'invitee_user_id');
     }
 
     /**

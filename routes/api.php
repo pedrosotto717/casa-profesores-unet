@@ -4,6 +4,8 @@ use App\Http\Controllers\Api\V1\AcademyController;
 use App\Http\Controllers\Api\V1\AreaController;
 use App\Http\Controllers\Api\V1\AuthenticationController;
 use App\Http\Controllers\Api\V1\Auth\RegisterController;
+use App\Http\Controllers\Api\V1\InvitationController;
+use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\UploadController;
 use Illuminate\Http\Request;
@@ -30,6 +32,16 @@ Route::prefix('v1')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [AuthenticationController::class, 'logout']);
         
+        // Notifications routes (authenticated users)
+        Route::get('/notifications', [NotificationController::class, 'index']);
+        Route::get('/notifications/unread', [NotificationController::class, 'unread']);
+        Route::get('/notifications/count', [NotificationController::class, 'count']);
+        Route::put('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
+        Route::put('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
+        
+        // Invitations routes (authenticated users can create, admin can manage)
+        Route::post('/invitations', [InvitationController::class, 'store']);
+        
         // File upload protected routes
         Route::post('/uploads', [UploadController::class, 'store']);
         Route::delete('/uploads/{id}', [UploadController::class, 'destroy']);
@@ -41,6 +53,12 @@ Route::prefix('v1')->group(function () {
             Route::post('/users', [UserController::class, 'store']);
             Route::put('/users/{user}', [UserController::class, 'update']);
             Route::post('/users/{user}/invite', [UserController::class, 'invite']);
+            
+            // Invitations management (admin only)
+            Route::get('/invitations', [InvitationController::class, 'index']);
+            Route::get('/invitations/pending', [InvitationController::class, 'pending']);
+            Route::put('/invitations/{id}/approve', [InvitationController::class, 'approve']);
+            Route::put('/invitations/{id}/reject', [InvitationController::class, 'reject']);
             
             // Areas CRUD
             Route::post('/areas', [AreaController::class, 'store']);

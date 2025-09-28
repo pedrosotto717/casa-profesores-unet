@@ -502,3 +502,26 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
 *   **Files Modified:**
     *   `UPDATE: routes/api.php` - Moved user index and show routes from auth:sanctum middleware to public routes section
 
+### [2025-01-28 11:00:00] - FEAT: Complete invitation and notification system implementation
+*   **Action:** Implemented comprehensive invitation system where any authenticated user can invite new people to the system, with admin approval workflow. Includes in-system notifications for admins and users, complete audit logging, and proper user creation upon approval.
+*   **Files Modified:**
+    *   `CREATE: database/migrations/2025_01_28_110000_create_notifications_table.php` - Migration for in-system notifications with target_type (user/role) and target_id support
+    *   `CREATE: database/migrations/2025_01_28_110100_update_invitations_table_for_new_flow.php` - Migration to update invitations table: add name field, remove invitee_user_id, add reviewed_by, reviewed_at, rejection_reason
+    *   `CREATE: app/Models/Notification.php` - Model for in-system notifications with scopes for user/role targeting and read/unread status
+    *   `UPDATE: app/Models/Invitation.php` - Updated fillable fields and relationships for new invitation flow
+    *   `CREATE: app/Services/NotificationService.php` - Service for creating and managing notifications for users and roles, with invitation-specific notification methods
+    *   `CREATE: app/Services/InvitationService.php` - Service for invitation workflow: create, approve, reject with user creation, notifications, and audit logging
+    *   `CREATE: app/Http/Controllers/Api/V1/NotificationController.php` - Controller for notification management: list, mark as read, count
+    *   `CREATE: app/Http/Controllers/Api/V1/InvitationController.php` - Controller for invitation management: create, list, approve, reject
+    *   `CREATE: app/Http/Requests/CreateInvitationRequest.php` - Form request validation for invitation creation
+    *   `CREATE: app/Http/Requests/RejectInvitationRequest.php` - Form request validation for invitation rejection with reason
+    *   `CREATE: app/Http/Resources/InvitationResource.php` - API resource for invitation data formatting with relationships and computed fields
+    *   `CREATE: app/Http/Resources/NotificationResource.php` - API resource for notification data formatting
+    *   `UPDATE: routes/api.php` - Added notification routes (authenticated users) and invitation routes (create for authenticated, manage for admin)
+
+### [2025-01-28 11:30:00] - FIX: Correct enum usage in invitation system
+*   **Action:** Fixed enum constant usage in InvitationService and InvitationResource to match the actual enum values defined in InvitationStatus (Spanish values: pendiente, aceptada, rechazada, etc.).
+*   **Files Modified:**
+    *   `UPDATE: app/Services/InvitationService.php` - Changed InvitationStatus::Pending to InvitationStatus::Pendiente, InvitationStatus::Approved to InvitationStatus::Aceptada, InvitationStatus::Rejected to InvitationStatus::Rechazada
+    *   `UPDATE: app/Http/Resources/InvitationResource.php` - Updated getStatusLabel() method to match enum values with Spanish strings (pendiente, aceptada, rechazada, expirada, revocada)
+
