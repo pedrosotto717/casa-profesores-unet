@@ -64,14 +64,20 @@ return [
             'driver' => 's3',
             'key' => env('R2_ACCESS_KEY_ID'),
             'secret' => env('R2_SECRET_ACCESS_KEY'),
-            'region' => env('R2_REGION', 'auto'),
+            'region' => 'auto', // R2 requires 'auto'
             'bucket' => env('R2_BUCKET'),
-            'endpoint' => env('R2_ENDPOINT'),
+            // IMPORTANT: Build endpoint URL within PHP to avoid Railway's shell-like variable expansion issues.
+            'endpoint' => 'https://' . env('R2_ACCOUNT_ID') . '.r2.cloudflarestorage.com',
             'url' => env('R2_PUBLIC_BASE_URL'),
-            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
-            'visibility' => env('R2_VISIBILITY', 'public'),
-            'request_checksum_calculation' => env('R2_REQUEST_CHECKSUM_CALCULATION', 'when_required'),
-            'response_checksum_validation' => env('R2_RESPONSE_CHECKSUM_VALIDATION', 'when_required'),
+            // R2 is S3-compatible but often requires path-style endpoints.
+            'use_path_style_endpoint' => true,
+            // Flysystem v3 uses 'options' for underlying client config.
+            // R2 does not support Content-MD5, which is a default in recent AWS SDKs.
+            // We disable it by providing an empty checksum algorithm array or a supported one.
+            'options' => [
+                'checksum' => [], // Disables MD5 checks
+            ],
+            // 'visibility' is not used by R2 as it does not have ACLs.
             'throw' => true,
         ],
 
