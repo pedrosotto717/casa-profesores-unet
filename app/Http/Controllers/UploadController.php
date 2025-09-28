@@ -109,6 +109,12 @@ final class UploadController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        // --- START DEBUG INSTRUMENTATION ---
+        if ($request->boolean('debug') || $request->header('X-Debug-R2') === '1') {
+            return $this->storeWithDebug($request);
+        }
+        // --- END DEBUG INSTRUMENTATION ---
+
         $request->validate([
             'file' => ['required', 'file', 'max:10240'], // 10MB max
             'title' => ['nullable', 'string', 'max:200'],
@@ -148,10 +154,146 @@ final class UploadController extends Controller
             ], 201);
             
         } catch (\Exception $e) {
-            return response()->json([
+            // Provide a more detailed error in a standard format
+            $response = [
                 'success' => false,
-                'message' => 'Error uploading file: ' . $e->getMessage()
-            ], 500);
+                'message' => 'Error uploading file: ' . $e->getMessage(),
+            ];
+            
+            // Add previous exception message if available, which is common for Flysystem
+            if ($e->getPrevious()) {
+                $response['error_details'] = $e->getPrevious()->getMessage();
+            }
+
+            return response()->json($response, 500);
+        }
+    }
+
+    /**
+     * Upload a file to R2 storage with extensive debug instrumentation.
+     * This method is triggered by ?debug=1 or X-Debug-R2: 1 header.
+     * 
+     * @param Request $request
+     * @return JsonResponse
+     */
+    private function storeWithDebug(Request $request): JsonResponse
+    {
+        $debugInfo = [];
+
+        try {
+            $request->validate(['file' => ['required', 'file', 'max:51200']]);
+        } catch (ValidationException $e) {
+            return response()->json(['ok' => false, 'error' => 'Validation failed', 'details' => $e->errors()], 422);
+        }
+
+        $file = $request->file('file');
+        $r2Config = config('filesystems.disks.r2');
+        
+        // 1. Environment & Config Details
+        $debugInfo['environment'] = [
+            'app_env' => config('app.env'),
+            'php_version' => PHP_VERSION,
+            'laravel_version' => app()->version(),
+            'filesystem_default' => config('filesystems.default'),
+        ];
+
+        $debugInfo['r2_disk_config'] = collect($r2Config)->except(['key', 'secret'])->all();
+        $debugInfo['incoming_file'] = [
+            'original_name' => $file->getClientOriginalName(),
+            'size_bytes' => $file->getSize(),
+            'mime_type' => $file->getMimeType(),
+        ];
+
+        // 2. R2 Probe using direct AWS SDK
+        $probeResult = ['status' => 'pending', 'steps' => []];
+        try {
+            $s3Client = new \Aws\S3\S3Client([
+                'version' => 'latest',
+                'region' => $r2Config['region'],
+                'endpoint' => $r2Config['endpoint'],
+                'use_path_style_endpoint' => $r2Config['use_path_style_endpoint'],
+                'credentials' => [
+                    'key' => env('R2_ACCESS_KEY_ID'),
+                    'secret' => env('R2_SECRET_ACCESS_KEY'),
+                ],
+            ]);
+            $probeResult['sdk_client_config'] = 'OK';
+
+            // a) headBucket probe
+            try {
+                $s3Client->headBucket(['Bucket' => $r2Config['bucket']]);
+                $probeResult['steps']['headBucket'] = 'SUCCESS';
+            } catch (\Aws\Exception\AwsException $e) {
+                $probeResult['steps']['headBucket'] = 'FAILED: ' . $e->getAwsErrorCode() . ' - ' . $e->getAwsErrorMessage();
+            }
+
+            // b) putObject probe
+            $probeKey = 'probe/' . uniqid() . '.txt';
+            try {
+                $s3Client->putObject([
+                    'Bucket' => $r2Config['bucket'],
+                    'Key' => $probeKey,
+                    'Body' => 'This is a probe file from Laravel.',
+                    'ContentType' => 'text/plain',
+                ]);
+                $probeResult['steps']['putObject'] = 'SUCCESS';
+
+                // c) deleteObject probe
+                $s3Client->deleteObject(['Bucket' => $r2Config['bucket'], 'Key' => $probeKey]);
+                $probeResult['steps']['deleteObject'] = 'SUCCESS';
+
+            } catch (\Aws\Exception\AwsException $e) {
+                $probeResult['steps']['putObject'] = 'FAILED: ' . $e->getAwsErrorCode() . ' - ' . $e->getAwsErrorMessage();
+            }
+            $probeResult['status'] = 'completed';
+
+        } catch (\Throwable $e) {
+            $probeResult['status'] = 'FATAL_ERROR';
+            $probeResult['error'] = $e->getMessage();
+        }
+        $debugInfo['r2_probe'] = $probeResult;
+
+        // 3. Flysystem Upload Attempt
+        $uploadResult = [];
+        try {
+            $path = 'uploads/' . now()->format('Y/m/d') . '/' . $file->hashName();
+            
+            // Use stream for upload
+            $stream = fopen($file->getRealPath(), 'r');
+            Storage::disk('r2')->put($path, $stream);
+            if (is_resource($stream)) {
+                fclose($stream);
+            }
+
+            $uploadResult['status'] = 'SUCCESS';
+            $uploadResult['path'] = $path;
+            $uploadResult['url'] = Storage::disk('r2')->url($path);
+
+            $debugInfo['flysystem_upload'] = $uploadResult;
+
+            return response()->json(['ok' => true, 'data' => $uploadResult, 'debug' => $debugInfo], 201);
+
+        } catch (\Throwable $e) {
+            $uploadResult['status'] = 'FAILED';
+            $uploadResult['exception_class'] = get_class($e);
+            $uploadResult['message'] = $e->getMessage();
+
+            $previous = $e->getPrevious();
+            if ($previous) {
+                $uploadResult['previous_exception_class'] = get_class($previous);
+                $uploadResult['previous_message'] = $previous->getMessage();
+                if ($previous instanceof \Aws\Exception\AwsException) {
+                    $uploadResult['aws_error'] = [
+                        'code' => $previous->getAwsErrorCode(),
+                        'message' => $previous->getAwsErrorMessage(),
+                        'type' => $previous->getAwsErrorType(),
+                        'http_status_code' => $previous->getStatusCode(),
+                    ];
+                }
+            }
+            $debugInfo['flysystem_upload'] = $uploadResult;
+            
+            return response()->json(['ok' => false, 'error' => 'Upload failed.', 'debug' => $debugInfo], 500);
         }
     }
 

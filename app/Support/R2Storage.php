@@ -36,11 +36,11 @@ final class R2Storage
         // Generate unique path with timestamp to ensure uniqueness
         $path = $file->hashName();
         
-        // Store file with public visibility
-        Storage::disk('r2')->put($path, $file->getContent());
+        // Store file using a stream for better performance and memory management.
+        Storage::disk('r2')->put($path, fopen($file->getRealPath(), 'r'));
         
         // Calculate file hash for reference (not for deduplication)
-        $fileHash = hash('sha256', $file->getContent());
+        $fileHash = hash_file('sha256', $file->getRealPath());
         
         // Create database record - each upload creates a new independent file record
         $fileRecord = File::create([
