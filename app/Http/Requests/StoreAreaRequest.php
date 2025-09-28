@@ -25,10 +25,15 @@ final class StoreAreaRequest extends FormRequest
             'slug' => ['nullable', 'string', 'max:180', 'unique:areas,slug'],
             'description' => ['nullable', 'string'],
             'capacity' => ['nullable', 'integer', 'min:1'],
-            'hourly_rate' => ['nullable', 'numeric', 'min:0'],
+            'is_reservable' => ['nullable', 'boolean'],
             'is_active' => ['nullable', 'boolean'],
             'images' => ['nullable', 'array', 'max:10'],
             'images.*' => ['file', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:10240'], // 10MB max per image
+            'schedules' => ['nullable', 'array'],
+            'schedules.*.day_of_week' => ['required_with:schedules', 'integer', 'min:1', 'max:7'], // 1=lunes, 7=domingo
+            'schedules.*.start_time' => ['required_with:schedules', 'date_format:H:i'],
+            'schedules.*.end_time' => ['required_with:schedules', 'date_format:H:i', 'after:schedules.*.start_time'],
+            'schedules.*.is_open' => ['required_with:schedules', 'boolean'],
         ];
     }
 
@@ -42,11 +47,20 @@ final class StoreAreaRequest extends FormRequest
             'name.unique' => 'An area with this name already exists.',
             'slug.unique' => 'An area with this slug already exists.',
             'capacity.min' => 'Capacity must be at least 1.',
-            'hourly_rate.min' => 'Hourly rate cannot be negative.',
             'images.max' => 'Maximum 10 images allowed.',
             'images.*.image' => 'Each file must be an image.',
             'images.*.mimes' => 'Images must be JPEG, PNG, JPG, GIF, or WebP format.',
             'images.*.max' => 'Each image must be smaller than 10MB.',
+            'schedules.*.day_of_week.required_with' => 'Day of week is required when schedules are provided.',
+            'schedules.*.day_of_week.integer' => 'Day of week must be an integer (1-7).',
+            'schedules.*.day_of_week.min' => 'Day of week must be between 1 (Monday) and 7 (Sunday).',
+            'schedules.*.day_of_week.max' => 'Day of week must be between 1 (Monday) and 7 (Sunday).',
+            'schedules.*.start_time.required_with' => 'Start time is required when schedules are provided.',
+            'schedules.*.start_time.date_format' => 'Start time must be in HH:MM format.',
+            'schedules.*.end_time.required_with' => 'End time is required when schedules are provided.',
+            'schedules.*.end_time.date_format' => 'End time must be in HH:MM format.',
+            'schedules.*.end_time.after' => 'End time must be after start time.',
+            'schedules.*.is_open.required_with' => 'Is open status is required when schedules are provided.',
         ];
     }
 }

@@ -13,6 +13,41 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
     *   `CREATE: changelog.md`
     *   `CREATE: prompt.md`
 
+### [2025-09-28 18:45:00] - REFACTOR: Cambio a estándar ISO 8601 para días de la semana (1-7)
+*   **Acción:** Se cambió el sistema de días de la semana de 0-6 a 1-7 siguiendo el estándar ISO 8601, donde Lunes=1 y Domingo=7.
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Http/Requests/StoreAreaRequest.php` - Actualizadas validaciones para días 1-7
+    *   `UPDATE: app/Http/Requests/UpdateAreaRequest.php` - Actualizadas validaciones para días 1-7
+    *   `UPDATE: database/seeders/AreasSeeder.php` - Actualizados todos los horarios para usar días 1-7
+
+### [2025-09-28 18:15:00] - FEAT: Implementación del sistema de horarios para áreas
+*   **Acción:** Se implementó el sistema completo de horarios para áreas, permitiendo definir disponibilidad por día de la semana según el reglamento de la CPU.
+*   **Archivos Modificados:**
+    *   `UPDATE: database/seeders/AreasSeeder.php` - Agregada lógica para crear horarios específicos por área según reglamento
+    *   `UPDATE: app/Http/Requests/StoreAreaRequest.php` - Agregada validación para horarios en creación de áreas
+    *   `UPDATE: app/Http/Requests/UpdateAreaRequest.php` - Agregada validación para horarios en actualización de áreas
+    *   `UPDATE: app/Services/AreaService.php` - Agregados métodos para manejar creación y actualización de horarios
+    *   `UPDATE: app/Http/Controllers/Api/V1/AreaController.php` - Actualizado para procesar horarios en create y update
+    *   `UPDATE: app/Http/Resources/AreaResource.php` - Agregado campo schedules en respuesta de API
+    *   `UPDATE: app/Models/AreaSchedule.php` - Corregido formato de cast para horas
+
+### [2025-09-28 17:35:00] - REFACTOR: Eliminación completa del sistema de servicios y simplificación de áreas
+*   **Acción:** Se eliminó completamente el sistema de servicios que duplicaba funcionalidad de áreas. Se agregó campo `is_reservable` a áreas y se removió `hourly_rate` por ser inapropiado para institución sin fines de lucro.
+*   **Archivos Modificados:**
+    *   `CREATE: database/migrations/2025_09_28_173509_update_areas_table_remove_services_dependency.php` - Migración para agregar is_reservable y remover hourly_rate
+    *   `CREATE: database/migrations/2025_09_28_173612_drop_services_table.php` - Migración para eliminar tabla services
+    *   `UPDATE: app/Models/Area.php` - Agregado campo is_reservable, removido hourly_rate y relación services
+    *   `UPDATE: database/seeders/AreasSeeder.php` - Agregada lógica para marcar áreas como reservables según reglamento
+    *   `UPDATE: database/seeders/DatabaseSeeder.php` - Removida llamada a ServicesSeeder
+    *   `UPDATE: routes/api.php` - Eliminadas rutas de servicios
+    *   `DELETE: app/Models/Service.php` - Modelo de servicios eliminado
+    *   `DELETE: app/Http/Controllers/Api/V1/ServiceController.php` - Controlador de servicios eliminado
+    *   `DELETE: app/Http/Requests/StoreServiceRequest.php` - Request de creación de servicios eliminado
+    *   `DELETE: app/Http/Requests/UpdateServiceRequest.php` - Request de actualización de servicios eliminado
+    *   `DELETE: app/Http/Resources/ServiceResource.php` - Resource de servicios eliminado
+    *   `DELETE: app/Services/ServiceService.php` - Servicio de lógica de servicios eliminado
+    *   `DELETE: database/seeders/ServicesSeeder.php` - Seeder de servicios eliminado
+
 ### [2025-01-27 17:00:00] - CLEANUP: Remoción de archivos y cambios de debug después del testing exitoso
 *   **Acción:** Se removieron todos los archivos y cambios de debug implementados para el diagnóstico de R2, ya que el problema fue resuelto exitosamente.
 *   **Archivos Modificados:**

@@ -4,7 +4,6 @@ use App\Http\Controllers\Api\V1\AcademyController;
 use App\Http\Controllers\Api\V1\AreaController;
 use App\Http\Controllers\Api\V1\AuthenticationController;
 use App\Http\Controllers\Api\V1\Auth\RegisterController;
-use App\Http\Controllers\Api\V1\ServiceController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\UploadController;
 use Illuminate\Http\Request;
@@ -18,8 +17,6 @@ Route::prefix('v1')->group(function () {
     // Public routes (no authentication required)
     Route::get('/areas', [AreaController::class, 'index']);
     Route::get('/areas/{area}', [AreaController::class, 'show']);
-    Route::get('/services', [ServiceController::class, 'index']);
-    Route::get('/services/{service}', [ServiceController::class, 'show']);
     Route::get('/academies', [AcademyController::class, 'index']);
     Route::get('/academies/{academy}', [AcademyController::class, 'show']);
     
@@ -44,10 +41,6 @@ Route::prefix('v1')->group(function () {
             Route::put('/areas/{area}', [AreaController::class, 'update']);
             Route::delete('/areas/{area}', [AreaController::class, 'destroy']);
             
-            // Services CRUD
-            Route::post('/services', [ServiceController::class, 'store']);
-            Route::put('/services/{service}', [ServiceController::class, 'update']);
-            Route::delete('/services/{service}', [ServiceController::class, 'destroy']);
             
             // Academies CRUD
             Route::post('/academies', [AcademyController::class, 'store']);

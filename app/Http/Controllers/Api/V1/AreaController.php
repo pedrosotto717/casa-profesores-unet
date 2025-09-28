@@ -43,8 +43,9 @@ final class AreaController extends Controller
     {
         $data = $request->validated();
         $images = $request->file('images', []);
+        $schedules = $request->input('schedules', []);
 
-        $area = $this->areaService->create($data, $images, $request->user()->id);
+        $area = $this->areaService->create($data, $images, $schedules, $request->user()->id);
 
         return response()->json([
             'message' => 'Area created successfully.',
@@ -58,7 +59,7 @@ final class AreaController extends Controller
     public function show(Area $area): JsonResponse
     {
         // Load the area with its relationships
-        $area->load(['entityFiles.file']);
+        $area->load(['entityFiles.file', 'areaSchedules']);
 
         return response()->json([
             'data' => new AreaResource($area),
@@ -73,8 +74,9 @@ final class AreaController extends Controller
         $data = $request->validated();
         $images = $request->file('images', []);
         $removeFileIds = $request->input('remove_file_ids', []);
+        $schedules = $request->input('schedules', []);
 
-        $area = $this->areaService->update($area, $data, $images, $removeFileIds, $request->user()->id);
+        $area = $this->areaService->update($area, $data, $images, $removeFileIds, $schedules, $request->user()->id);
 
         return response()->json([
             'message' => 'Area updated successfully.',
