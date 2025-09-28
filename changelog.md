@@ -13,6 +13,17 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
     *   `CREATE: changelog.md`
     *   `CREATE: prompt.md`
 
+### [2025-09-28 19:15:00] - FEAT: Implementación completa del sistema de horarios para academias
+*   **Acción:** Se implementó el sistema completo de horarios para academias, permitiendo definir disponibilidad por día de la semana, área donde se dicta y capacidad máxima.
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Models/AcademySchedule.php` - Corregido formato de tiempo de H:i:s a H:i
+    *   `UPDATE: database/seeders/AcademiesSeeder.php` - Agregada lógica para crear horarios específicos por academia
+    *   `UPDATE: app/Http/Requests/StoreAcademyRequest.php` - Agregada validación para horarios en creación de academias
+    *   `UPDATE: app/Http/Requests/UpdateAcademyRequest.php` - Agregada validación para horarios en actualización de academias
+    *   `UPDATE: app/Services/AcademyService.php` - Agregado manejo de horarios en creación y actualización
+    *   `UPDATE: app/Http/Controllers/Api/V1/AcademyController.php` - Agregado procesamiento de horarios en endpoints
+    *   `UPDATE: app/Http/Resources/AcademyResource.php` - Agregada exposición de horarios en respuestas API
+
 ### [2025-09-28 18:45:00] - REFACTOR: Cambio a estándar ISO 8601 para días de la semana (1-7)
 *   **Acción:** Se cambió el sistema de días de la semana de 0-6 a 1-7 siguiendo el estándar ISO 8601, donde Lunes=1 y Domingo=7.
 *   **Archivos Modificados:**

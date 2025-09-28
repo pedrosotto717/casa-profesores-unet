@@ -26,6 +26,19 @@ final class AcademyResource extends JsonResource
                     return $file;
                 });
             })),
+            'schedules' => $this->whenLoaded('academySchedules', function () {
+                return $this->academySchedules->map(function ($schedule) {
+                    return [
+                        'id' => $schedule->id,
+                        'area_id' => $schedule->area_id,
+                        'area_name' => $schedule->area ? $schedule->area->name : null,
+                        'day_of_week' => $schedule->day_of_week,
+                        'start_time' => $schedule->start_time,
+                        'end_time' => $schedule->end_time,
+                        'capacity' => $schedule->capacity,
+                    ];
+                });
+            }),
             'schedules_count' => $this->whenCounted('academySchedules'),
             'enrollments_count' => $this->whenCounted('academyEnrollments'),
             'created_at' => $this->created_at,
