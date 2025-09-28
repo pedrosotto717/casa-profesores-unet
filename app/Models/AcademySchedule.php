@@ -22,8 +22,8 @@ final class AcademySchedule extends Model
 
     protected $casts = [
         'day_of_week' => 'integer',
-        'start_time' => 'datetime:H:i:s',
-        'end_time' => 'datetime:H:i:s',
+        'start_time' => 'datetime:H:i',
+        'end_time' => 'datetime:H:i',
         'capacity' => 'integer',
     ];
 

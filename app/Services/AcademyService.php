@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Academy;
+use App\Models\AcademySchedule;
 use App\Models\AuditLog;
 use App\Models\EntityFile;
 use App\Models\File;
@@ -19,7 +20,7 @@ final class AcademyService
      */
     public function getAll(array $filters = []): Collection
     {
-        $query = Academy::with(['leadInstructor', 'entityFiles.file']);
+        $query = Academy::with(['leadInstructor', 'entityFiles.file', 'academySchedules.area']);
 
         if (isset($filters['search'])) {
             $query->where('name', 'like', '%' . $filters['search'] . '%');
@@ -41,19 +42,20 @@ final class AcademyService
      */
     public function getById(int $id): ?Academy
     {
-        return Academy::with(['leadInstructor', 'entityFiles.file', 'academySchedules', 'academyEnrollments'])
+        return Academy::with(['leadInstructor', 'entityFiles.file', 'academySchedules.area', 'academyEnrollments'])
                       ->find($id);
     }
 
     /**
-     * Create a new academy with optional images.
+     * Create a new academy with optional images and schedules.
      */
-    public function create(array $data, array $images = [], int $userId = null): Academy
+    public function create(array $data, array $images = [], array $schedules = [], int $userId = null): Academy
     {
-        return DB::transaction(function () use ($data, $images, $userId) {
+        return DB::transaction(function () use ($data, $images, $schedules, $userId) {
             Log::info('AcademyService - Creating academy:', [
                 'data' => $data,
                 'images_count' => count($images),
+                'schedules_count' => count($schedules),
                 'user_id' => $userId,
             ]);
 
@@ -73,6 +75,11 @@ final class AcademyService
                 ]);
             }
 
+            // Handle schedules
+            if (!empty($schedules)) {
+                $this->createSchedules($academy, $schedules);
+            }
+
             // Log academy creation
             if ($userId) {
                 $this->logAcademyCreation($userId, $academy, $data);
@@ -80,16 +87,16 @@ final class AcademyService
 
             // Refresh the academy to load the newly created entity files
             $academy->refresh();
-            return $academy->load(['leadInstructor', 'entityFiles.file']);
+            return $academy->load(['leadInstructor', 'entityFiles.file', 'academySchedules.area']);
         });
     }
 
     /**
-     * Update an academy with optional image changes.
+     * Update an academy with optional image changes and schedules.
      */
-    public function update(Academy $academy, array $data, array $images = [], array $removeFileIds = [], int $userId = null): Academy
+    public function update(Academy $academy, array $data, array $images = [], array $removeFileIds = [], array $schedules = [], int $userId = null): Academy
     {
-        return DB::transaction(function () use ($academy, $data, $images, $removeFileIds, $userId) {
+        return DB::transaction(function () use ($academy, $data, $images, $removeFileIds, $schedules, $userId) {
             // Update academy data
             $academy->update($data);
 
@@ -103,9 +110,14 @@ final class AcademyService
                 $this->attachImages($academy, $images, $userId);
             }
 
+            // Handle schedules
+            if (!empty($schedules)) {
+                $this->updateSchedules($academy, $schedules);
+            }
+
             // Refresh the academy to load the newly created entity files
             $academy->refresh();
-            return $academy->load(['leadInstructor', 'entityFiles.file']);
+            return $academy->load(['leadInstructor', 'entityFiles.file', 'academySchedules.area']);
         });
     }
 
@@ -289,5 +301,34 @@ final class AcademyService
             ],
             'after' => null,
         ]);
+    }
+
+    /**
+     * Create schedules for an academy.
+     */
+    private function createSchedules(Academy $academy, array $schedules): void
+    {
+        foreach ($schedules as $schedule) {
+            AcademySchedule::create([
+                'academy_id' => $academy->id,
+                'area_id' => $schedule['area_id'],
+                'day_of_week' => $schedule['day_of_week'],
+                'start_time' => $schedule['start_time'],
+                'end_time' => $schedule['end_time'],
+                'capacity' => $schedule['capacity'] ?? null,
+            ]);
+        }
+    }
+
+    /**
+     * Update schedules for an academy.
+     */
+    private function updateSchedules(Academy $academy, array $schedules): void
+    {
+        // Delete existing schedules
+        AcademySchedule::where('academy_id', $academy->id)->delete();
+        
+        // Create new schedules
+        $this->createSchedules($academy, $schedules);
     }
 }

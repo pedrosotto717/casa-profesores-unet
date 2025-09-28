@@ -50,8 +50,9 @@ final class AcademyController extends Controller
     {
         $data = $request->validated();
         $images = $request->file('images', []);
+        $schedules = $request->input('schedules', []);
 
-        $academy = $this->academyService->create($data, $images, $request->user()->id);
+        $academy = $this->academyService->create($data, $images, $schedules, $request->user()->id);
 
         return response()->json([
             'message' => 'Academy created successfully.',
@@ -65,7 +66,7 @@ final class AcademyController extends Controller
     public function show(Academy $academy): JsonResponse
     {
         // Load the academy with its relationships
-        $academy->load(['leadInstructor', 'entityFiles.file']);
+        $academy->load(['leadInstructor', 'entityFiles.file', 'academySchedules.area']);
         
         // Debug logging
         Log::info('Academy loaded:', [
@@ -102,8 +103,9 @@ final class AcademyController extends Controller
         $data = $request->validated();
         $images = $request->file('images', []);
         $removeFileIds = $request->input('remove_file_ids', []);
+        $schedules = $request->input('schedules', []);
 
-        $academy = $this->academyService->update($academy, $data, $images, $removeFileIds, $request->user()->id);
+        $academy = $this->academyService->update($academy, $data, $images, $removeFileIds, $schedules, $request->user()->id);
 
         return response()->json([
             'message' => 'Academy updated successfully.',
