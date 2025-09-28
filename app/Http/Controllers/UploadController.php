@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Resources\FileResource;
 use App\Models\File;
 use App\Support\R2Storage;
+use App\Support\DebugLog;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -17,6 +20,85 @@ use Illuminate\Validation\ValidationException;
  */
 final class UploadController extends Controller
 {
+    /**
+     * Upload a file to R2 storage with debug instrumentation.
+     * 
+     * @param Request $request
+     * @return JsonResponse
+     * 
+     * @throws ValidationException
+     */
+    public function storeWithDebug(Request $request): JsonResponse
+    {
+        $dbg = new DebugLog();
+        $debugEnabled = $request->boolean('debug') || $request->header('X-Debug-R2');
+
+        $request->validate([
+            'file' => ['required', 'file', 'max:51200'], // 50 MB max
+        ]);
+
+        $disk = Storage::disk('r2');
+        $conf = collect(config('filesystems.disks.r2'))
+            ->except(['key', 'secret'])
+            ->all();
+
+        $file = $request->file('file');
+        $path = 'uploads/' . now()->format('Y/m/d/') . $file->hashName();
+
+        $dbg->add('env', [
+            'app_env' => config('app.env'),
+            'php' => PHP_VERSION,
+            'laravel' => app()->version(),
+            'disk_conf' => $conf,
+        ]);
+
+        $dbg->add('incoming_file', [
+            'original' => $file->getClientOriginalName(),
+            'size' => $file->getSize(),
+            'mime' => $file->getMimeType(),
+            'path' => $path,
+        ]);
+
+        try {
+            // IMPORTANT: no ACL/visibility param
+            $disk->put($path, file_get_contents($file->getRealPath()));
+            $url = Storage::disk('r2')->url($path);
+
+            $dbg->add('put_ok', ['path' => $path, 'url' => $url]);
+
+            return response()->json([
+                'ok' => true,
+                'path' => $path,
+                'url' => $url,
+                'debug' => $debugEnabled ? $dbg->all() : null,
+            ], Response::HTTP_CREATED);
+
+        } catch (\Throwable $e) {
+            $prev = $e->getPrevious();
+            $dbg->add('exception', [
+                'msg' => $e->getMessage(),
+                'prev' => $prev?->getMessage(),
+                'class' => get_class($e),
+            ]);
+
+            // If it is an AWS exception, extract code/status if present
+            if ($prev instanceof \Aws\Exception\AwsException) {
+                $dbg->add('aws_exception', [
+                    'aws_code' => $prev->getAwsErrorCode(),
+                    'aws_msg' => $prev->getAwsErrorMessage(),
+                    'aws_type' => $prev->getAwsErrorType(),
+                    'status' => $prev->getStatusCode(),
+                ]);
+            }
+
+            return response()->json([
+                'ok' => false,
+                'error' => $e->getMessage(),
+                'debug' => $dbg->all(),
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
     /**
      * Upload a file to R2 storage and create database record.
      * 
@@ -36,7 +118,7 @@ final class UploadController extends Controller
 
         try {
             $file = $request->file('file');
-            $userId = auth()->id();
+            $userId = auth()->user()?->id;
             $title = $request->input('title');
             $description = $request->input('description');
             $fileType = $request->input('file_type', 'other');
@@ -92,7 +174,7 @@ final class UploadController extends Controller
             }
 
             // Check if user can delete this file
-            if ($file->uploaded_by !== auth()->id() && !auth()->user()->can('delete', $file)) {
+            if ($file->uploaded_by !== auth()->user()?->id && !auth()->user()?->can('delete', $file)) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Unauthorized to delete this file'
@@ -182,7 +264,6 @@ final class UploadController extends Controller
             $cmd = $client->getCommand('PutObject', [
                 'Bucket' => env('R2_BUCKET'),
                 'Key' => $key,
-                'ACL' => 'public-read',
                 'ContentType' => $contentType,
             ]);
             

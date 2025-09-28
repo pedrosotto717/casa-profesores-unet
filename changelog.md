@@ -13,6 +13,21 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
     *   `CREATE: changelog.md`
     *   `CREATE: prompt.md`
 
+### [2025-01-27 16:50:00] - DOCS: Documentación de cambios de debug para limpieza posterior
+*   **Acción:** Se creó documentación detallada de todos los cambios de debug implementados para facilitar su remoción después del testing.
+*   **Archivos Modificados:**
+    *   `CREATE: docs/debug-changes-to-remove.md` - Documentación completa de archivos y cambios de debug a remover
+
+### [2025-01-27 16:45:00] - CHORE: Diagnóstico completo de R2 con instrumentación de debug y comando Artisan
+*   **Acción:** Se implementó un sistema completo de diagnóstico para Cloudflare R2 incluyendo corrección de configuración, auditoría de código, instrumentación de endpoint de subida, servicio de pruebas con AWS SDK y comando Artisan de diagnóstico.
+*   **Archivos Modificados:**
+    *   `UPDATE: config/filesystems.php` - Corregida configuración R2: use_path_style_endpoint=true, visibility=private, checksum options
+    *   `UPDATE: app/Http/Controllers/UploadController.php` - Eliminado ACL 'public-read' de presigned URLs, añadido método storeWithDebug con instrumentación completa
+    *   `UPDATE: routes/api.php` - Añadida ruta POST /api/v1/uploads/debug para endpoint de diagnóstico
+    *   `CREATE: app/Support/DebugLog.php` - Clase para recolección de logs de debug en memoria
+    *   `CREATE: app/Support/R2ProbeService.php` - Servicio de pruebas de conectividad usando AWS SDK nativo
+    *   `CREATE: app/Console/Commands/R2Diagnose.php` - Comando Artisan para diagnóstico completo con reporte markdown
+
 ### [2025-01-27 15:30:00] - FEAT: Configuración inicial de Laravel Sanctum
 *   **Acción:** Se configuró Laravel Sanctum para autenticación local y se añadió el trait HasApiTokens al modelo User.
 *   **Archivos Modificados:**

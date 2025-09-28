@@ -34,6 +34,7 @@ Route::prefix('v1')->group(function () {
         
         // File upload protected routes
         Route::post('/uploads', [UploadController::class, 'store']);
+        Route::post('/uploads/debug', [UploadController::class, 'storeWithDebug']);
         Route::delete('/uploads/{id}', [UploadController::class, 'destroy']);
         Route::post('/uploads/presign', [UploadController::class, 'presign']);
         
