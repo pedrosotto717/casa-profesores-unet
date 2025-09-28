@@ -19,6 +19,8 @@ Route::prefix('v1')->group(function () {
     Route::get('/areas/{area}', [AreaController::class, 'show']);
     Route::get('/academies', [AcademyController::class, 'index']);
     Route::get('/academies/{academy}', [AcademyController::class, 'show']);
+    Route::get('/users', [UserController::class, 'index']);
+    Route::get('/users/{user}', [UserController::class, 'show']);
     
     // File upload public routes
     Route::get('/uploads', [UploadController::class, 'index']);
@@ -27,7 +29,6 @@ Route::prefix('v1')->group(function () {
     // Protected routes (authentication required)
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [AuthenticationController::class, 'logout']);
-        Route::apiResource('users', UserController::class)->only(['index', 'show']);
         
         // File upload protected routes
         Route::post('/uploads', [UploadController::class, 'store']);
@@ -36,11 +37,15 @@ Route::prefix('v1')->group(function () {
         
         // Admin-only routes (authentication + admin role required)
         Route::middleware('admin')->group(function () {
+            // Users CRUD
+            Route::post('/users', [UserController::class, 'store']);
+            Route::put('/users/{user}', [UserController::class, 'update']);
+            Route::post('/users/{user}/invite', [UserController::class, 'invite']);
+            
             // Areas CRUD
             Route::post('/areas', [AreaController::class, 'store']);
             Route::put('/areas/{area}', [AreaController::class, 'update']);
             Route::delete('/areas/{area}', [AreaController::class, 'destroy']);
-            
             
             // Academies CRUD
             Route::post('/academies', [AcademyController::class, 'store']);

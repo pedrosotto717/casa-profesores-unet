@@ -13,6 +13,12 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
     *   `CREATE: changelog.md`
     *   `CREATE: prompt.md`
 
+### [2025-09-28 19:30:00] - FEAT: Implementación de logging de auditoría para actualizaciones de academias y áreas
+*   **Acción:** Se agregó logging de auditoría completo para las operaciones de actualización de academias y áreas, registrando los datos antes y después del cambio.
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Services/AcademyService.php` - Agregado método logAcademyUpdate() y logging en método update()
+    *   `UPDATE: app/Services/AreaService.php` - Agregado método logAreaUpdate() y logging en método update()
+
 ### [2025-09-28 19:15:00] - FEAT: Implementación completa del sistema de horarios para academias
 *   **Acción:** Se implementó el sistema completo de horarios para academias, permitiendo definir disponibilidad por día de la semana, área donde se dicta y capacidad máxima.
 *   **Archivos Modificados:**
@@ -481,4 +487,18 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
     *   `UPDATE: app/Http/Resources/AcademyResource.php` - Changed from FileResource to ImageResource for images
     *   `UPDATE: app/Http/Resources/AreaResource.php` - Changed from FileResource to ImageResource for images
     *   `UPDATE: app/Http/Resources/ServiceResource.php` - Changed from FileResource to ImageResource for images
+
+### [2025-01-28 10:30:00] - FEAT: Complete user management system implementation
+*   **Action:** Implemented comprehensive user management system with admin-only endpoints for creating, updating, and inviting users. Includes role management, solvency control, audit logging, and protection against admin self-demotion.
+*   **Files Modified:**
+    *   `CREATE: app/Http/Requests/StoreUserRequest.php` - Form request validation for user creation with role, solvency, and email validation
+    *   `CREATE: app/Http/Requests/UpdateUserRequest.php` - Form request validation for user updates with unique email validation excluding current user
+    *   `UPDATE: app/Services/UserService.php` - Extended with createUser(), updateUser(), and inviteUser() methods including solvency calculation, admin self-demotion protection, and comprehensive audit logging
+    *   `UPDATE: app/Http/Controllers/Api/V1/UserController.php` - Added store(), update(), and invite() methods with dependency injection and enhanced index() with search functionality
+    *   `UPDATE: routes/api.php` - Added admin-protected routes for POST /users, PUT /users/{user}, and POST /users/{user}/invite
+
+### [2025-01-28 10:45:00] - FIX: Move user listing endpoints to public routes
+*   **Action:** Moved GET /users and GET /users/{user} endpoints from protected routes to public routes since user listing should be publicly accessible without authentication.
+*   **Files Modified:**
+    *   `UPDATE: routes/api.php` - Moved user index and show routes from auth:sanctum middleware to public routes section
 
