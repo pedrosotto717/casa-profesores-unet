@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Enums\UserStatus;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,6 +28,15 @@ final class AuthenticationController extends Controller
         }
 
         $user = Auth::user();
+        
+        // Check if user is pending approval
+        if ($user->status === UserStatus::AprobacionPendiente) {
+            Auth::logout();
+            throw ValidationException::withMessages([
+                'email' => ['Su cuenta está pendiente de aprobación administrativa. Por favor, espere a que un administrador revise su solicitud.'],
+            ]);
+        }
+
         $token = $user->createToken('api-token')->plainTextToken;
 
         return response()->json([

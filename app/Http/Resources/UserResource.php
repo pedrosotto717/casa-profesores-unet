@@ -20,8 +20,11 @@ final class UserResource extends JsonResource
             'email' => $this->email,
             'role' => $this->role?->value,
             'role_label' => $this->getRoleLabel(),
+            'status' => $this->status?->value,
+            'status_label' => $this->getStatusLabel(),
+            'aspired_role' => $this->aspired_role?->value,
+            'responsible_email' => $this->responsible_email,
             'sso_uid' => $this->sso_uid,
-            'is_solvent' => $this->is_solvent,
             'solvent_until' => $this->solvent_until?->toDateString(),
             'email_verified_at' => $this->email_verified_at?->toIso8601String(),
             'created_at' => $this->created_at?->toIso8601String(),
@@ -52,6 +55,19 @@ final class UserResource extends JsonResource
             'estudiante' => 'Estudiante',
             'invitado' => 'Invitado',
             default => 'Usuario',
+        };
+    }
+
+    /**
+     * Get a human-readable label for the user status.
+     */
+    private function getStatusLabel(): string
+    {
+        return match ($this->status?->value) {
+            'aprobacion_pendiente' => 'Aprobación Pendiente',
+            'solvente' => 'Solvente',
+            'insolvente' => 'Insolvente',
+            default => 'Desconocido',
         };
     }
 }

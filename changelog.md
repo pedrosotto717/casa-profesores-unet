@@ -525,3 +525,66 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
     *   `UPDATE: app/Services/InvitationService.php` - Changed InvitationStatus::Pending to InvitationStatus::Pendiente, InvitationStatus::Approved to InvitationStatus::Aceptada, InvitationStatus::Rejected to InvitationStatus::Rechazada
     *   `UPDATE: app/Http/Resources/InvitationResource.php` - Updated getStatusLabel() method to match enum values with Spanish strings (pendiente, aceptada, rechazada, expirada, revocada)
 
+### [2025-10-01 00:15:00] - FEAT: Implement new business logic for user registration and approval workflow
+*   **Action:** Implemented comprehensive new business logic for user registration system based on business_logic.md specifications. Includes new user status system, aspired roles, responsible professor validation, and admin approval workflow.
+*   **Files Modified:**
+    *   `CREATE: app/Enums/UserStatus.php` - New enum for user status (aprobacion_pendiente, solvente, insolvente)
+    *   `CREATE: app/Enums/AspiredRole.php` - New enum for aspired roles (profesor, estudiante)
+    *   `CREATE: database/migrations/2025_10_01_001500_update_users_table_for_new_business_logic.php` - Migration to update users table with new fields: status, responsible_email, aspired_role, and remove is_solvent
+    *   `UPDATE: app/Models/User.php` - Added new fields to fillable array and casts for status and aspired_role enums
+    *   `UPDATE: app/Services/UserService.php` - Updated register() method to handle aspired_role and responsible_email, updated createUser() and updateUser() to use new status field instead of is_solvent, updated audit logging
+    *   `UPDATE: app/Http/Requests/Auth/RegisterUserRequest.php` - Added validation for aspired_role (required) and responsible_email (required_if:aspired_role,estudiante), added @unet.edu.ve validation for both user and responsible emails
+    *   `UPDATE: app/Http/Controllers/Api/V1/UserController.php` - Added pendingRegistrations() method for admin to view pending user registrations, updated index() method to filter by status instead of is_solvent
+    *   `UPDATE: app/Http/Resources/UserResource.php` - Added status, status_label, aspired_role, and responsible_email fields to API responses, added getStatusLabel() method
+    *   `UPDATE: routes/api.php` - Added GET /api/v1/users/pending-registrations route for admin access to pending registrations
+
+### [2025-10-01 00:30:00] - FIX: Correct user creation status logic according to business rules
+*   **Action:** Fixed user creation logic to properly handle different status values based on the three user creation methods defined in business_logic.md. Only auto-registration users should have 'aprobacion_pendiente' status.
+*   **Files Modified:**
+    *   `UPDATE: app/Services/InvitationService.php` - Fixed approveInvitation() method to use new status field instead of is_solvent, set default status to 'insolvente' for invited users (they are already approved by admin)
+    *   `UPDATE: app/Http/Requests/Auth/RegisterUserRequest.php` - Restricted aspired_role validation to only 'profesor' and 'estudiante' (instructor and obrero roles cannot be obtained through auto-registration)
+
+### [2025-10-01 00:45:00] - FEAT: Complete notification system for user registration and approval workflow
+*   **Action:** Implemented comprehensive notification system for auto-registration workflow according to business_logic.md specifications. Added notifications for new registration requests and user approvals, plus detailed TODOs for email implementation.
+*   **Files Modified:**
+    *   `UPDATE: app/Services/UserService.php` - Added NotificationService dependency, implemented notifications for new registration requests and user approvals, added handleStatusChangeNotifications() method
+    *   `UPDATE: app/Services/NotificationService.php` - Added notifyAdminsOfPendingRegistration() and notifyUserOfApproval() methods for auto-registration workflow
+    *   `UPDATE: app/Services/InvitationService.php` - Enhanced TODOs for email sending with detailed content specifications
+    *   `CREATE: docs/notification-and-email-system.md` - Comprehensive documentation of notification system and email implementation plan
+
+### [2025-10-01 01:00:00] - DOCS: Create comprehensive frontend roadmap for user registration system
+*   **Action:** Created detailed frontend roadmap and specifications for implementing user registration and incorporation flows according to business_logic.md. Includes complete UI/UX specifications, API integrations, and implementation timeline for all user roles.
+*   **Files Modified:**
+    *   `CREATE: docs/frontend-roadmap-user-registration.md` - Complete frontend roadmap with detailed specifications for auto-registration, invitation system, admin panels, UI components, API integrations, testing strategy, and 10-week implementation timeline
+
+### [2025-10-01 16:15:00] - FEAT: Implement user deletion endpoint with audit logging
+*   **Action:** Implemented DELETE endpoint for user deletion with comprehensive security validations and audit logging. Only administrators can delete users, with protection against self-deletion and last admin deletion.
+*   **Files Modified:**
+    *   `UPDATE: app/Services/UserService.php` - Added deleteUser() method with security validations and audit logging
+    *   `UPDATE: app/Http/Controllers/Api/V1/UserController.php` - Added destroy() method for user deletion endpoint
+    *   `UPDATE: routes/api.php` - Added DELETE /users/{user} route with admin middleware
+    *   `UPDATE: changelog.md` - Record of changes
+
+### [2025-10-01 16:30:00] - FIX: Remove token generation for pending approval users
+*   **Action:** Removed Sanctum token generation from user registration endpoint and added login blocking for users with 'aprobacion_pendiente' status. Users cannot access the system until approved by an administrator.
+*   **Files Modified:**
+    *   `UPDATE: app/Services/UserService.php` - Removed token generation from register() method, users with pending approval cannot receive authentication tokens
+    *   `UPDATE: app/Http/Controllers/Api/V1/AuthenticationController.php` - Added status check in login() method to block users with 'aprobacion_pendiente' status from logging in
+
+### [2025-10-01 16:45:00] - FIX: Fix route ordering for pending-registrations endpoint
+*   **Action:** Fixed route ordering in api.php to prevent Laravel from interpreting 'pending-registrations' as a user parameter. Moved the specific route before the parameterized route.
+*   **Files Modified:**
+    *   `UPDATE: routes/api.php` - Moved '/users/pending-registrations' route before '/users/{user}' route to avoid routing conflicts
+
+### [2025-10-01 17:00:00] - FIX: Change pending-registrations route to avoid parameter conflicts
+*   **Action:** Changed the pending-registrations route from '/users/pending-registrations' to '/admin/pending-registrations' to completely avoid conflicts with the users/{user} parameter route.
+*   **Files Modified:**
+    *   `UPDATE: routes/api.php` - Changed route from '/users/pending-registrations' to '/admin/pending-registrations' to avoid Laravel parameter conflicts
+
+### [2025-01-27 15:45:00] - FEAT: Implementación de flujo de aprobación automática de usuarios
+*   **Action:** Enhanced the existing PUT /users/{user} endpoint to handle automatic user approval flow. When an admin changes a user's status from 'aprobacion_pendiente' to 'solvente' or 'insolvente', the system automatically promotes the user to their aspired role and clears the aspired_role field.
+*   **Files Modified:**
+    *   `UPDATE: app/Services/UserService.php` - Added auto-approval logic in updateUser() method, enhanced audit logging for approval actions, and updated getUserSnapshot() to include aspired_role and responsible_email
+    *   `UPDATE: app/Http/Requests/UpdateUserRequest.php` - Added status field validation with UserStatus enum values and corresponding error messages
+    *   `UPDATE: docs/frontend-roadmap-user-registration.md` - Updated API endpoints documentation to reflect the new approval flow, corrected endpoint URLs, and added comprehensive documentation of the automatic approval behavior
+

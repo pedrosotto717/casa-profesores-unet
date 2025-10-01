@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Enums\UserRole;
+use App\Enums\UserStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -24,6 +25,7 @@ final class UpdateUserRequest extends FormRequest
     public function rules(): array
     {
         $validRoles = array_column(UserRole::cases(), 'value');
+        $validStatuses = array_column(UserStatus::cases(), 'value');
         $userId = $this->route('user')->id ?? null;
 
         return [
@@ -35,6 +37,7 @@ final class UpdateUserRequest extends FormRequest
                 Rule::unique('users', 'email')->ignore($userId)
             ],
             'role' => ['sometimes', 'string', Rule::in($validRoles)],
+            'status' => ['sometimes', 'string', Rule::in($validStatuses)],
             'password' => ['nullable', 'string', 'min:8', 'max:255'],
             'is_solvent' => ['nullable', 'boolean'],
             'solvent_until' => ['nullable', 'date', 'after_or_equal:today'],
@@ -54,6 +57,7 @@ final class UpdateUserRequest extends FormRequest
             'email.email' => 'El formato del correo electrónico no es válido.',
             'email.unique' => 'Este correo electrónico ya está registrado.',
             'role.in' => 'El rol seleccionado no es válido.',
+            'status.in' => 'El estado seleccionado no es válido.',
             'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
             'solvent_until.date' => 'La fecha de solvencia debe ser una fecha válida.',
             'solvent_until.after_or_equal' => 'La fecha de solvencia no puede ser anterior a hoy.',
@@ -71,6 +75,7 @@ final class UpdateUserRequest extends FormRequest
             'name' => 'nombre',
             'email' => 'correo electrónico',
             'role' => 'rol',
+            'status' => 'estado',
             'password' => 'contraseña',
             'is_solvent' => 'estado de solvencia',
             'solvent_until' => 'fecha de solvencia',
