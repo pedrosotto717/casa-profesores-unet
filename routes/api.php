@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\AcademyController;
 use App\Http\Controllers\Api\V1\AreaController;
+use App\Http\Controllers\Api\V1\AuditLogController;
 use App\Http\Controllers\Api\V1\AuthenticationController;
 use App\Http\Controllers\Api\V1\Auth\RegisterController;
 use App\Http\Controllers\Api\V1\InvitationController;
@@ -73,6 +74,10 @@ Route::prefix('v1')->group(function () {
             Route::post('/academies', [AcademyController::class, 'store']);
             Route::put('/academies/{academy}', [AcademyController::class, 'update']);
             Route::delete('/academies/{academy}', [AcademyController::class, 'destroy']);
+            
+            // Audit logs (admin only)
+            Route::get('/audit-logs', [AuditLogController::class, 'index']);
+            Route::get('/audit-logs/{auditLog}', [AuditLogController::class, 'show']);
         });
     });
 });

@@ -13,6 +13,11 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
     *   `CREATE: changelog.md`
     *   `CREATE: prompt.md`
 
+### [2025-09-28 19:45:00] - DOCS: Actualización completa de documentación CRUD API
+*   **Acción:** Se actualizó completamente la documentación CRUD API para reflejar todos los cambios realizados: eliminación del sistema de servicios, implementación de horarios para áreas y academias, logging de auditoría, y nuevos campos.
+*   **Archivos Modificados:**
+    *   `UPDATE: docs/crud-api-documentation.md` - Documentación completamente actualizada con ejemplos de horarios, validaciones, esquemas de BD y logging de auditoría
+
 ### [2025-09-28 19:30:00] - FEAT: Implementación de logging de auditoría para actualizaciones de academias y áreas
 *   **Acción:** Se agregó logging de auditoría completo para las operaciones de actualización de academias y áreas, registrando los datos antes y después del cambio.
 *   **Archivos Modificados:**
@@ -353,6 +358,14 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
 *   **Action:** Consolidated three separate documentation files into a single unified file, eliminating redundancy and inconsistencies. Removed API testing guide for future recreation with complete Postman collection.
 *   **Files Modified:**
     *   `DELETE: docs/file-management-system.md` - Removed original file
+
+### [2025-01-27 23:30:00] - FEAT: Implement audit logs API endpoints for admin access
+*   **Action:** Created minimal audit logs API with two admin-only endpoints for viewing system audit trails. Includes comprehensive filtering, pagination, data sanitization for sensitive fields, and complete documentation.
+*   **Files Modified:**
+    *   `CREATE: app/Http/Controllers/Api/V1/AuditLogController.php` - Controller with index() and show() methods, supports filtering by entity_type, entity_id, action, user_id, date range, and text search in before/after data
+    *   `CREATE: app/Http/Resources/AuditLogResource.php` - Resource class with data sanitization for sensitive fields (passwords, tokens, etc.) and entity labeling
+    *   `UPDATE: routes/api.php` - Added audit logs routes under admin middleware: GET /api/v1/audit-logs and GET /api/v1/audit-logs/{id}
+    *   `CREATE: docs/audit-logs-api.md` - Complete API documentation with available filters, response examples, security features, and error handling
     *   `DELETE: docs/r2-integration-notes.md` - Removed original file  
     *   `DELETE: docs/api-testing-guide.md` - Removed incomplete guide for future recreation
     *   `CREATE: docs/file-management-system.md` - New unified documentation combining R2 integration and file management system information, organized with R2 info first, then configuration, then file system details
@@ -587,4 +600,9 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
     *   `UPDATE: app/Services/UserService.php` - Added auto-approval logic in updateUser() method, enhanced audit logging for approval actions, and updated getUserSnapshot() to include aspired_role and responsible_email
     *   `UPDATE: app/Http/Requests/UpdateUserRequest.php` - Added status field validation with UserStatus enum values and corresponding error messages
     *   `UPDATE: docs/frontend-roadmap-user-registration.md` - Updated API endpoints documentation to reflect the new approval flow, corrected endpoint URLs, and added comprehensive documentation of the automatic approval behavior
+
+### [2025-01-28 12:00:00] - DOCS: Creación de documentación completa del sistema de registros e invitaciones
+*   **Acción:** Se creó documentación técnica completa del sistema de registro de usuarios e invitaciones, consolidando toda la información de los flujos de negocio, estructura de base de datos, API endpoints, servicios y consideraciones de implementación.
+*   **Archivos Modificados:**
+    *   `CREATE: docs/user-registration-and-invitation-system.md` - Documentación técnica completa del sistema de registros e invitaciones con arquitectura, flujos de negocio, estructura de BD, API endpoints, servicios, validaciones, seguridad, auditoría y roadmap de implementación
 
