@@ -25,7 +25,9 @@ class User extends Authenticatable
         'email',
         'password',
         'sso_uid',
-        'is_solvent',
+        'status',
+        'responsible_email',
+        'aspired_role',
         'solvent_until',
     ];
 
@@ -50,7 +52,8 @@ class User extends Authenticatable
             'role' => \App\Enums\UserRole::class,
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'is_solvent' => 'boolean',
+            'status' => \App\Enums\UserStatus::class,
+            'aspired_role' => \App\Enums\AspiredRole::class,
             'solvent_until' => 'date',
         ];
     }

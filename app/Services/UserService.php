@@ -3,16 +3,23 @@
 namespace App\Services;
 
 use App\Enums\UserRole;
+use App\Enums\UserStatus;
+use App\Enums\AspiredRole;
 use App\Models\AuditLog;
 use App\Models\User;
+use App\Services\NotificationService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
 final class UserService
 {
+    public function __construct(
+        private readonly NotificationService $notificationService
+    ) {}
     /**
      * Register a new user with local authentication.
+     * Implements the auto-registration flow with aspired_role and responsible_email.
      */
     public function register(array $data): array
     {
@@ -21,17 +28,28 @@ final class UserService
             'email'    => $data['email'],
             // SSO users won't have password; this is local registration
             'password' => Hash::make($data['password']),
-            // safe initial role (NOT admin). Using enum value
+            // Auto-registration creates user with 'usuario' role and 'aprobacion_pendiente' status
             'role'     => UserRole::Usuario,
+            'status'   => UserStatus::AprobacionPendiente,
+            'aspired_role' => isset($data['aspired_role']) ? AspiredRole::from($data['aspired_role']) : null,
+            'responsible_email' => $data['responsible_email'] ?? null,
         ]);
 
-        // SPA token with Sanctum
-        $token = $user->createToken('spa')->plainTextToken;
+        // Notify all admins about the new registration request
+        $this->notificationService->notifyAdminsOfPendingRegistration(
+            $user->id,
+            $user->name,
+            $user->email,
+            $user->aspired_role?->value,
+            $user->responsible_email
+        );
+
+        // TODO: Send email to the user confirming registration and explaining approval process
+        // This should be implemented in a future iteration
 
         return [
             'user' => $user, 
-            'token' => $token,
-            'message' => 'Usuario registrado exitosamente.'
+            'message' => 'Usuario registrado exitosamente. Su cuenta está pendiente de aprobación administrativa.'
         ];
     }
 
@@ -60,15 +78,15 @@ final class UserService
     public function createUser(array $data, int $adminUserId): User
     {
         return DB::transaction(function () use ($data, $adminUserId) {
-            // Calculate solvency based on solvent_until if provided
-            $isSolvent = $this->calculateSolvency($data['is_solvent'] ?? null, $data['solvent_until'] ?? null);
+            // Determine status based on provided data or default to 'insolvente'
+            $status = isset($data['status']) ? UserStatus::from($data['status']) : UserStatus::Insolvente;
 
             $user = User::create([
                 'name' => $data['name'],
                 'email' => $data['email'],
                 'role' => UserRole::from($data['role']),
                 'password' => isset($data['password']) ? Hash::make($data['password']) : null,
-                'is_solvent' => $isSolvent,
+                'status' => $status,
                 'solvent_until' => $data['solvent_until'] ?? null,
             ]);
 
@@ -78,7 +96,7 @@ final class UserService
                 'name' => $user->name,
                 'email' => $user->email,
                 'role' => $user->role->value,
-                'is_solvent' => $user->is_solvent,
+                'status' => $user->status->value,
                 'solvent_until' => $user->solvent_until?->toDateString(),
                 'created_at' => $user->created_at->toIso8601String(),
                 'updated_at' => $user->updated_at->toIso8601String(),
@@ -124,21 +142,34 @@ final class UserService
                 $changes['password'] = '[HIDDEN]';
             }
 
-            // Handle solvency
-            $solvencyChanged = false;
+            // Handle status
+            $statusChanged = false;
+            $oldStatus = $user->status;
+            if (isset($data['status'])) {
+                $user->status = UserStatus::from($data['status']);
+                $changes['status'] = $data['status'];
+                $statusChanged = true;
+
+                // Auto-approval logic: If user was pending approval and is being approved,
+                // automatically promote them to their aspired role
+                if ($oldStatus === UserStatus::AprobacionPendiente && 
+                    ($user->status === UserStatus::Solvente || $user->status === UserStatus::Insolvente) &&
+                    $user->aspired_role !== null) {
+                    
+                    $oldRole = $user->role;
+                    $user->role = UserRole::from($user->aspired_role->value);
+                    $changes['role'] = $user->aspired_role->value;
+                    
+                    // Clear aspired_role since it's no longer needed
+                    $user->aspired_role = null;
+                    $changes['aspired_role'] = null;
+                }
+            }
+
+            // Handle solvency date
             if (isset($data['solvent_until'])) {
                 $user->solvent_until = $data['solvent_until'];
                 $changes['solvent_until'] = $data['solvent_until'];
-                $solvencyChanged = true;
-            }
-
-            if (isset($data['is_solvent']) || isset($data['solvent_until'])) {
-                $newSolvency = $this->calculateSolvency($data['is_solvent'] ?? null, $data['solvent_until'] ?? null);
-                if ($user->is_solvent !== $newSolvency) {
-                    $user->is_solvent = $newSolvency;
-                    $changes['is_solvent'] = $newSolvency;
-                    $solvencyChanged = true;
-                }
             }
 
             $user->save();
@@ -156,17 +187,37 @@ final class UserService
                     );
                 }
 
-                if ($solvencyChanged) {
-                    $this->logUserAction($adminUserId, $user->id, 'user_solvency_changed',
+                // Special audit log for auto-approval
+                if ($statusChanged && $oldStatus === UserStatus::AprobacionPendiente && 
+                    ($user->status === UserStatus::Solvente || $user->status === UserStatus::Insolvente)) {
+                    $this->logUserAction($adminUserId, $user->id, 'user_approved', 
                         [
-                            'is_solvent' => $before['is_solvent'],
+                            'status' => $oldStatus->value,
+                            'role' => $before['role'],
+                            'aspired_role' => $before['aspired_role'] ?? null
+                        ], 
+                        [
+                            'status' => $user->status->value,
+                            'role' => $user->role->value,
+                            'aspired_role' => null
+                        ]
+                    );
+                }
+
+                if ($statusChanged) {
+                    $this->logUserAction($adminUserId, $user->id, 'user_status_changed',
+                        [
+                            'status' => $before['status'],
                             'solvent_until' => $before['solvent_until']
                         ],
                         [
-                            'is_solvent' => $after['is_solvent'],
+                            'status' => $after['status'],
                             'solvent_until' => $after['solvent_until']
                         ]
                     );
+
+                    // Handle notifications for status changes (approval/rejection)
+                    $this->handleStatusChangeNotifications($user, $oldStatus, $user->status, $adminUserId);
                 }
             }
 
@@ -233,10 +284,75 @@ final class UserService
             'name' => $user->name,
             'email' => $user->email,
             'role' => $user->role->value,
-            'is_solvent' => $user->is_solvent,
+            'status' => $user->status->value,
+            'aspired_role' => $user->aspired_role?->value,
+            'responsible_email' => $user->responsible_email,
             'solvent_until' => $user->solvent_until?->toDateString(),
             'updated_at' => $user->updated_at->toIso8601String(),
         ];
+    }
+
+    /**
+     * Handle notifications for status changes (approval/rejection).
+     */
+    private function handleStatusChangeNotifications(User $user, UserStatus $oldStatus, UserStatus $newStatus, int $adminUserId): void
+    {
+        // Only notify if user was pending approval and status changed
+        if ($oldStatus === UserStatus::AprobacionPendiente) {
+            if ($newStatus === UserStatus::Solvente || $newStatus === UserStatus::Insolvente) {
+                // User was approved
+                $this->notificationService->notifyUserOfApproval(
+                    $user->id,
+                    $user->name,
+                    $user->role->value
+                );
+
+                // TODO: Send email to the user notifying them of approval
+                // This should be implemented in a future iteration
+            }
+            // Note: We don't handle rejection notifications here as rejection
+            // would typically involve deleting the user or setting a different status
+            // that we haven't defined yet in the business logic
+        }
+    }
+
+    /**
+     * Delete a user (soft delete).
+     */
+    public function deleteUser(User $user, int $adminUserId): bool
+    {
+        return DB::transaction(function () use ($user, $adminUserId) {
+            // Prevent admin from deleting themselves
+            if ($user->id === $adminUserId) {
+                throw ValidationException::withMessages([
+                    'user' => 'No se puede eliminar su propia cuenta.'
+                ]);
+            }
+
+            // Prevent deletion of the last admin
+            if ($user->role === UserRole::Administrador) {
+                $adminCount = User::where('role', UserRole::Administrador)->count();
+                
+                if ($adminCount <= 1) {
+                    throw ValidationException::withMessages([
+                        'user' => 'No se puede eliminar el único administrador del sistema.'
+                    ]);
+                }
+            }
+
+            // Get user snapshot before deletion for audit log
+            $before = $this->getUserSnapshot($user);
+
+            // Perform soft delete
+            $deleted = $user->delete();
+
+            if ($deleted) {
+                // Audit log for user deletion
+                $this->logUserAction($adminUserId, $user->id, 'user_deleted', $before, null);
+            }
+
+            return $deleted;
+        });
     }
 
     /**

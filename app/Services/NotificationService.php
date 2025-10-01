@@ -189,4 +189,50 @@ final class NotificationService
             ]
         );
     }
+
+    /**
+     * Create registration pending notification for all admins.
+     */
+    public function notifyAdminsOfPendingRegistration(int $userId, string $userName, string $userEmail, ?string $aspiredRole, ?string $responsibleEmail): Notification
+    {
+        $message = "Nueva solicitud de registro de {$userName} ({$userEmail})";
+        if ($aspiredRole) {
+            $message .= " aspirando a ser {$aspiredRole}";
+        }
+        if ($responsibleEmail) {
+            $message .= " con profesor responsable: {$responsibleEmail}";
+        }
+        $message .= ".";
+
+        return $this->createForRole(
+            'administrador',
+            'Nueva Solicitud de Registro',
+            $message,
+            'registration_pending',
+            [
+                'user_id' => $userId,
+                'user_name' => $userName,
+                'user_email' => $userEmail,
+                'aspired_role' => $aspiredRole,
+                'responsible_email' => $responsibleEmail,
+            ]
+        );
+    }
+
+    /**
+     * Create user approval notification for the user.
+     */
+    public function notifyUserOfApproval(int $userId, string $userName, string $userRole): Notification
+    {
+        return $this->createForUser(
+            $userId,
+            'Cuenta Aprobada',
+            "¡Felicidades {$userName}! Tu cuenta ha sido aprobada y ahora tienes el rol de {$userRole}. Ya puedes iniciar sesión y utilizar todas las funcionalidades del sistema.",
+            'user_approved',
+            [
+                'user_name' => $userName,
+                'user_role' => $userRole,
+            ]
+        );
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\InvitationStatus;
 use App\Enums\UserRole;
+use App\Enums\UserStatus;
 use App\Models\AuditLog;
 use App\Models\Invitation;
 use App\Models\User;
@@ -67,8 +68,9 @@ final class InvitationService
                 'expires_at' => $invitation->expires_at->toIso8601String(),
             ]);
 
-            // TODO: Send email to the person being invited
+            // TODO: Send email to the person being invited with invitation details and link to accept
             // This should be implemented in a future iteration
+            // Email should include: inviter name, invitation message, acceptance link, expiration date
 
             return $invitation;
         });
@@ -100,7 +102,7 @@ final class InvitationService
                 'email' => $invitation->email,
                 'role' => UserRole::Invitado, // New users start as "invitado"
                 'password' => null, // No password for invited users initially
-                'is_solvent' => false, // Default to not solvent
+                'status' => UserStatus::Insolvente, // Default to insolvente (active but not up to date with contributions)
             ]);
 
             // Update invitation status
@@ -118,9 +120,9 @@ final class InvitationService
             );
 
 
-            // TODO: Send email to the person being invited
+            // TODO: Send email to the person being invited notifying them of account creation
             // This should be implemented in a future iteration
-            // FIXME: Implement email sending
+            // Email should include: account details, login instructions, system welcome message
 
             
             // Audit logs
@@ -138,7 +140,7 @@ final class InvitationService
                 'name' => $user->name,
                 'email' => $user->email,
                 'role' => $user->role->value,
-                'is_solvent' => $user->is_solvent,
+                'status' => $user->status->value,
                 'created_via' => 'invitation_approval',
                 'invitation_id' => $invitation->id,
                 'created_at' => $user->created_at->toIso8601String(),

@@ -52,7 +52,11 @@ Route::prefix('v1')->group(function () {
             // Users CRUD
             Route::post('/users', [UserController::class, 'store']);
             Route::put('/users/{user}', [UserController::class, 'update']);
+            Route::delete('/users/{user}', [UserController::class, 'destroy']);
             Route::post('/users/{user}/invite', [UserController::class, 'invite']);
+            
+            // Admin specific routes
+            Route::get('/admin/pending-registrations', [UserController::class, 'pendingRegistrations']);
             
             // Invitations management (admin only)
             Route::get('/invitations', [InvitationController::class, 'index']);
