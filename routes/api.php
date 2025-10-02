@@ -2,10 +2,12 @@
 
 use App\Http\Controllers\Api\V1\AcademyController;
 use App\Http\Controllers\Api\V1\AreaController;
+use App\Http\Controllers\Api\V1\AuditLogController;
 use App\Http\Controllers\Api\V1\AuthenticationController;
 use App\Http\Controllers\Api\V1\Auth\RegisterController;
 use App\Http\Controllers\Api\V1\InvitationController;
 use App\Http\Controllers\Api\V1\NotificationController;
+use App\Http\Controllers\Api\V1\ReservationController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\UploadController;
 use Illuminate\Http\Request;
@@ -28,6 +30,9 @@ Route::prefix('v1')->group(function () {
     Route::get('/uploads', [UploadController::class, 'index']);
     Route::get('/uploads/{id}', [UploadController::class, 'show']);
     
+    // Public availability endpoint
+    Route::get('/reservations/availability', [ReservationController::class, 'availability']);
+    
     // Protected routes (authentication required)
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [AuthenticationController::class, 'logout']);
@@ -41,6 +46,12 @@ Route::prefix('v1')->group(function () {
         
         // Invitations routes (authenticated users can create, admin can manage)
         Route::post('/invitations', [InvitationController::class, 'store']);
+        
+        // Reservations routes (authenticated users: profesor, estudiante, invitado with status solvente)
+        Route::get('/reservations', [ReservationController::class, 'index']);
+        Route::post('/reservations', [ReservationController::class, 'store']);
+        Route::put('/reservations/{id}', [ReservationController::class, 'update']);
+        Route::post('/reservations/{id}/cancel', [ReservationController::class, 'cancel']);
         
         // File upload protected routes
         Route::post('/uploads', [UploadController::class, 'store']);
@@ -73,6 +84,14 @@ Route::prefix('v1')->group(function () {
             Route::post('/academies', [AcademyController::class, 'store']);
             Route::put('/academies/{academy}', [AcademyController::class, 'update']);
             Route::delete('/academies/{academy}', [AcademyController::class, 'destroy']);
+            
+            // Reservations management (admin only)
+            Route::post('/reservations/{id}/approve', [ReservationController::class, 'approve']);
+            Route::post('/reservations/{id}/reject', [ReservationController::class, 'reject']);
+            
+            // Audit logs (admin only)
+            Route::get('/audit-logs', [AuditLogController::class, 'index']);
+            Route::get('/audit-logs/{auditLog}', [AuditLogController::class, 'show']);
         });
     });
 });

@@ -13,6 +13,11 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
     *   `CREATE: changelog.md`
     *   `CREATE: prompt.md`
 
+### [2025-09-28 19:45:00] - DOCS: Actualización completa de documentación CRUD API
+*   **Acción:** Se actualizó completamente la documentación CRUD API para reflejar todos los cambios realizados: eliminación del sistema de servicios, implementación de horarios para áreas y academias, logging de auditoría, y nuevos campos.
+*   **Archivos Modificados:**
+    *   `UPDATE: docs/crud-api-documentation.md` - Documentación completamente actualizada con ejemplos de horarios, validaciones, esquemas de BD y logging de auditoría
+
 ### [2025-09-28 19:30:00] - FEAT: Implementación de logging de auditoría para actualizaciones de academias y áreas
 *   **Acción:** Se agregó logging de auditoría completo para las operaciones de actualización de academias y áreas, registrando los datos antes y después del cambio.
 *   **Archivos Modificados:**
@@ -353,6 +358,14 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
 *   **Action:** Consolidated three separate documentation files into a single unified file, eliminating redundancy and inconsistencies. Removed API testing guide for future recreation with complete Postman collection.
 *   **Files Modified:**
     *   `DELETE: docs/file-management-system.md` - Removed original file
+
+### [2025-01-27 23:30:00] - FEAT: Implement audit logs API endpoints for admin access
+*   **Action:** Created minimal audit logs API with two admin-only endpoints for viewing system audit trails. Includes comprehensive filtering, pagination, data sanitization for sensitive fields, and complete documentation.
+*   **Files Modified:**
+    *   `CREATE: app/Http/Controllers/Api/V1/AuditLogController.php` - Controller with index() and show() methods, supports filtering by entity_type, entity_id, action, user_id, date range, and text search in before/after data
+    *   `CREATE: app/Http/Resources/AuditLogResource.php` - Resource class with data sanitization for sensitive fields (passwords, tokens, etc.) and entity labeling
+    *   `UPDATE: routes/api.php` - Added audit logs routes under admin middleware: GET /api/v1/audit-logs and GET /api/v1/audit-logs/{id}
+    *   `CREATE: docs/audit-logs-api.md` - Complete API documentation with available filters, response examples, security features, and error handling
     *   `DELETE: docs/r2-integration-notes.md` - Removed original file  
     *   `DELETE: docs/api-testing-guide.md` - Removed incomplete guide for future recreation
     *   `CREATE: docs/file-management-system.md` - New unified documentation combining R2 integration and file management system information, organized with R2 info first, then configuration, then file system details
@@ -587,4 +600,103 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
     *   `UPDATE: app/Services/UserService.php` - Added auto-approval logic in updateUser() method, enhanced audit logging for approval actions, and updated getUserSnapshot() to include aspired_role and responsible_email
     *   `UPDATE: app/Http/Requests/UpdateUserRequest.php` - Added status field validation with UserStatus enum values and corresponding error messages
     *   `UPDATE: docs/frontend-roadmap-user-registration.md` - Updated API endpoints documentation to reflect the new approval flow, corrected endpoint URLs, and added comprehensive documentation of the automatic approval behavior
+
+### [2025-01-28 12:00:00] - DOCS: Creación de documentación completa del sistema de registros e invitaciones
+*   **Acción:** Se creó documentación técnica completa del sistema de registro de usuarios e invitaciones, consolidando toda la información de los flujos de negocio, estructura de base de datos, API endpoints, servicios y consideraciones de implementación.
+*   **Archivos Modificados:**
+    *   `CREATE: docs/user-registration-and-invitation-system.md` - Documentación técnica completa del sistema de registros e invitaciones con arquitectura, flujos de negocio, estructura de BD, API endpoints, servicios, validaciones, seguridad, auditoría y roadmap de implementación
+
+### [2025-01-28 13:00:00] - FEAT: Implementación completa del sistema de reservas
+*   **Acción:** Se implementó el módulo completo de reservas siguiendo las especificaciones del prompt, incluyendo CRUD de reservas, sistema de aprobación administrativa, anticolisión con academias, disponibilidad pública y auditoría completa.
+*   **Archivos Modificados:**
+    *   `CREATE: database/migrations/2025_01_28_120000_create_reservations_table.php` - Migración para tabla reservations con índices de performance
+    *   `CREATE: app/Models/Reservation.php` - Modelo con relaciones, scopes y métodos de validación
+    *   `CREATE: app/Services/ReservationService.php` - Servicio con lógica de negocio completa, validaciones, anticolisión y cálculo de disponibilidad
+    *   `CREATE: app/Http/Requests/StoreReservationRequest.php` - Validación para creación de reservas
+    *   `CREATE: app/Http/Requests/UpdateReservationRequest.php` - Validación para actualización de reservas
+    *   `CREATE: app/Http/Requests/CancelReservationRequest.php` - Validación para cancelación de reservas
+    *   `CREATE: app/Http/Requests/RejectReservationRequest.php` - Validación para rechazo de reservas
+    *   `CREATE: app/Http/Requests/GetAvailabilityRequest.php` - Validación para endpoint de disponibilidad
+    *   `CREATE: app/Http/Controllers/Api/V1/ReservationController.php` - Controlador con todos los endpoints de reservas
+    *   `CREATE: app/Http/Resources/ReservationResource.php` - Resource para formateo de respuestas de reservas
+    *   `CREATE: config/reservations.php` - Configuración de parámetros del sistema de reservas
+    *   `CREATE: docs/reservation-system.md` - Documentación técnica completa del sistema de reservas
+    *   `UPDATE: routes/api.php` - Agregadas rutas públicas y protegidas para reservas
+    *   `UPDATE: app/Services/NotificationService.php` - Agregados métodos de notificación para reservas
+
+### [2025-01-28 13:15:00] - FIX: Permitir a usuarios ver sus propias reservas
+*   **Acción:** Se corrigió el endpoint GET /reservations para permitir que los usuarios autenticados vean sus propias reservas, mientras que los administradores mantienen acceso completo con filtros.
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Http/Controllers/Api/V1/ReservationController.php` - Modificado método index() para filtrar por usuario si no es admin
+    *   `UPDATE: routes/api.php` - Movida ruta GET /reservations fuera del middleware admin para acceso de usuarios autenticados
+    *   `UPDATE: docs/reservation-system.md` - Actualizada documentación para reflejar el nuevo comportamiento del endpoint
+
+### [2025-01-28 13:30:00] - FIX: Adaptar sistema de reservas a estructura de tabla existente
+*   **Acción:** Se adaptó todo el sistema de reservas para usar la estructura original de la tabla `reservations` existente, eliminando la migración duplicada y actualizando todos los componentes.
+*   **Archivos Modificados:**
+    *   `DELETE: database/migrations/2025_01_28_120000_create_reservations_table.php` - Eliminada migración duplicada
+    *   `DELETE: database/migrations/2025_01_28_130000_update_reservations_table_for_new_system.php` - Eliminada migración de modificación
+    *   `UPDATE: app/Models/Reservation.php` - Adaptado para usar columnas originales (requester_id, approved_by, title, notes, decision_reason)
+    *   `UPDATE: app/Services/ReservationService.php` - Actualizado para usar nombres de columnas originales
+    *   `UPDATE: app/Http/Requests/StoreReservationRequest.php` - Cambiado de note/description a title/notes
+    *   `UPDATE: app/Http/Requests/UpdateReservationRequest.php` - Cambiado de note/description a title/notes
+    *   `UPDATE: app/Http/Resources/ReservationResource.php` - Adaptado para usar relaciones requester/approver y campos originales
+    *   `UPDATE: app/Http/Controllers/Api/V1/ReservationController.php` - Actualizado para usar relaciones correctas
+    *   `UPDATE: docs/reservation-system.md` - Documentación actualizada con estructura original de tabla
+
+### [2025-01-28 13:45:00] - FIX: Correcciones críticas según business_logic.md
+*   **Acción:** Se corrigieron errores críticos encontrados en la validación contra business_logic.md.
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Services/ReservationService.php` - Corregidos errores en notificaciones (user_id vs requester_id) y audit logs (note vs title)
+    *   `UPDATE: app/Services/ReservationService.php` - Corregidos errores en notificaciones (user_id vs requester_id) y audit logs (note vs title)
+    *   `UPDATE: docs/reservation-system.md` - Documentación actualizada para reflejar roles correctos
+    *   `UPDATE: routes/api.php` - Comentarios actualizados para reflejar roles correctos
+
+### [2025-01-28 13:50:00] - FIX: Incluir invitados en sistema de reservas
+*   **Acción:** Se corrigió la validación para incluir invitados en el sistema de reservas, ya que también pueden solicitar reservas y requieren validación de profesor responsable.
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Services/ReservationService.php` - Agregado UserRole::Invitado a roles permitidos para reservas
+    *   `UPDATE: app/Services/ReservationService.php` - Agregada validación de profesor responsable para invitados
+    *   `UPDATE: docs/reservation-system.md` - Documentación actualizada para incluir invitados
+    *   `UPDATE: routes/api.php` - Comentarios actualizados para incluir invitados
+
+### [2025-01-28 13:55:00] - DOCS: Guía rápida de testing para endpoints de reservas
+*   **Acción:** Se creó una guía rápida con ejemplos de curl para probar todos los endpoints del sistema de reservas.
+*   **Archivos Modificados:**
+    *   `CREATE: docs/reservation-api-quick-test.md` - Guía rápida con ejemplos de testing para todos los endpoints
+
+### [2025-01-28 14:00:00] - UPDATE: Guía de testing actualizada con datos reales
+*   **Acción:** Se actualizó la guía de testing con datos reales del seeder de áreas, fechas coherentes para octubre 2025 y ejemplos específicos por tipo de área.
+*   **Archivos Modificados:**
+    *   `UPDATE: docs/reservation-api-quick-test.md` - Agregada tabla de áreas disponibles, ejemplos específicos por área (piscina, salón, sauna), fechas actualizadas para octubre 2025, y query parameters realistas
+
+### [2025-01-28 14:05:00] - FIX: Corrección de lógica de validación de anticipación mínima
+*   **Acción:** Se corrigió la lógica invertida en la validación de anticipación mínima para reservas. El método diffInHours estaba calculando desde la fecha de inicio hacia ahora en lugar de desde ahora hacia la fecha de inicio.
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Services/ReservationService.php` - Corregida línea 379: cambiado de $start->diffInHours(now(), false) a now()->diffInHours($start, false)
+
+### [2025-10-02 14:30:00] - FIX: Corrección de TypeError en notificaciones de reservas
+*   **Acción:** Se corrigió el error TypeError donde se pasaban objetos Carbon en lugar de strings a los métodos de notificación. Se agregó format('Y-m-d H:i:s') a todas las fechas antes de pasarlas a NotificationService.
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Services/ReservationService.php` - Agregado import de NotificationService y format() a todos los objetos Carbon en llamadas a métodos de notificación (líneas 67-73, 180-185, 226-231, 268-274)
+
+### [2025-10-02 14:35:00] - FIX: Corrección de TypeError en getDurationInMinutes()
+*   **Acción:** Se corrigió el error TypeError en el método getDurationInMinutes() del modelo Reservation donde se devolvía un float pero el tipo de retorno declarado era int. Se agregó cast (int) para convertir el resultado a entero.
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Models/Reservation.php` - Agregado cast (int) en línea 172 para convertir el resultado de diffInMinutes() a entero
+
+### [2025-10-02 14:40:00] - FIX: Corrección de TypeError en validateTimeWindows()
+*   **Acción:** Se corrigió el error TypeError en el método validateTimeWindows() donde se pasaban objetos Carbon en lugar de strings. Se agregó toDateTimeString() para convertir los objetos Carbon a strings.
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Services/ReservationService.php` - Agregado toDateTimeString() en línea 122 para convertir objetos Carbon a strings antes de llamar a validateTimeWindows()
+
+### [2025-10-02 14:45:00] - FIX: Corrección de TypeError en validateNoConflicts()
+*   **Acción:** Se corrigió el error TypeError en el método validateNoConflicts() donde se pasaban objetos Carbon en lugar de strings. Se agregó toDateTimeString() para convertir los objetos Carbon a strings en todas las llamadas.
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Services/ReservationService.php` - Agregado toDateTimeString() en líneas 123 y 208 para convertir objetos Carbon a strings antes de llamar a validateNoConflicts()
+
+### [2025-10-02 14:50:00] - FIX: Corrección de TypeError en endpoint de disponibilidad
+*   **Acción:** Se corrigió el error TypeError en el endpoint de disponibilidad donde se pasaba un string para area_id pero el método getAreaAvailability() esperaba un int. Se agregó cast (int) para convertir el string a entero.
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Http/Controllers/Api/V1/ReservationController.php` - Agregado cast (int) en línea 171 para convertir area_id de string a int antes de llamar a getAreaAvailability()
 

@@ -235,4 +235,86 @@ final class NotificationService
             ]
         );
     }
+
+    /**
+     * Create pending reservation notification for admins.
+     */
+    public function notifyAdminsOfPendingReservation(int $reservationId, string $userName, string $areaName, string $startsAt, string $endsAt): Notification
+    {
+        $message = "Nueva solicitud de reserva de {$userName} para el área {$areaName} el {$startsAt} hasta {$endsAt}.";
+
+        return $this->createForRole(
+            'administrador',
+            'Nueva Solicitud de Reserva',
+            $message,
+            'reservation_pending',
+            [
+                'reservation_id' => $reservationId,
+                'user_name' => $userName,
+                'area_name' => $areaName,
+                'starts_at' => $startsAt,
+                'ends_at' => $endsAt,
+            ]
+        );
+    }
+
+    /**
+     * Create reservation approval notification for the user.
+     */
+    public function notifyUserOfReservationApproval(int $userId, string $areaName, string $startsAt, string $endsAt): Notification
+    {
+        return $this->createForUser(
+            $userId,
+            'Reserva Aprobada',
+            "Tu reserva para el área {$areaName} del {$startsAt} al {$endsAt} ha sido aprobada.",
+            'reservation_approved',
+            [
+                'area_name' => $areaName,
+                'starts_at' => $startsAt,
+                'ends_at' => $endsAt,
+            ]
+        );
+    }
+
+    /**
+     * Create reservation rejection notification for the user.
+     */
+    public function notifyUserOfReservationRejection(int $userId, string $areaName, string $startsAt, string $endsAt, string $reason): Notification
+    {
+        return $this->createForUser(
+            $userId,
+            'Reserva Rechazada',
+            "Tu reserva para el área {$areaName} del {$startsAt} al {$endsAt} ha sido rechazada. Razón: {$reason}",
+            'reservation_rejected',
+            [
+                'area_name' => $areaName,
+                'starts_at' => $startsAt,
+                'ends_at' => $endsAt,
+                'reason' => $reason,
+            ]
+        );
+    }
+
+    /**
+     * Create reservation cancellation notification for the user.
+     */
+    public function notifyUserOfReservationCancellation(int $userId, string $areaName, string $startsAt, string $reason = null): Notification
+    {
+        $message = "Tu reserva para el área {$areaName} del {$startsAt} ha sido cancelada.";
+        if ($reason) {
+            $message .= " Razón: {$reason}";
+        }
+
+        return $this->createForUser(
+            $userId,
+            'Reserva Cancelada',
+            $message,
+            'reservation_canceled',
+            [
+                'area_name' => $areaName,
+                'starts_at' => $startsAt,
+                'reason' => $reason,
+            ]
+        );
+    }
 }
