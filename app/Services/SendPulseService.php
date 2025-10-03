@@ -291,6 +291,23 @@ class SendPulseService
     }
 
     /**
+     * Send account rejection email to user.
+     */
+    public function sendAccountRejectedEmail(string $userEmail, string $userName): array
+    {
+        $subject = 'Solicitud de registro - Casa del Profesor Universitario';
+        $html = $this->generateAccountRejectedHtml($userName);
+        $text = $this->generateAccountRejectedText($userName);
+
+        return $this->sendBasic(
+            [['email' => $userEmail, 'name' => $userName]],
+            $subject,
+            $html,
+            $text
+        );
+    }
+
+    /**
      * Send invitation approved email with auth code
      */
     public function sendInvitationApprovedEmail(string $userEmail, string $userName, string $authCode): array
@@ -409,6 +426,88 @@ Casa del Profesor Universitario - UNET
 Este correo fue enviado automáticamente por el sistema de la Casa del Profesor Universitario.
 Universidad Nacional Experimental del Táchira (UNET)
 Si tienes alguna consulta, contacta a la administración.";
+    }
+
+    /**
+     * Generate HTML version for account rejected email
+     */
+    private function generateAccountRejectedHtml(string $userName): string
+    {
+        return "
+        <!DOCTYPE html>
+        <html lang='es'>
+        <head>
+            <meta charset='UTF-8'>
+            <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+            <title>Solicitud de registro - Casa del Profesor Universitario</title>
+            <style>
+                body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f4f4f4; }
+                .container { background-color: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+                .header { text-align: center; border-bottom: 3px solid #2c5aa0; padding-bottom: 20px; margin-bottom: 30px; }
+                .logo { font-size: 24px; font-weight: bold; color: #2c5aa0; margin-bottom: 10px; }
+                .subtitle { color: #666; font-size: 14px; }
+                .highlight { background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 20px 0; border-radius: 4px; }
+                .footer { border-top: 1px solid #eee; padding-top: 20px; text-align: center; color: #666; font-size: 12px; }
+            </style>
+        </head>
+        <body>
+            <div class='container'>
+                <div class='header'>
+                    <div class='logo'>🏛️ Casa del Profesor Universitario</div>
+                    <div class='subtitle'>Universidad Nacional Experimental del Táchira</div>
+                </div>
+                
+                <h2>Estimado/a {$userName},</h2>
+                
+                <p>Lamentamos informarte que tu solicitud de registro en la <strong>Casa del Profesor Universitario</strong> no ha sido aprobada en esta ocasión.</p>
+                
+                <div class='highlight'>
+                    <h3>📋 Estado de tu solicitud</h3>
+                    <p><strong>Resultado:</strong> No aprobada</p>
+                    <p><strong>Fecha de revisión:</strong> " . now()->format('d/m/Y') . "</p>
+                </div>
+                
+                <p>Si tienes alguna pregunta sobre esta decisión o deseas obtener más información sobre los criterios de admisión, te invitamos a contactar directamente con la administración de la Casa del Profesor Universitario.</p>
+                
+                <p>Agradecemos tu interés en formar parte de nuestra comunidad universitaria.</p>
+                
+                <p><strong>Equipo de Administración</strong><br>
+                Casa del Profesor Universitario - UNET</p>
+                
+                <div class='footer'>
+                    <p>Este correo fue enviado automáticamente por el sistema de la Casa del Profesor Universitario.</p>
+                    <p>Universidad Nacional Experimental del Táchira (UNET)</p>
+                    <p>Para consultas, contacta a la administración.</p>
+                </div>
+            </div>
+        </body>
+        </html>";
+    }
+
+    /**
+     * Generate text version for account rejected email
+     */
+    private function generateAccountRejectedText(string $userName): string
+    {
+        return "Estimado/a {$userName},
+
+Lamentamos informarte que tu solicitud de registro en la Casa del Profesor Universitario no ha sido aprobada en esta ocasión.
+
+📋 Estado de tu solicitud:
+• Resultado: No aprobada
+• Fecha de revisión: " . now()->format('d/m/Y') . "
+
+Si tienes alguna pregunta sobre esta decisión o deseas obtener más información sobre los criterios de admisión, te invitamos a contactar directamente con la administración de la Casa del Profesor Universitario.
+
+Agradecemos tu interés en formar parte de nuestra comunidad universitaria.
+
+Equipo de Administración
+Casa del Profesor Universitario - UNET
+
+---
+Este correo fue enviado automáticamente por el sistema de la Casa del Profesor Universitario.
+Universidad Nacional Experimental del Táchira (UNET)
+Para consultas, contacta a la administración.";
     }
 
     /**

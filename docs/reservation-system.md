@@ -20,10 +20,10 @@ Este documento describe la implementación completa del sistema de reservas para
 | `profesor` | ✅ | Status `solvente` |
 | `estudiante` | ✅ | Status `solvente` + profesor responsable activo |
 | `invitado` | ✅ | Status `solvente` + profesor responsable activo |
+| `administrador` | ✅ | Status `solvente` |
 | `instructor` | ❌ | Solo gestiona su academia |
 | `obrero` | ❌ | Acceso operativo limitado |
 | `usuario` | ❌ | Estado transitorio |
-| `administrador` | ❌ | Solo aprueba/rechaza reservas |
 
 ## Estructura de Base de Datos
 
@@ -58,7 +58,7 @@ CREATE TABLE reservations (
 
 **POST** `/api/v1/reservations`
 
-**Autenticación**: Requerida (roles: profesor, estudiante, invitado con status solvente)
+**Autenticación**: Requerida (roles: profesor, estudiante, invitado, administrador con status solvente)
 
 **Payload**:
 ```json
@@ -73,7 +73,7 @@ CREATE TABLE reservations (
 
 **Validaciones**:
 - Área debe ser reservable (`is_reservable = true`)
-- Usuario debe tener rol permitido (profesor, estudiante o invitado) y status `solvente`
+- Usuario debe tener rol permitido (profesor, estudiante, invitado o administrador) y status `solvente`
 - Para estudiantes e invitados: profesor responsable debe existir y estar activo
 - Ventanas de tiempo: anticipación mínima, horizonte máximo, duración máxima
 - Anticolisión: no puede solaparse con reservas aprobadas o sesiones de academias

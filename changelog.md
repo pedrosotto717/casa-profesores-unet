@@ -7,6 +7,38 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
 
 ---
 
+### [2025-10-03 15:30:00] - FEAT: Permitir que administradores puedan hacer reservaciones
+*   **Acción:** Modificado el sistema de reservaciones para permitir que usuarios con rol de administrador puedan crear reservaciones.
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Services/ReservationService.php` - Agregado UserRole::Administrador a la lista de roles permitidos en validateUserCanReserve()
+    *   `UPDATE: docs/reservation-system.md` - Actualizada documentación para incluir administradores en roles que pueden hacer reservaciones
+
+### [2025-10-03 15:15:00] - FEAT: Implementar envío de email de rechazo para usuarios
+*   **Acción:** Agregar funcionalidad para enviar correo electrónico cuando un usuario es rechazado.
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Services/SendPulseService.php`
+    *   `UPDATE: app/Services/UserService.php`
+*   **Funcionalidades:**
+    *   Método `sendAccountRejectedEmail()` en SendPulseService
+    *   Templates HTML y texto para email de rechazo
+    *   Integración automática en UserService cuando status cambia a 'rechazado'
+    *   Email simple y profesional informando sobre la decisión
+    *   Incluye fecha de revisión y contacto para consultas
+
+### [2025-10-03 15:10:01] - FEAT: Agregar estado rechazado al sistema de usuarios
+*   **Acción:** Implementación del estado 'rechazado' para usuarios rechazados por administradores.
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Enums/UserStatus.php`
+    *   `CREATE: database/migrations/2025_10_03_151001_add_rejected_status_to_users_table.php`
+    *   `UPDATE: docs/user-registration-and-invitation-system.md`
+    *   `UPDATE: specs/bussines_logic.md`
+*   **Funcionalidades:**
+    *   Nuevo estado 'rechazado' en enum UserStatus
+    *   Migración para actualizar tabla users con el nuevo estado
+    *   Documentación actualizada con flujo de rechazo
+    *   Especificaciones de lógica de negocio actualizadas
+    *   Estado final que no permite transiciones a otros estados
+
 ### [2025-01-27 16:00:00] - FEAT: Comando para cambiar estatus de usuario
 *   **Acción:** Creación de comando de Laravel para cambiar estatus de usuario por email.
 *   **Archivos Modificados:**

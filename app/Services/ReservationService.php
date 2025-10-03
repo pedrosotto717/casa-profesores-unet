@@ -318,11 +318,11 @@ final class ReservationService
      */
     private function validateUserCanReserve(User $user): void
     {
-        // Check role - Profesor, Estudiante and Invitado can make reservations
-        $allowedRoles = [UserRole::Profesor, UserRole::Estudiante, UserRole::Invitado];
+        // Check role - Profesor, Estudiante, Invitado and Administrador can make reservations
+        $allowedRoles = [UserRole::Profesor, UserRole::Estudiante, UserRole::Invitado, UserRole::Administrador];
         if (!in_array($user->role, $allowedRoles)) {
             throw ValidationException::withMessages([
-                'user' => 'Tu rol no permite realizar reservas. Solo profesores, estudiantes e invitados pueden solicitar reservas.'
+                'user' => 'Tu rol no permite realizar reservas. Solo profesores, estudiantes, invitados y administradores pueden solicitar reservas.'
             ]);
         }
 

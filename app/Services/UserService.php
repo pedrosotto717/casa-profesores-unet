@@ -218,7 +218,7 @@ final class UserService
                         ]
                     );
 
-                    // Handle notifications for status changes (approval/rejection)
+                    // Only notify if user was pending approval and status changed to solvente or insolvente; or if status changed to rejected
                     $this->handleStatusChangeNotifications($user, $oldStatus, $user->status, $adminUserId);
                 }
             }
@@ -315,10 +315,13 @@ final class UserService
                     $user->name,
                     $user->role->value
                 );
+            } else if ($newStatus === UserStatus::Rechazado) {
+                // User was rejected - send rejection email
+                $this->sendPulseService->sendAccountRejectedEmail(
+                    $user->email,
+                    $user->name
+                );
             }
-            // Note: We don't handle rejection notifications here as rejection
-            // would typically involve deleting the user or setting a different status
-            // that we haven't defined yet in the business logic
         }
     }
 
