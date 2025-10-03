@@ -7,6 +7,35 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
 
 ---
 
+### [2025-01-27 16:00:00] - FEAT: Comando para cambiar estatus de usuario
+*   **Acción:** Creación de comando de Laravel para cambiar estatus de usuario por email.
+*   **Archivos Modificados:**
+    *   `CREATE: app/Console/Commands/ChangeUserStatusCommand.php`
+    *   `CREATE: docs/user-status-command.md`
+*   **Funcionalidades:**
+    *   Comando `user:change-status` con validación completa
+    *   Soporte para auto-aprobación de roles (aprobacion_pendiente → solvente/insolvente)
+    *   Auditoría completa con información del administrador
+    *   Transacciones de base de datos para integridad
+    *   Confirmación interactiva para seguridad
+*   **Uso:** `php artisan user:change-status <email> <status> [--admin-email=ADMIN_EMAIL]`
+*   **Estatus válidos:** aprobacion_pendiente, solvente, insolvente
+
+### [2025-01-27 15:30:00] - REVIEW: Revisión completa de creación de usuarios
+*   **Acción:** Revisión exhaustiva de las tres formas de crear usuarios y verificación de asignación de estatus.
+*   **Archivos Revisados:**
+    *   `app/Services/UserService.php` - Métodos register() y createUser()
+    *   `app/Services/InvitationService.php` - Método approveInvitation()
+    *   `app/Enums/UserStatus.php` - Estados válidos del sistema
+    *   `app/Http/Controllers/Api/V1/Auth/RegisterController.php` - Controlador de registro
+    *   `app/Http/Controllers/Api/V1/UserController.php` - Controlador de usuarios
+*   **Hallazgos:** ✅ Sistema correctamente implementado - todas las formas de crear usuarios asignan estatus apropiados según especificaciones.
+*   **Cumplimiento:** 
+    *   Auto-registro → `aprobacion_pendiente` ✅
+    *   Invitación → `insolvente` ✅  
+    *   Creación directa → Configurable con fallback a `insolvente` ✅
+*   **Conclusión:** No se requieren cambios - el sistema cumple completamente con la lógica de negocio definida.
+
 ### [2025-09-16 10:00:00] - CHORE: Inicialización de reglas y changelog
 *   **Acción:** Se crearon los archivos `.cursor-rules.json` y `changelog.md` para establecer las directrices de desarrollo y el registro de cambios para el trabajo agéntico de IA.
 *   **Archivos Modificados:**
