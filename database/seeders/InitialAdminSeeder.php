@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Enums\UserRole;
+use App\Enums\UserStatus;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -28,6 +29,7 @@ final class InitialAdminSeeder extends Seeder
             'email_verified_at' => now(),
             'remember_token' => Str::random(10),
             'sso_uid' => null,
+            'status' => UserStatus::Solvente,
         ]);
     }
 }
