@@ -13,6 +13,7 @@ El sistema utiliza un campo `status` para controlar el acceso y funcionalidades 
 - **`aprobacion_pendiente`**: Estado inicial para usuarios auto-registrados. No pueden iniciar sesión.
 - **`solvente`**: Usuario activo y al día con aportes. Acceso completo según su rol.
 - **`insolvente`**: Usuario activo pero no al día con aportes. Acceso limitado.
+- **`rechazado`**: Usuario rechazado por administrador. No puede iniciar sesión ni realizar acciones.
 
 ### Roles del Sistema
 
@@ -34,7 +35,7 @@ El sistema utiliza un campo `status` para controlar el acceso y funcionalidades 
 CREATE TABLE users (
     id BIGINT PRIMARY KEY,
     role ENUM('usuario', 'profesor', 'estudiante', 'instructor', 'obrero', 'invitado', 'administrador'),
-    status ENUM('aprobacion_pendiente', 'solvente', 'insolvente') DEFAULT 'aprobacion_pendiente',
+    status ENUM('aprobacion_pendiente', 'solvente', 'insolvente', 'rechazado') DEFAULT 'aprobacion_pendiente',
     responsible_email VARCHAR(180) NULL, -- Email del profesor responsable (para estudiantes)
     aspired_role ENUM('profesor', 'estudiante') NULL, -- Rol aspirado en auto-registro
     name VARCHAR(255),
@@ -105,17 +106,24 @@ CREATE TABLE invitations (
 
 **Proceso**:
 1. Admin revisa la solicitud en `/admin/pending-registrations`
-2. Cambia el `status` a `solvente` o `insolvente`
+2. Cambia el `status` a `solvente`, `insolvente` o `rechazado`
 3. El sistema automáticamente:
-   - Promueve al usuario a su `aspired_role`
-   - Limpia el campo `aspired_role`
-   - Envía notificación de aprobación
+   - Si se aprueba: Promueve al usuario a su `aspired_role` y limpia el campo `aspired_role`
+   - Si se rechaza: Mantiene el rol `usuario` y el `aspired_role`
+   - Envía notificación de aprobación o rechazo
    - Registra auditoría completa
 
 **Payload para Aprobar**:
 ```json
 {
   "status": "solvente"
+}
+```
+
+**Payload para Rechazar**:
+```json
+{
+  "status": "rechazado"
 }
 ```
 
@@ -290,17 +298,19 @@ graph TD
     A[Auto-Registro] --> B[aprobacion_pendiente]
     B --> C[Admin Aprueba]
     C --> D[insolvente/solvente]
-    D --> E[Admin Actualiza]
-    E --> F[Cambio de Estado]
-    F --> D
+    B --> E[Admin Rechaza]
+    E --> F[rechazado]
+    D --> G[Admin Actualiza]
+    G --> H[Cambio de Estado]
+    H --> D
     
-    G[Invitación] --> H[pendiente]
-    H --> I[Admin Aprueba]
-    I --> J[Usuario Creado - invitado]
-    H --> K[Admin Rechaza]
-    K --> L[rechazada]
+    I[Invitación] --> J[pendiente]
+    J --> K[Admin Aprueba]
+    K --> L[Usuario Creado - invitado]
+    J --> M[Admin Rechaza]
+    M --> N[rechazada]
     
-    M[Creación Directa] --> N[Usuario Activo]
+    O[Creación Directa] --> P[Usuario Activo]
 ```
 
 ## Consideraciones de Seguridad
@@ -330,6 +340,7 @@ graph TD
 - `registration_pending`: Nueva solicitud de registro
 - `user_approved`: Usuario aprobado
 - `user_rejected`: Usuario rechazado
+- `user_status_changed`: Cambio de estado de usuario (incluye rechazo)
 - `invitation_pending`: Nueva invitación pendiente
 - `invitation_approved`: Invitación aprobada
 - `invitation_rejected`: Invitación rechazada

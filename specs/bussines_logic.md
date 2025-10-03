@@ -37,6 +37,7 @@ Para gestionar el acceso y la solvencia, la cuenta de un usuario se rige por un 
 *   **`aprobacion_pendiente`**: Estado por defecto de cualquier cuenta creada vía **auto-registro**. El usuario no puede iniciar sesión.
 *   **`solvente`**: El usuario está activo y al día con sus aportes. Tiene acceso completo a las funciones de su rol (ej. reservar, invitar).
 *   **`insolvente`**: El usuario está activo pero no al día con sus aportes. Puede iniciar sesión, pero tiene bloqueadas las acciones clave como reservar o invitar.
+*   **`rechazado`**: El usuario ha sido rechazado por un administrador. No puede iniciar sesión ni realizar acciones. Este estado es final y no permite transiciones a otros estados.
 
 ### 1.3. Vías de Creación de Usuarios
 
@@ -72,8 +73,8 @@ Este es el proceso obligatorio para activar las cuentas creadas por auto-registr
 2.  **Revisión:** El administrador accede a la lista de usuarios pendientes, donde debe poder ver el rol aspirado y el correo del responsable.
 3.  **Decisión:**
     *   **Aprobar:** El administrador cambia el `status` a `insolvente` (estado activo inicial por defecto) y actualiza el `role` del usuario al valor guardado en `aspired_role` (`profesor` o `estudiante`).
-    *   **Rechazar:** La solicitud es denegada y el registro puede ser eliminado o marcado como rechazado.
-4.  **Activación:** Una vez aprobado, el usuario puede iniciar sesión por primera vez.
+    *   **Rechazar:** El administrador cambia el `status` a `rechazado`. El usuario mantiene el rol `usuario` y el `aspired_role` original. No puede iniciar sesión.
+4.  **Activación:** Una vez aprobado, el usuario puede iniciar sesión por primera vez. Si es rechazado, el usuario queda bloqueado permanentemente.
 
 ---
 

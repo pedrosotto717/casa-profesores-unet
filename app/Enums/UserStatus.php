@@ -7,4 +7,5 @@ enum UserStatus: string
     case AprobacionPendiente = 'aprobacion_pendiente';
     case Solvente = 'solvente';
     case Insolvente = 'insolvente';
+    case Rechazado = 'rechazado';
 }
