@@ -29,6 +29,8 @@ class User extends Authenticatable
         'responsible_email',
         'aspired_role',
         'solvent_until',
+        'auth_code',
+        'auth_code_expires_at',
     ];
 
     /**
@@ -55,6 +57,7 @@ class User extends Authenticatable
             'status' => \App\Enums\UserStatus::class,
             'aspired_role' => \App\Enums\AspiredRole::class,
             'solvent_until' => 'date',
+            'auth_code_expires_at' => 'datetime',
         ];
     }
 

@@ -8,6 +8,7 @@ use App\Enums\AspiredRole;
 use App\Models\AuditLog;
 use App\Models\User;
 use App\Services\NotificationService;
+use App\Services\SendPulseService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -15,7 +16,8 @@ use Illuminate\Validation\ValidationException;
 final class UserService
 {
     public function __construct(
-        private readonly NotificationService $notificationService
+        private readonly NotificationService $notificationService,
+        private readonly SendPulseService $sendPulseService
     ) {}
     /**
      * Register a new user with local authentication.
@@ -307,8 +309,12 @@ final class UserService
                     $user->role->value
                 );
 
-                // TODO: Send email to the user notifying them of approval
-                // This should be implemented in a future iteration
+                // Send email to the user notifying them of approval
+                $this->sendPulseService->sendAccountApprovedEmail(
+                    $user->email,
+                    $user->name,
+                    $user->role->value
+                );
             }
             // Note: We don't handle rejection notifications here as rejection
             // would typically involve deleting the user or setting a different status

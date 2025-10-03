@@ -8,6 +8,8 @@ use App\Http\Controllers\Api\V1\Auth\RegisterController;
 use App\Http\Controllers\Api\V1\InvitationController;
 use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\ReservationController;
+use App\Http\Controllers\Api\V1\SetPasswordController;
+use App\Http\Controllers\Api\V1\TestEmailController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\UploadController;
 use Illuminate\Http\Request;
@@ -16,7 +18,12 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('v1')->group(function () {
     // Authentication routes
     Route::post('/auth/register', RegisterController::class);
+    Route::post('/auth/set-password', [SetPasswordController::class, 'setPassword']);
     Route::post('/login', [AuthenticationController::class, 'login']);
+    
+    // Test email routes (temporary for debugging)
+    Route::get('/test-email/config', [TestEmailController::class, 'testConfig']);
+    Route::post('/test-email/send', [TestEmailController::class, 'testEmail']);
     
     // Public routes (no authentication required)
     Route::get('/areas', [AreaController::class, 'index']);
@@ -62,6 +69,7 @@ Route::prefix('v1')->group(function () {
         Route::middleware('admin')->group(function () {
             // Users CRUD
             Route::post('/users', [UserController::class, 'store']);
+            // Update user status and role, if user status is solvente, set role to profesor|estudiante
             Route::put('/users/{user}', [UserController::class, 'update']);
             Route::delete('/users/{user}', [UserController::class, 'destroy']);
             Route::post('/users/{user}/invite', [UserController::class, 'invite']);

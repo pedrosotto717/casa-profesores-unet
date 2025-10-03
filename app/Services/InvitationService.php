@@ -8,6 +8,7 @@ use App\Enums\UserStatus;
 use App\Models\AuditLog;
 use App\Models\Invitation;
 use App\Models\User;
+use App\Services\SendPulseService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -15,7 +16,8 @@ use Illuminate\Validation\ValidationException;
 final class InvitationService
 {
     public function __construct(
-        private readonly NotificationService $notificationService
+        private readonly NotificationService $notificationService,
+        private readonly SendPulseService $sendPulseService
     ) {}
 
     /**
@@ -96,6 +98,9 @@ final class InvitationService
                 ]);
             }
 
+            // Generate auth code for password setup
+            $authCode = Str::random(64);
+            
             // Create the user
             $user = User::create([
                 'name' => $invitation->name,
@@ -103,6 +108,9 @@ final class InvitationService
                 'role' => UserRole::Invitado, // New users start as "invitado"
                 'password' => null, // No password for invited users initially
                 'status' => UserStatus::Insolvente, // Default to insolvente (active but not up to date with contributions)
+                'responsible_email' => $invitation->inviterUser->email,
+                'auth_code' => $authCode,
+                'auth_code_expires_at' => now()->addDays(30), // Auth code expires in 30 days
             ]);
 
             // Update invitation status
@@ -120,9 +128,12 @@ final class InvitationService
             );
 
 
-            // TODO: Send email to the person being invited notifying them of account creation
-            // This should be implemented in a future iteration
-            // Email should include: account details, login instructions, system welcome message
+            // Send email to the person being invited notifying them of account creation
+            $this->sendPulseService->sendInvitationApprovedEmail(
+                $user->email,
+                $user->name,
+                $authCode
+            );
 
             
             // Audit logs

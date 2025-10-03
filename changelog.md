@@ -527,6 +527,23 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
     *   `CREATE: app/Http/Controllers/Api/V1/NotificationController.php` - Controller for notification management: list, mark as read, count
     *   `CREATE: app/Http/Controllers/Api/V1/InvitationController.php` - Controller for invitation management: create, list, approve, reject
     *   `CREATE: app/Http/Requests/CreateInvitationRequest.php` - Form request validation for invitation creation
+
+### [2025-10-02 21:30:00] - FEAT: Implement email system with SendPulse integration (PHP vanilla)
+*   **Action:** Implemented complete email system using SendPulseService directly (no Mailable classes). Includes HTML generation methods, authentication code system for invited users, and new endpoint for password setup. All emails are generated as HTML strings and sent via SendPulse API.
+*   **Files Modified:**
+    *   `CREATE: database/migrations/2025_10_02_213145_add_auth_code_fields_to_users_table.php` - Migration to add auth_code and auth_code_expires_at fields to users table
+    *   `CREATE: app/Http/Controllers/Api/V1/SetPasswordController.php` - Simple controller with setPassword method for invited users
+    *   `UPDATE: app/Services/SendPulseService.php` - Added methods: sendAccountApprovedEmail, sendInvitationApprovedEmail, generateAccountApprovedHtml, generateAccountApprovedText, generateInvitationApprovedHtml, generateInvitationApprovedText
+    *   `UPDATE: app/Models/User.php` - Added auth_code and auth_code_expires_at to fillable fields and casts
+    *   `UPDATE: app/Services/UserService.php` - Added SendPulseService dependency and email sending in handleStatusChangeNotifications method
+    *   `UPDATE: app/Services/InvitationService.php` - Added SendPulseService dependency, auth code generation and email sending in approveInvitation method
+    *   `UPDATE: routes/api.php` - Added POST /auth/set-password endpoint using SetPasswordController
+    *   `UPDATE: config/app.php` - Added frontend_url configuration for email links
+
+### [2025-10-02 21:45:00] - FIX: Correct undefined variable error in SendPulseService
+*   **Action:** Fixed undefined variable $userEmail error in generateAccountApprovedHtml method by adding $userEmail parameter to method signature and updating method call.
+*   **Files Modified:**
+    *   `UPDATE: app/Services/SendPulseService.php` - Fixed generateAccountApprovedHtml method signature and call to include $userEmail parameter
     *   `CREATE: app/Http/Requests/RejectInvitationRequest.php` - Form request validation for invitation rejection with reason
     *   `CREATE: app/Http/Resources/InvitationResource.php` - API resource for invitation data formatting with relationships and computed fields
     *   `CREATE: app/Http/Resources/NotificationResource.php` - API resource for notification data formatting
