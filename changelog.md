@@ -717,3 +717,8 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
 *   **Archivos Modificados:**
     *   `UPDATE: app/Http/Controllers/Api/V1/ReservationController.php` - Agregado cast (int) en línea 171 para convertir area_id de string a int antes de llamar a getAreaAvailability()
 
+### [2025-10-02 22:00:00] - ENHANCE: Mejora en email de invitación con enlace en texto plano
+*   **Acción:** Se agregó el enlace de establecimiento de contraseña en texto plano antes del botón en el email de invitación, para que los usuarios puedan copiarlo si el botón no funciona por problemas de spam.
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Services/SendPulseService.php` - Agregado enlace en texto plano con estilo destacado antes del botón en generateInvitationApprovedHtml()
+

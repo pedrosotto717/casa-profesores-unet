@@ -457,6 +457,12 @@ Si tienes alguna consulta, contacta a la administración.";
                 <h3>Para completar tu registro:</h3>
                 <p>Necesitas establecer una contraseña para poder acceder al sistema. Haz clic en el botón de abajo para continuar:</p>
                 
+                <div class='highlight'>
+                    <h4>🔗 Enlace para establecer contraseña:</h4>
+                    <p style='word-break: break-all; background-color: #f8f9fa; padding: 10px; border-radius: 5px; font-family: monospace; font-size: 12px;'>{$setPasswordUrl}</p>
+                    <p><small>Si el botón no funciona, copia y pega este enlace en tu navegador.</small></p>
+                </div>
+                
                 <div style='text-align: center; margin: 30px 0;'>
                     <a href='{$setPasswordUrl}' target='_blank' class='button'>Establecer Contraseña</a>
                 </div>
