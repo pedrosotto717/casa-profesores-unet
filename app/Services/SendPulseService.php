@@ -649,4 +649,135 @@ Este correo fue enviado automáticamente por el sistema de la Casa del Profesor 
 Universidad Nacional Experimental del Táchira (UNET)
 Si tienes alguna consulta, contacta a la administración.";
     }
+
+    /**
+     * Send password reset code email
+     */
+    public function sendPasswordResetCodeEmail(string $userEmail, string $userName, string $code): array
+    {
+        $subject = 'Código de recuperación de contraseña - Casa del Profesor Universitario';
+        $html = $this->generatePasswordResetCodeHtml($userName, $code);
+        $text = $this->generatePasswordResetCodeText($userName, $code);
+
+        return $this->sendBasic(
+            [['email' => $userEmail, 'name' => $userName]],
+            $subject,
+            $html,
+            $text
+        );
+    }
+
+    /**
+     * Generate HTML for password reset code email
+     */
+    private function generatePasswordResetCodeHtml(string $userName, string $code): string
+    {
+        return "
+        <!DOCTYPE html>
+        <html lang='es'>
+        <head>
+            <meta charset='UTF-8'>
+            <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+            <title>Código de recuperación de contraseña</title>
+            <style>
+                body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f4f4f4; }
+                .container { background-color: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+                .header { text-align: center; border-bottom: 3px solid #2c5aa0; padding-bottom: 20px; margin-bottom: 30px; }
+                .logo { font-size: 24px; font-weight: bold; color: #2c5aa0; margin-bottom: 10px; }
+                .subtitle { color: #666; font-size: 14px; }
+                .code-container { text-align: center; margin: 30px 0; }
+                .code { font-size: 36px; font-weight: bold; color: #2c5aa0; background-color: #f8f9fa; padding: 20px; border-radius: 10px; border: 2px dashed #2c5aa0; letter-spacing: 8px; font-family: 'Courier New', monospace; }
+                .highlight { background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 20px 0; border-radius: 4px; }
+                .warning { background-color: #f8d7da; padding: 15px; border-left: 4px solid #dc3545; margin: 20px 0; border-radius: 4px; }
+                .footer { border-top: 1px solid #eee; padding-top: 20px; text-align: center; color: #666; font-size: 12px; }
+            </style>
+        </head>
+        <body>
+            <div class='container'>
+                <div class='header'>
+                    <div class='logo'>🏛️ Casa del Profesor Universitario</div>
+                    <div class='subtitle'>Universidad Nacional Experimental del Táchira</div>
+                </div>
+                
+                <h2>Hola, {$userName}</h2>
+                
+                <p>Hemos recibido una solicitud para restablecer la contraseña de tu cuenta en la <strong>Casa del Profesor Universitario</strong>.</p>
+                
+                <div class='code-container'>
+                    <h3>Tu código de recuperación es:</h3>
+                    <div class='code'>{$code}</div>
+                </div>
+                
+                <div class='highlight'>
+                    <h4>⏰ Importante:</h4>
+                    <ul>
+                        <li>Este código es válido por <strong>15 minutos</strong></li>
+                        <li>Úsalo para restablecer tu contraseña</li>
+                        <li>No compartas este código con nadie</li>
+                    </ul>
+                </div>
+                
+                <div class='warning'>
+                    <h4>⚠️ Si no solicitaste este cambio:</h4>
+                    <p>Si no fuiste tú quien solicitó el restablecimiento de contraseña, puedes ignorar este correo de forma segura. Tu cuenta permanecerá protegida.</p>
+                </div>
+                
+                <h3>¿Cómo usar este código?</h3>
+                <ol>
+                    <li>Ve a la página de restablecimiento de contraseña</li>
+                    <li>Ingresa tu email y este código</li>
+                    <li>Crea una nueva contraseña segura</li>
+                    <li>Inicia sesión con tu nueva contraseña</li>
+                </ol>
+                
+                <p>Si tienes problemas o necesitas ayuda, contacta a la administración de la Casa del Profesor Universitario.</p>
+                
+                <p><strong>Equipo de Administración</strong><br>
+                Casa del Profesor Universitario - UNET</p>
+                
+                <div class='footer'>
+                    <p>Este correo fue enviado automáticamente por el sistema de la Casa del Profesor Universitario.</p>
+                    <p>Universidad Nacional Experimental del Táchira (UNET)</p>
+                    <p>Para consultas, contacta a la administración.</p>
+                </div>
+            </div>
+        </body>
+        </html>";
+    }
+
+    /**
+     * Generate text version for password reset code email
+     */
+    private function generatePasswordResetCodeText(string $userName, string $code): string
+    {
+        return "Hola, {$userName},
+
+Hemos recibido una solicitud para restablecer la contraseña de tu cuenta en la Casa del Profesor Universitario.
+
+Tu código de recuperación es: {$code}
+
+⏰ Importante:
+- Este código es válido por 15 minutos
+- Úsalo para restablecer tu contraseña
+- No compartas este código con nadie
+
+⚠️ Si no solicitaste este cambio:
+Si no fuiste tú quien solicitó el restablecimiento de contraseña, puedes ignorar este correo de forma segura. Tu cuenta permanecerá protegida.
+
+¿Cómo usar este código?
+1. Ve a la página de restablecimiento de contraseña
+2. Ingresa tu email y este código
+3. Crea una nueva contraseña segura
+4. Inicia sesión con tu nueva contraseña
+
+Si tienes problemas o necesitas ayuda, contacta a la administración de la Casa del Profesor Universitario.
+
+Equipo de Administración
+Casa del Profesor Universitario - UNET
+
+---
+Este correo fue enviado automáticamente por el sistema de la Casa del Profesor Universitario.
+Universidad Nacional Experimental del Táchira (UNET)
+Para consultas, contacta a la administración.";
+    }
 }

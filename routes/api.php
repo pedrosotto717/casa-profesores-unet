@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\AuthenticationController;
 use App\Http\Controllers\Api\V1\Auth\RegisterController;
 use App\Http\Controllers\Api\V1\InvitationController;
 use App\Http\Controllers\Api\V1\NotificationController;
+use App\Http\Controllers\Api\V1\PasswordResetController;
 use App\Http\Controllers\Api\V1\ReservationController;
 use App\Http\Controllers\Api\V1\SetPasswordController;
 use App\Http\Controllers\Api\V1\TestEmailController;
@@ -19,6 +20,8 @@ Route::prefix('v1')->group(function () {
     // Authentication routes
     Route::post('/auth/register', RegisterController::class);
     Route::post('/auth/set-password', [SetPasswordController::class, 'setPassword']);
+    Route::post('/auth/forgot-password', [PasswordResetController::class, 'forgotPassword']);
+    Route::post('/auth/reset-password', [PasswordResetController::class, 'resetPassword']);
     Route::post('/login', [AuthenticationController::class, 'login']);
     
     // Test email routes (temporary for debugging)
