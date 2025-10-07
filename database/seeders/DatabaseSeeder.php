@@ -20,13 +20,5 @@ class DatabaseSeeder extends Seeder
         $this->call(AreasSeeder::class);
         $this->call(AcademiesSeeder::class);
         $this->call(DocumentsSeeder::class);
-
-        // Create test user for development
-        // if (app()->environment('local', 'testing')) {
-        //     User::factory()->create([
-        //         'name' => 'Test User',
-        //         'email' => 'test@example.com',
-        //     ]);
-        // }
     }
 }

@@ -2,11 +2,15 @@
 
 namespace Database\Seeders;
 
+use App\Enums\UserRole;
+use App\Enums\UserStatus;
 use App\Models\Academy;
 use App\Models\AcademySchedule;
 use App\Models\Area;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 final class AcademiesSeeder extends Seeder
 {
@@ -17,8 +21,17 @@ final class AcademiesSeeder extends Seeder
      */
     public function run(): void
     {
-        $leadInstructor = User::first();
-
+        $leadInstructor = User::create([
+            'name' => 'Instructor',
+            'email' => 'instructor.test@unet.edu.ve',
+            'password' => Hash::make('12345678'),
+            'role' => UserRole::Instructor,
+            'email_verified_at' => now(),
+            'remember_token' => Str::random(10),
+            'sso_uid' => null,
+            'status' => UserStatus::Solvente,
+        ]);
+    
         $academies = [
             'Escuela de natación' => [
                 'description' => 'Academia de natación para todas las edades',

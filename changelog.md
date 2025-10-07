@@ -778,6 +778,28 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
 *   **Archivos Modificados:**
     *   `UPDATE: app/Http/Controllers/Api/V1/ReservationController.php` - Agregado cast (int) en línea 171 para convertir area_id de string a int antes de llamar a getAreaAvailability()
 
+### [2025-10-06 23:35:00] - FEAT: Implementación completa del sistema de recuperación de contraseña vía código de 6 dígitos
+*   **Acción:** Se implementó un sistema completo de recuperación de contraseña usando códigos de 6 dígitos enviados por email, con todas las medidas de seguridad requeridas.
+*   **Archivos Modificados:**
+    *   `CREATE: database/migrations/2025_10_06_233337_add_password_reset_fields_to_users_table.php` - Migración para agregar campos de control de intentos y throttling
+    *   `CREATE: app/Http/Controllers/Api/V1/PasswordResetController.php` - Controlador con endpoints forgot-password y reset-password
+    *   `CREATE: app/Http/Requests/ForgotPasswordRequest.php` - Validación para solicitud de código de recuperación
+    *   `CREATE: app/Http/Requests/ResetPasswordRequest.php` - Validación para restablecimiento de contraseña
+    *   `UPDATE: app/Services/SendPulseService.php` - Agregados métodos para envío de código de recuperación con templates HTML y texto
+    *   `UPDATE: app/Models/User.php` - Agregados campos auth_code_attempts y last_code_sent_at al fillable y casts
+    *   `UPDATE: routes/api.php` - Agregadas rutas públicas POST /auth/forgot-password y POST /auth/reset-password
+*   **Funcionalidades:**
+    *   Generación de códigos de 6 dígitos con hash SHA-256 para seguridad
+    *   TTL de 15 minutos para códigos de recuperación
+    *   Límite de 5 intentos por código antes de invalidación
+    *   Throttling: 1 solicitud por minuto por email, 3 por hora por IP
+    *   Revocación automática de tokens Sanctum al restablecer contraseña
+    *   Auditoría completa de eventos password_reset_requested y password_reset_completed
+    *   Emails profesionales con branding institucional y instrucciones claras
+    *   Validación de usuarios rechazados (no pueden restablecer contraseña)
+    *   Respuestas genéricas para no revelar existencia de emails
+    *   Manejo de errores robusto con logging detallado
+
 ### [2025-10-02 22:00:00] - ENHANCE: Mejora en email de invitación con enlace en texto plano
 *   **Acción:** Se agregó el enlace de establecimiento de contraseña en texto plano antes del botón en el email de invitación, para que los usuarios puedan copiarlo si el botón no funciona por problemas de spam.
 *   **Archivos Modificados:**

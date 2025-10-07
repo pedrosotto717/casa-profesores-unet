@@ -31,6 +31,8 @@ class User extends Authenticatable
         'solvent_until',
         'auth_code',
         'auth_code_expires_at',
+        'auth_code_attempts',
+        'last_code_sent_at',
     ];
 
     /**
@@ -58,6 +60,7 @@ class User extends Authenticatable
             'aspired_role' => \App\Enums\AspiredRole::class,
             'solvent_until' => 'date',
             'auth_code_expires_at' => 'datetime',
+            'last_code_sent_at' => 'datetime',
         ];
     }
 
