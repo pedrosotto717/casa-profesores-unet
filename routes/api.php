@@ -5,6 +5,8 @@ use App\Http\Controllers\Api\V1\AreaController;
 use App\Http\Controllers\Api\V1\AuditLogController;
 use App\Http\Controllers\Api\V1\AuthenticationController;
 use App\Http\Controllers\Api\V1\Auth\RegisterController;
+use App\Http\Controllers\Api\V1\Chat\ChatController;
+use App\Http\Controllers\Api\V1\Chat\UserBlockController;
 use App\Http\Controllers\Api\V1\InvitationController;
 use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\PasswordResetController;
@@ -33,8 +35,7 @@ Route::prefix('v1')->group(function () {
     Route::get('/areas/{area}', [AreaController::class, 'show']);
     Route::get('/academies', [AcademyController::class, 'index']);
     Route::get('/academies/{academy}', [AcademyController::class, 'show']);
-    Route::get('/users', [UserController::class, 'index']);
-    Route::get('/users/{user}', [UserController::class, 'show']);
+    
     
     // File upload public routes
     Route::get('/uploads', [UploadController::class, 'index']);
@@ -45,6 +46,8 @@ Route::prefix('v1')->group(function () {
     
     // Protected routes (authentication required)
     Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/users', [UserController::class, 'index']);
+        Route::get('/users/{user}', [UserController::class, 'show']);
         Route::post('/logout', [AuthenticationController::class, 'logout']);
         
         // Notifications routes (authenticated users)
@@ -67,6 +70,7 @@ Route::prefix('v1')->group(function () {
         Route::post('/uploads', [UploadController::class, 'store']);
         Route::delete('/uploads/{id}', [UploadController::class, 'destroy']);
         Route::post('/uploads/presign', [UploadController::class, 'presign']);
+        Route::put('/users/me', [UserController::class, 'updateMe']);
         
         // Admin-only routes (authentication + admin role required)
         Route::middleware('admin')->group(function () {
@@ -104,6 +108,27 @@ Route::prefix('v1')->group(function () {
             Route::get('/audit-logs', [AuditLogController::class, 'index']);
             Route::get('/audit-logs/{auditLog}', [AuditLogController::class, 'show']);
         });
+    });
+
+    // Chat routes (authenticated users only)
+    Route::middleware('auth:sanctum')->prefix('chat')->group(function () {
+        // User search for starting conversations
+        Route::get('/users/search', [ChatController::class, 'searchUsers']);
+        
+        // Conversation management
+        Route::post('/conversations', [ChatController::class, 'createConversation']);
+        Route::get('/conversations', [ChatController::class, 'listConversations']);
+        Route::get('/conversations/{conversationId}/messages', [ChatController::class, 'getMessages']);
+        Route::post('/conversations/{conversationId}/messages', [ChatController::class, 'sendMessage']);
+        Route::post('/conversations/{conversationId}/read', [ChatController::class, 'markAsRead']);
+        
+        // Unread summary for polling
+        Route::get('/unread/summary', [ChatController::class, 'getUnreadSummary']);
+        
+        // User blocking
+        Route::get('/blocks', [UserBlockController::class, 'index']);
+        Route::post('/blocks', [UserBlockController::class, 'store']);
+        Route::delete('/blocks/{blockedUserId}', [UserBlockController::class, 'destroy']);
     });
 });
 

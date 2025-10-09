@@ -365,6 +365,45 @@ final class UserService
     }
 
     /**
+     * Update the authenticated user's own profile.
+     * Only allows updating basic information (name, email, password).
+     * Role and status cannot be modified through this method.
+     */
+    public function updateMe(User $user, array $data): User
+    {
+        return DB::transaction(function () use ($user, $data) {
+            $before = $this->getUserSnapshot($user);
+            $changes = [];
+
+            // Update basic fields only
+            if (isset($data['name'])) {
+                $user->name = $data['name'];
+                $changes['name'] = $data['name'];
+            }
+
+            if (isset($data['email'])) {
+                $user->email = $data['email'];
+                $changes['email'] = $data['email'];
+            }
+
+            if (isset($data['password']) && !empty($data['password'])) {
+                $user->password = Hash::make($data['password']);
+                $changes['password'] = '[HIDDEN]';
+            }
+
+            $user->save();
+            $after = $this->getUserSnapshot($user);
+
+            // Audit log for self-update
+            if (!empty($changes)) {
+                $this->logUserAction($user->id, $user->id, 'user_self_updated', $before, $after);
+            }
+
+            return $user;
+        });
+    }
+
+    /**
      * Log user action in audit log.
      */
     private function logUserAction(int $adminUserId, int $targetUserId, string $action, ?array $before, ?array $after): void
