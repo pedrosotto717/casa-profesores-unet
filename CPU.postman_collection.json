@@ -1,0 +1,3557 @@
+{
+	"info": {
+		"_postman_id": "ce23aa5d-6ec8-4ea2-a39f-5596495fb82b",
+		"name": "CPU",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30755954",
+		"_collection_link": "https://team01-6016.postman.co/workspace/Pedro~c0ef9c01-f978-40d1-a834-6e855fc02d2d/collection/30755954-ce23aa5d-6ec8-4ea2-a39f-5596495fb82b?action=share&source=collection_link&creator=30755954"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Create User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "6|wtQCuD4R1RRRGWb1bT5TFlGi3NXGyqcCs9pU8qAX43bc7779",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"María González\",\r\n  \"email\": \"maria.gonzalez@unet.edu.ve\",\r\n  \"role\": \"profesor\",\r\n  \"password\": \"password123\",\r\n  \"is_solvent\": true,\r\n  \"solvent_until\": \"2025-12-31\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/users",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "2|xPFImC80VVe8n7hvZ7hYwK2geQpnMjiKhxrcz7jicb7e984f",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    // \"name\": \"Pedro Soto\",\r\n    // \"email\": \"sotto18a2000@gmail.com\",\r\n    // \"password\": \"00000000\",\r\n    // \"role\": \"profesor\",\r\n    \"status\": \"solvente\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/users/:id",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET All Users",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/users?role=invitado",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "solvente",
+									"disabled": true
+								},
+								{
+									"key": "role",
+									"value": "invitado"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "GET All Users",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "",
+										"value": "",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{cpu_url}}/api/v1/users",
+									"host": [
+										"{{cpu_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"users"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Date",
+									"value": "Sun, 28 Sep 2025 19:08:20 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.54 (Win64) OpenSSL/1.1.1q mod_fcgid/2.3.10-dev"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.3.8"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"data\": [\n        {\n            \"id\": 1,\n            \"name\": \"CPU Admin\",\n            \"email\": \"admin@example.com\",\n            \"role\": \"administrador\",\n            \"role_label\": \"Administrador\",\n            \"sso_uid\": null,\n            \"is_solvent\": false,\n            \"solvent_until\": null,\n            \"email_verified_at\": \"2025-09-28T18:22:17+00:00\",\n            \"created_at\": \"2025-09-28T18:22:17+00:00\",\n            \"updated_at\": \"2025-09-28T18:22:50+00:00\"\n        },\n        {\n            \"id\": 2,\n            \"name\": \"Pedro Soto\",\n            \"email\": \"sotto18a2000@gmail.com\",\n            \"role\": \"profesor\",\n            \"role_label\": \"Profesor\",\n            \"sso_uid\": null,\n            \"is_solvent\": false,\n            \"solvent_until\": null,\n            \"email_verified_at\": null,\n            \"created_at\": \"2025-09-28T18:22:31+00:00\",\n            \"updated_at\": \"2025-09-28T19:06:48+00:00\"\n        },\n        {\n            \"id\": 3,\n            \"name\": \"María González\",\n            \"email\": \"maria.gonzalez@unet.edu.ve\",\n            \"role\": \"profesor\",\n            \"role_label\": \"Profesor\",\n            \"sso_uid\": null,\n            \"is_solvent\": true,\n            \"solvent_until\": \"2025-12-31\",\n            \"email_verified_at\": null,\n            \"created_at\": \"2025-09-28T19:06:00+00:00\",\n            \"updated_at\": \"2025-09-28T19:06:00+00:00\"\n        }\n    ],\n    \"meta\": {\n        \"version\": \"v1\",\n        \"pagination\": {\n            \"current_page\": 1,\n            \"last_page\": 1,\n            \"per_page\": 15,\n            \"total\": 3\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "GET Pending User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "2|xPFImC80VVe8n7hvZ7hYwK2geQpnMjiKhxrcz7jicb7e984f",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/admin/pending-registrations?aspired_role=estudiante",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"pending-registrations"
+							],
+							"query": [
+								{
+									"key": "aspired_role",
+									"value": "estudiante"
+								},
+								{
+									"key": "status",
+									"value": "solvente",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "GET All Users",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "",
+										"value": "",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{cpu_url}}/api/v1/users",
+									"host": [
+										"{{cpu_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"users"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Date",
+									"value": "Sun, 28 Sep 2025 19:08:20 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.54 (Win64) OpenSSL/1.1.1q mod_fcgid/2.3.10-dev"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.3.8"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"data\": [\n        {\n            \"id\": 1,\n            \"name\": \"CPU Admin\",\n            \"email\": \"admin@example.com\",\n            \"role\": \"administrador\",\n            \"role_label\": \"Administrador\",\n            \"sso_uid\": null,\n            \"is_solvent\": false,\n            \"solvent_until\": null,\n            \"email_verified_at\": \"2025-09-28T18:22:17+00:00\",\n            \"created_at\": \"2025-09-28T18:22:17+00:00\",\n            \"updated_at\": \"2025-09-28T18:22:50+00:00\"\n        },\n        {\n            \"id\": 2,\n            \"name\": \"Pedro Soto\",\n            \"email\": \"sotto18a2000@gmail.com\",\n            \"role\": \"profesor\",\n            \"role_label\": \"Profesor\",\n            \"sso_uid\": null,\n            \"is_solvent\": false,\n            \"solvent_until\": null,\n            \"email_verified_at\": null,\n            \"created_at\": \"2025-09-28T18:22:31+00:00\",\n            \"updated_at\": \"2025-09-28T19:06:48+00:00\"\n        },\n        {\n            \"id\": 3,\n            \"name\": \"María González\",\n            \"email\": \"maria.gonzalez@unet.edu.ve\",\n            \"role\": \"profesor\",\n            \"role_label\": \"Profesor\",\n            \"sso_uid\": null,\n            \"is_solvent\": true,\n            \"solvent_until\": \"2025-12-31\",\n            \"email_verified_at\": null,\n            \"created_at\": \"2025-09-28T19:06:00+00:00\",\n            \"updated_at\": \"2025-09-28T19:06:00+00:00\"\n        }\n    ],\n    \"meta\": {\n        \"version\": \"v1\",\n        \"pagination\": {\n            \"current_page\": 1,\n            \"last_page\": 1,\n            \"per_page\": 15,\n            \"total\": 3\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "GET User",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/users/:id",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE User",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/users/:id",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "No auth",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Pedro Soto\",\r\n  \"email\": \"pedro.soto@unet.edu.ve\",\r\n  \"password\": \"12345678\",\r\n  \"aspired_role\": \"estudiante\",\r\n  \"responsible_email\": \"maria.garcia@unet.edu.ve\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/auth/register",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Uploads",
+			"item": [
+				{
+					"name": "POST File",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "17|rERAf78KygSeBV0L6ZWkwMGsW9rE6cfSP3Oz8Qtmb0b1931c",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/pedro/OneDrive/Imágenes/Background/pexels-abdulwahab-alawadhi-6311336.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/uploads",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"uploads"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "POST File",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "",
+										"value": "",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "file",
+											"type": "file",
+											"src": "/C:/Users/pedro/OneDrive/Imágenes/test2.jpg"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{cpu_url}}/api/v1/uploads",
+									"host": [
+										"{{cpu_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"uploads"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Date",
+									"value": "Fri, 26 Sep 2025 00:21:20 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.54 (Win64) OpenSSL/1.1.1q mod_fcgid/2.3.10-dev"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.3.8"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Vary",
+									"value": "Authorization"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"data\": {\n        \"id\": 1,\n        \"title\": \"test2.jpg\",\n        \"original_filename\": \"test2.jpg\",\n        \"file_path\": \"DRKAccDB1yzfgHjoQhZJ6MvgGTaOLIblgums2HfS.jpg\",\n        \"url\": \"https://pub-f036cdb97df14208ab2cd7df46b5e016.r2.dev/DRKAccDB1yzfgHjoQhZJ6MvgGTaOLIblgums2HfS.jpg\",\n        \"mime_type\": \"image/jpeg\",\n        \"file_size\": 10026,\n        \"formatted_size\": \"9.79 KB\",\n        \"file_type\": \"image\",\n        \"storage_disk\": \"r2\",\n        \"visibility\": \"publico\",\n        \"description\": null,\n        \"metadata\": {\n            \"uploaded_via\": \"api\",\n            \"user_agent\": \"PostmanRuntime/7.47.1\",\n            \"ip_address\": \"127.0.0.1\"\n        },\n        \"uploaded_by\": {\n            \"id\": 1,\n            \"name\": \"CPU Admin\",\n            \"email\": \"admin@example.com\"\n        },\n        \"created_at\": \"2025-09-26T00:21:21.000000Z\",\n        \"updated_at\": \"2025-09-26T00:21:21.000000Z\"\n    },\n    \"message\": \"File uploaded successfully\"\n}"
+						}
+					]
+				},
+				{
+					"name": "GET Files",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"file_type\": \"image\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/uploads",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"uploads"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET File by ID",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/uploads/:id",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"uploads",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "GET File",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "",
+										"value": "",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "file",
+											"type": "file",
+											"src": "/C:/Users/pedro/OneDrive/Imágenes/test2.jpg"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{cpu_url}}/api/v1/uploads/:id",
+									"host": [
+										"{{cpu_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"uploads",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Date",
+									"value": "Fri, 26 Sep 2025 00:23:02 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.54 (Win64) OpenSSL/1.1.1q mod_fcgid/2.3.10-dev"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.3.8"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Vary",
+									"value": "Authorization"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"data\": {\n        \"id\": 1,\n        \"title\": \"test2.jpg\",\n        \"original_filename\": \"test2.jpg\",\n        \"file_path\": \"DRKAccDB1yzfgHjoQhZJ6MvgGTaOLIblgums2HfS.jpg\",\n        \"url\": \"https://pub-f036cdb97df14208ab2cd7df46b5e016.r2.dev/DRKAccDB1yzfgHjoQhZJ6MvgGTaOLIblgums2HfS.jpg\",\n        \"mime_type\": \"image/jpeg\",\n        \"file_size\": 10026,\n        \"formatted_size\": \"9.79 KB\",\n        \"file_type\": \"image\",\n        \"storage_disk\": \"r2\",\n        \"visibility\": \"publico\",\n        \"description\": null,\n        \"metadata\": {\n            \"ip_address\": \"127.0.0.1\",\n            \"user_agent\": \"PostmanRuntime/7.47.1\",\n            \"uploaded_via\": \"api\"\n        },\n        \"uploaded_by\": {\n            \"id\": 1,\n            \"name\": \"CPU Admin\",\n            \"email\": \"admin@example.com\"\n        },\n        \"created_at\": \"2025-09-26T00:21:21.000000Z\",\n        \"updated_at\": \"2025-09-26T00:21:21.000000Z\"\n    },\n    \"message\": \"File information retrieved successfully\"\n}"
+						}
+					]
+				},
+				{
+					"name": "DELETE File",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "1|Gt1FdYZnzQBRQbMlr3H72Bw3hwX9fQfkJRI91XnT30b8f769",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/pedro/OneDrive/Imágenes/test2.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/uploads/:id",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"uploads",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Academies",
+			"item": [
+				{
+					"name": "CREATE Academy",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "2|B1KTQJXvGzveWFvWjeWqw9A7SVqtsw4bVkFNChSNbb1aa2c0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Escuela de prueba",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Descripcion de ejemplo",
+									"type": "text"
+								},
+								{
+									"key": "lead_instructor_id",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "status",
+									"value": "activa",
+									"type": "text"
+								},
+								{
+									"key": "images[]",
+									"type": "file",
+									"src": "/C:/Users/pedro/OneDrive/Imágenes/Background/willian-justen-de-vasconcellos-PlK0RA-5a0c-unsplash.jpg",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/academies",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"academies"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE Academy",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "4|XpYXIUxXiv010Mg83Lb29xvm68uQO2QvAPS67qsTa16c2f9c",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Escuela de natación\",\r\n  \"description\": \"Academia de natación para todas las edades. Incluye clases para principiantes, intermedios y avanzados.\",\r\n  \"lead_instructor_id\": 2,\r\n  \"status\": \"activa\",\r\n  \"schedules\": [\r\n    {\r\n      \"area_id\": 1,\r\n      \"day_of_week\": 1,\r\n      \"start_time\": \"16:00\",\r\n      \"end_time\": \"18:00\",\r\n      \"capacity\": 20\r\n    },\r\n    {\r\n      \"area_id\": 1,\r\n      \"day_of_week\": 3,\r\n      \"start_time\": \"16:00\",\r\n      \"end_time\": \"18:00\",\r\n      \"capacity\": 20\r\n    },\r\n    {\r\n      \"area_id\": 1,\r\n      \"day_of_week\": 5,\r\n      \"start_time\": \"16:00\",\r\n      \"end_time\": \"18:00\",\r\n      \"capacity\": 15\r\n    }\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/academies/:id",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"academies",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "UPDATE Academy",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "",
+										"value": "",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"name\": \"Escuela de natación\",\r\n  \"description\": \"Academia de natación para todas las edades. Incluye clases para principiantes, intermedios y avanzados.\",\r\n  \"lead_instructor_id\": 2,\r\n  \"status\": \"activa\",\r\n  \"schedules\": [\r\n    {\r\n      \"area_id\": 1,\r\n      \"day_of_week\": 1,\r\n      \"start_time\": \"16:00\",\r\n      \"end_time\": \"18:00\",\r\n      \"capacity\": 20\r\n    },\r\n    {\r\n      \"area_id\": 1,\r\n      \"day_of_week\": 3,\r\n      \"start_time\": \"16:00\",\r\n      \"end_time\": \"18:00\",\r\n      \"capacity\": 20\r\n    },\r\n    {\r\n      \"area_id\": 1,\r\n      \"day_of_week\": 5,\r\n      \"start_time\": \"16:00\",\r\n      \"end_time\": \"18:00\",\r\n      \"capacity\": 15\r\n    }\r\n  ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{cpu_url}}/api/v1/academies/:id",
+									"host": [
+										"{{cpu_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"academies",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Date",
+									"value": "Sun, 28 Sep 2025 18:52:29 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.54 (Win64) OpenSSL/1.1.1q mod_fcgid/2.3.10-dev"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.3.8"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Vary",
+									"value": "Authorization"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Academy updated successfully.\",\n    \"data\": {\n        \"id\": 1,\n        \"name\": \"Escuela de natación\",\n        \"description\": \"Academia de natación para todas las edades. Incluye clases para principiantes, intermedios y avanzados.\",\n        \"status\": \"activa\",\n        \"lead_instructor\": {\n            \"id\": 2,\n            \"name\": \"Pedro Soto\",\n            \"email\": \"sotto18a2000@gmail.com\",\n            \"role\": \"instructor\",\n            \"role_label\": \"Instructor\",\n            \"sso_uid\": null,\n            \"is_solvent\": false,\n            \"solvent_until\": null,\n            \"email_verified_at\": null,\n            \"created_at\": \"2025-09-28T18:22:31+00:00\",\n            \"updated_at\": \"2025-09-28T18:22:34+00:00\"\n        },\n        \"images\": [],\n        \"schedules\": [\n            {\n                \"id\": 16,\n                \"area_id\": 1,\n                \"area_name\": \"Piscina Actualizada\",\n                \"day_of_week\": 1,\n                \"start_time\": \"2025-09-28T16:00:00.000000Z\",\n                \"end_time\": \"2025-09-28T18:00:00.000000Z\",\n                \"capacity\": 20\n            },\n            {\n                \"id\": 17,\n                \"area_id\": 1,\n                \"area_name\": \"Piscina Actualizada\",\n                \"day_of_week\": 3,\n                \"start_time\": \"2025-09-28T16:00:00.000000Z\",\n                \"end_time\": \"2025-09-28T18:00:00.000000Z\",\n                \"capacity\": 20\n            },\n            {\n                \"id\": 18,\n                \"area_id\": 1,\n                \"area_name\": \"Piscina Actualizada\",\n                \"day_of_week\": 5,\n                \"start_time\": \"2025-09-28T16:00:00.000000Z\",\n                \"end_time\": \"2025-09-28T18:00:00.000000Z\",\n                \"capacity\": 15\n            }\n        ],\n        \"created_at\": \"2025-09-28T18:22:17.000000Z\",\n        \"updated_at\": \"2025-09-28T18:52:29.000000Z\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "GET Academy by Id",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/academies/:id",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"academies",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "12"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET All Academies",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/academies",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"academies"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Academy",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "4|QTxvMxkejHAZjSTQP8r2Y0QkNR6xY1X9BYonm49Adeb6cb39",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/academies/:id",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"academies",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "8"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Areas",
+			"item": [
+				{
+					"name": "CREATE Area",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "2|B1KTQJXvGzveWFvWjeWqw9A7SVqtsw4bVkFNChSNbb1aa2c0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Aula de Informática",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Aula equipada con 25 computadoras para clases de programación y sistemas",
+									"type": "text"
+								},
+								{
+									"key": "is_active",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "images[]",
+									"type": "file",
+									"src": "/C:/Users/pedro/OneDrive/Imágenes/Background/pexel_test.jpg"
+								},
+								{
+									"key": "capacity",
+									"value": "25",
+									"type": "text"
+								},
+								{
+									"key": "is_reservable",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/areas",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"areas"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE Area",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "2|B1KTQJXvGzveWFvWjeWqw9A7SVqtsw4bVkFNChSNbb1aa2c0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Piscina Actualizada\",\r\n  \"description\": \"Área acuática actualizada con nuevos horarios\",\r\n  \"capacity\": 20,\r\n  \"is_reservable\": true,\r\n  \"is_active\": true,\r\n  \"schedules\": [\r\n    {\r\n      \"day_of_week\": 1,\r\n      \"start_time\": \"06:00\",\r\n      \"end_time\": \"20:00\",\r\n      \"is_open\": true\r\n    },\r\n    {\r\n      \"day_of_week\": 2,\r\n      \"start_time\": \"06:00\",\r\n      \"end_time\": \"20:00\",\r\n      \"is_open\": true\r\n    },\r\n    {\r\n      \"day_of_week\": 3,\r\n      \"start_time\": \"06:00\",\r\n      \"end_time\": \"20:00\",\r\n      \"is_open\": true\r\n    },\r\n    {\r\n      \"day_of_week\": 4,\r\n      \"start_time\": \"06:00\",\r\n      \"end_time\": \"20:00\",\r\n      \"is_open\": true\r\n    },\r\n    {\r\n      \"day_of_week\": 5,\r\n      \"start_time\": \"06:00\",\r\n      \"end_time\": \"20:00\",\r\n      \"is_open\": true\r\n    },\r\n    {\r\n      \"day_of_week\": 6,\r\n      \"start_time\": \"08:00\",\r\n      \"end_time\": \"18:00\",\r\n      \"is_open\": true\r\n    },\r\n    {\r\n      \"day_of_week\": 7,\r\n      \"start_time\": \"08:00\",\r\n      \"end_time\": \"18:00\",\r\n      \"is_open\": true\r\n    }\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/areas/:id",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"areas",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Area By Id",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/areas/:id",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"areas",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "4"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Area",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "4|QTxvMxkejHAZjSTQP8r2Y0QkNR6xY1X9BYonm49Adeb6cb39",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/areas/:id",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"areas",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "8"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Chat",
+			"item": [
+				{
+					"name": "CREATE Conversation",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "5|VfiuUZWUTkzpIQVWmQPTwwAhaiFhePXqUe7QcVKoc7c86cd9",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"peer_email\": \"pedro.soto@unet.edu.ve\"\r\n}"
+						},
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/chat/conversations",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"chat",
+								"conversations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Chat Users",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "5|VfiuUZWUTkzpIQVWmQPTwwAhaiFhePXqUe7QcVKoc7c86cd9",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/chat/users/search?q=pedro",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"chat",
+								"users",
+								"search"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "pedro"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Invitations",
+			"item": [
+				{
+					"name": "CREATE Invitation",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "7|3ho20tqHCTh2IoPRfOjP42gnaPtBElhkVdQTsYoFed6b9bdc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Eduardo Castillo\",\r\n  \"email\": \"pedrosotto717@gmail.com\",\r\n  \"message\": \"\"\r\n}"
+						},
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/invitations",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"invitations"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "CREATE Invitation",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "",
+										"value": "",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"name\": \"Eduardo Castillo\",\r\n  \"email\": \"pedrosotto7177@gmail.com\",\r\n  \"message\": \"\"\r\n}"
+								},
+								"url": {
+									"raw": "{{cpu_url}}/api/v1/invitations",
+									"host": [
+										"{{cpu_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"invitations"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Date",
+									"value": "Fri, 03 Oct 2025 01:13:25 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.54 (Win64) OpenSSL/1.1.1q mod_fcgid/2.3.10-dev"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.3.8"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Vary",
+									"value": "Authorization"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"data\": {\n        \"id\": 7,\n        \"name\": \"Eduardo Castillo\",\n        \"email\": \"pedrosotto7177@gmail.com\",\n        \"message\": null,\n        \"status\": \"pendiente\",\n        \"status_label\": \"Pendiente\",\n        \"token\": \"iNCqKWJZv56OooQViPas8RsV9OriL6Wj8nLH2rRYKeE8MT8ZuIpdB7tkDTrkluGF\",\n        \"expires_at\": \"2025-11-02T01:13:26+00:00\",\n        \"created_at\": \"2025-10-03T01:13:26+00:00\",\n        \"updated_at\": \"2025-10-03T01:13:26+00:00\",\n        \"inviter\": {\n            \"id\": 5,\n            \"name\": \"Maria Garcia Profe\",\n            \"email\": \"maria.garcia@unet.edu.ve\",\n            \"role\": \"profesor\"\n        },\n        \"reviewed_at\": null,\n        \"rejection_reason\": null,\n        \"is_expired\": false,\n        \"days_until_expiry\": 29.999997800266204\n    },\n    \"message\": \"Invitación creada exitosamente. El administrador revisará tu solicitud.\",\n    \"meta\": {\n        \"version\": \"v1\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Approve Invitation",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "1|ryjdYJL3wOuZsrScDkUkuq09o0aKkKs6kgh6Y7Y5e4cbe2d8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Piscina Actualizada\",\r\n  \"description\": \"Área acuática actualizada con nuevos horarios\",\r\n  \"capacity\": 20,\r\n  \"is_reservable\": true,\r\n  \"is_active\": true,\r\n  \"schedules\": [\r\n    {\r\n      \"day_of_week\": 1,\r\n      \"start_time\": \"06:00\",\r\n      \"end_time\": \"20:00\",\r\n      \"is_open\": true\r\n    },\r\n    {\r\n      \"day_of_week\": 2,\r\n      \"start_time\": \"06:00\",\r\n      \"end_time\": \"20:00\",\r\n      \"is_open\": true\r\n    },\r\n    {\r\n      \"day_of_week\": 3,\r\n      \"start_time\": \"06:00\",\r\n      \"end_time\": \"20:00\",\r\n      \"is_open\": true\r\n    },\r\n    {\r\n      \"day_of_week\": 4,\r\n      \"start_time\": \"06:00\",\r\n      \"end_time\": \"20:00\",\r\n      \"is_open\": true\r\n    },\r\n    {\r\n      \"day_of_week\": 5,\r\n      \"start_time\": \"06:00\",\r\n      \"end_time\": \"20:00\",\r\n      \"is_open\": true\r\n    },\r\n    {\r\n      \"day_of_week\": 6,\r\n      \"start_time\": \"08:00\",\r\n      \"end_time\": \"18:00\",\r\n      \"is_open\": true\r\n    },\r\n    {\r\n      \"day_of_week\": 7,\r\n      \"start_time\": \"08:00\",\r\n      \"end_time\": \"18:00\",\r\n      \"is_open\": true\r\n    }\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/invitations/:id/approve",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"invitations",
+								":id",
+								"approve"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "7"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Approve Invitation",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "",
+										"value": "",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"name\": \"Piscina Actualizada\",\r\n  \"description\": \"Área acuática actualizada con nuevos horarios\",\r\n  \"capacity\": 20,\r\n  \"is_reservable\": true,\r\n  \"is_active\": true,\r\n  \"schedules\": [\r\n    {\r\n      \"day_of_week\": 1,\r\n      \"start_time\": \"06:00\",\r\n      \"end_time\": \"20:00\",\r\n      \"is_open\": true\r\n    },\r\n    {\r\n      \"day_of_week\": 2,\r\n      \"start_time\": \"06:00\",\r\n      \"end_time\": \"20:00\",\r\n      \"is_open\": true\r\n    },\r\n    {\r\n      \"day_of_week\": 3,\r\n      \"start_time\": \"06:00\",\r\n      \"end_time\": \"20:00\",\r\n      \"is_open\": true\r\n    },\r\n    {\r\n      \"day_of_week\": 4,\r\n      \"start_time\": \"06:00\",\r\n      \"end_time\": \"20:00\",\r\n      \"is_open\": true\r\n    },\r\n    {\r\n      \"day_of_week\": 5,\r\n      \"start_time\": \"06:00\",\r\n      \"end_time\": \"20:00\",\r\n      \"is_open\": true\r\n    },\r\n    {\r\n      \"day_of_week\": 6,\r\n      \"start_time\": \"08:00\",\r\n      \"end_time\": \"18:00\",\r\n      \"is_open\": true\r\n    },\r\n    {\r\n      \"day_of_week\": 7,\r\n      \"start_time\": \"08:00\",\r\n      \"end_time\": \"18:00\",\r\n      \"is_open\": true\r\n    }\r\n  ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{cpu_url}}/api/v1/invitations/:id/approve",
+									"host": [
+										"{{cpu_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"invitations",
+										":id",
+										"approve"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "7"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Date",
+									"value": "Fri, 03 Oct 2025 01:05:29 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.54 (Win64) OpenSSL/1.1.1q mod_fcgid/2.3.10-dev"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.3.8"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Vary",
+									"value": "Authorization"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"data\": {\n        \"user\": {\n            \"id\": 13,\n            \"name\": \"Daniel Chacon\",\n            \"email\": \"pedrosotoperez22@gmail.com\",\n            \"role\": \"invitado\"\n        },\n        \"invitation_id\": 6\n    },\n    \"message\": \"Invitación aprobada y usuario creado exitosamente.\",\n    \"meta\": {\n        \"version\": \"v1\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Reject Invitation",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "1|ryjdYJL3wOuZsrScDkUkuq09o0aKkKs6kgh6Y7Y5e4cbe2d8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"rejection_reason\": \"porque si!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/invitations/:id/reject",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"invitations",
+								":id",
+								"reject"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Invitations",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "7|3ho20tqHCTh2IoPRfOjP42gnaPtBElhkVdQTsYoFed6b9bdc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/invitations",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"invitations"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "GET All Areas",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "",
+										"value": "",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{cpu_url}}/api/v1/invitations",
+									"host": [
+										"{{cpu_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"invitations"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Date",
+									"value": "Sun, 28 Sep 2025 23:36:17 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.54 (Win64) OpenSSL/1.1.1q mod_fcgid/2.3.10-dev"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.3.8"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Vary",
+									"value": "Authorization"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"data\": [\n        {\n            \"id\": 1,\n            \"name\": \"Pedro Soto\",\n            \"email\": \"pedrosotto@unet.edu.ve\",\n            \"message\": null,\n            \"status\": \"pendiente\",\n            \"status_label\": \"Pendiente\",\n            \"token\": \"CrbDgjoM2zqDumTrIJfpfkyIfmpPX5w6zpHC1tnclkdbmRuZOFrXonMYI642hdfz\",\n            \"expires_at\": \"2025-10-28T23:35:32+00:00\",\n            \"created_at\": \"2025-09-28T23:35:32+00:00\",\n            \"updated_at\": \"2025-09-28T23:35:32+00:00\",\n            \"inviter\": {\n                \"id\": 1,\n                \"name\": \"CPU Admin\",\n                \"email\": \"admin@example.com\",\n                \"role\": \"administrador\"\n            },\n            \"reviewed_by\": null,\n            \"reviewed_at\": null,\n            \"rejection_reason\": null,\n            \"is_expired\": false,\n            \"days_until_expiry\": 29.999469959444443\n        }\n    ],\n    \"meta\": {\n        \"version\": \"v1\",\n        \"total\": 1,\n        \"pending\": 0\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "GET Pending Invitations",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "1|ryjdYJL3wOuZsrScDkUkuq09o0aKkKs6kgh6Y7Y5e4cbe2d8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/invitations/pending",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"invitations",
+								"pending"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "GET Invitations Copy",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "",
+										"value": "",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{cpu_url}}/api/v1/invitations/pending",
+									"host": [
+										"{{cpu_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"invitations",
+										"pending"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Date",
+									"value": "Sun, 28 Sep 2025 23:36:21 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.54 (Win64) OpenSSL/1.1.1q mod_fcgid/2.3.10-dev"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.3.8"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Vary",
+									"value": "Authorization"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=99"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"data\": [\n        {\n            \"id\": 1,\n            \"name\": \"Pedro Soto\",\n            \"email\": \"pedrosotto@unet.edu.ve\",\n            \"message\": null,\n            \"status\": \"pendiente\",\n            \"status_label\": \"Pendiente\",\n            \"token\": \"CrbDgjoM2zqDumTrIJfpfkyIfmpPX5w6zpHC1tnclkdbmRuZOFrXonMYI642hdfz\",\n            \"expires_at\": \"2025-10-28T23:35:32+00:00\",\n            \"created_at\": \"2025-09-28T23:35:32+00:00\",\n            \"updated_at\": \"2025-09-28T23:35:32+00:00\",\n            \"inviter\": {\n                \"id\": 1,\n                \"name\": \"CPU Admin\",\n                \"email\": \"admin@example.com\",\n                \"role\": \"administrador\"\n            },\n            \"reviewed_by\": null,\n            \"reviewed_at\": null,\n            \"rejection_reason\": null,\n            \"is_expired\": false,\n            \"days_until_expiry\": 29.99942855295139\n        }\n    ],\n    \"meta\": {\n        \"version\": \"v1\",\n        \"count\": 1\n    }\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Reservations",
+			"item": [
+				{
+					"name": "CREATE Reservation",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "3|wBRCzxlsKWr2dAMLBysPuVt0a47QyepU6uekg3t5d3771cd3",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"area_id\": 1,\r\n  \"starts_at\": \"2025-10-05T10:09:00Z\",\r\n  \"ends_at\": \"2025-10-05T12:10:00Z\",\r\n  \"title\": \"Sesión de natación matutina\",\r\n  \"notes\": \"Entrenamiento personal de natación\"\r\n}"
+						},
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/reservations",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reservations"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "CREATE Reservation",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "",
+										"value": "",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"area_id\": 1,\r\n  \"starts_at\": \"2025-10-05T10:09:00Z\",\r\n  \"ends_at\": \"2025-10-05T12:10:00Z\",\r\n  \"title\": \"Sesión de natación matutina\",\r\n  \"notes\": \"Entrenamiento personal de natación\"\r\n}"
+								},
+								"url": {
+									"raw": "{{cpu_url}}/api/v1/reservations",
+									"host": [
+										"{{cpu_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"reservations"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 02 Oct 2025 02:06:34 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.54 (Win64) OpenSSL/1.1.1q mod_fcgid/2.3.10-dev"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.3.8"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Vary",
+									"value": "Authorization"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"data\": {\n        \"id\": 3,\n        \"user\": {\n            \"id\": 4,\n            \"name\": \"Juan Pérez\",\n            \"email\": \"juan.perez@unet.edu.ve\",\n            \"role\": \"estudiante\",\n            \"role_label\": \"Estudiante\"\n        },\n        \"area\": {\n            \"id\": 1,\n            \"name\": \"Piscina\",\n            \"capacity\": null,\n            \"is_reservable\": true\n        },\n        \"starts_at\": \"2025-10-05T10:09:00+00:00\",\n        \"ends_at\": \"2025-10-05T12:10:00+00:00\",\n        \"status\": \"pendiente\",\n        \"status_label\": \"Pendiente\",\n        \"title\": \"Sesión de natación matutina\",\n        \"notes\": \"Entrenamiento personal de natación\",\n        \"decision_reason\": null,\n        \"reviewed_at\": null,\n        \"duration_minutes\": 121,\n        \"can_be_canceled\": false,\n        \"created_at\": \"2025-10-02T02:06:34+00:00\",\n        \"updated_at\": \"2025-10-02T02:06:34+00:00\"\n    },\n    \"message\": \"Reserva creada exitosamente. Está pendiente de aprobación administrativa.\"\n}"
+						}
+					]
+				},
+				{
+					"name": "UPDATE Reservation",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "5|1WSM4H0Se1EkYcVGBIcqTV8VDUPe1HTei0t3jDhHb607c7c6",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"area_id\": 1,\r\n  \"starts_at\": \"2025-10-07T10:09:00Z\",\r\n  \"ends_at\": \"2025-10-07T12:10:00Z\",\r\n  \"title\": \"Sesión de natación matutina\",\r\n  \"notes\": \"Entrenamiento personal de natación\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/reservations/:id",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reservations",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "4"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "UPDATE Reservation",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "",
+										"value": "",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"area_id\": 1,\r\n  \"starts_at\": \"2025-10-07T10:09:00Z\",\r\n  \"ends_at\": \"2025-10-07T12:10:00Z\",\r\n  \"title\": \"Sesión de natación matutina\",\r\n  \"notes\": \"Entrenamiento personal de natación\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{cpu_url}}/api/v1/reservations/:id",
+									"host": [
+										"{{cpu_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"reservations",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "4"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 02 Oct 2025 02:23:12 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.54 (Win64) OpenSSL/1.1.1q mod_fcgid/2.3.10-dev"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.3.8"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Vary",
+									"value": "Authorization"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"data\": {\n        \"id\": 4,\n        \"user\": {\n            \"id\": 4,\n            \"name\": \"Juan Pérez\",\n            \"email\": \"juan.perez@unet.edu.ve\",\n            \"role\": \"estudiante\",\n            \"role_label\": \"Estudiante\"\n        },\n        \"area\": {\n            \"id\": 1,\n            \"name\": \"Piscina\",\n            \"capacity\": null,\n            \"is_reservable\": true\n        },\n        \"starts_at\": \"2025-10-07T10:09:00+00:00\",\n        \"ends_at\": \"2025-10-07T12:10:00+00:00\",\n        \"status\": \"pendiente\",\n        \"status_label\": \"Pendiente\",\n        \"title\": \"Sesión de natación matutina\",\n        \"notes\": \"Entrenamiento personal de natación\",\n        \"decision_reason\": null,\n        \"reviewed_at\": null,\n        \"duration_minutes\": 121,\n        \"can_be_canceled\": false,\n        \"created_at\": \"2025-10-02T02:08:24+00:00\",\n        \"updated_at\": \"2025-10-02T02:23:13+00:00\"\n    },\n    \"message\": \"Reserva actualizada exitosamente.\"\n}"
+						}
+					]
+				},
+				{
+					"name": "GET Reservations",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "5|1WSM4H0Se1EkYcVGBIcqTV8VDUPe1HTei0t3jDhHb607c7c6",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/reservations",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reservations"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "GET Reservations",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "",
+										"value": "",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{cpu_url}}/api/v1/reservations",
+									"host": [
+										"{{cpu_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"reservations"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 02 Oct 2025 02:23:22 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Apache/2.4.54 (Win64) OpenSSL/1.1.1q mod_fcgid/2.3.10-dev"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.3.8"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Vary",
+									"value": "Authorization"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5, max=100"
+								},
+								{
+									"key": "Connection",
+									"value": "Keep-Alive"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": [\n        {\n            \"id\": 4,\n            \"user\": {\n                \"id\": 4,\n                \"name\": \"Juan Pérez\",\n                \"email\": \"juan.perez@unet.edu.ve\",\n                \"role\": \"estudiante\",\n                \"role_label\": \"Estudiante\"\n            },\n            \"area\": {\n                \"id\": 1,\n                \"name\": \"Piscina\",\n                \"capacity\": null,\n                \"is_reservable\": true\n            },\n            \"starts_at\": \"2025-10-07T10:09:00+00:00\",\n            \"ends_at\": \"2025-10-07T12:10:00+00:00\",\n            \"status\": \"pendiente\",\n            \"status_label\": \"Pendiente\",\n            \"title\": \"Sesión de natación matutina\",\n            \"notes\": \"Entrenamiento personal de natación\",\n            \"decision_reason\": null,\n            \"reviewed_at\": null,\n            \"duration_minutes\": 121,\n            \"can_be_canceled\": false,\n            \"created_at\": \"2025-10-02T02:08:24+00:00\",\n            \"updated_at\": \"2025-10-02T02:23:13+00:00\"\n        }\n    ],\n    \"links\": {\n        \"first\": \"https://dev.cpu-backend.lc/api/v1/reservations?page=1\",\n        \"last\": \"https://dev.cpu-backend.lc/api/v1/reservations?page=1\",\n        \"prev\": null,\n        \"next\": null\n    },\n    \"meta\": {\n        \"current_page\": 1,\n        \"from\": 1,\n        \"last_page\": 1,\n        \"links\": [\n            {\n                \"url\": null,\n                \"label\": \"&laquo; Previous\",\n                \"page\": null,\n                \"active\": false\n            },\n            {\n                \"url\": \"https://dev.cpu-backend.lc/api/v1/reservations?page=1\",\n                \"label\": \"1\",\n                \"page\": 1,\n                \"active\": true\n            },\n            {\n                \"url\": null,\n                \"label\": \"Next &raquo;\",\n                \"page\": null,\n                \"active\": false\n            }\n        ],\n        \"path\": \"https://dev.cpu-backend.lc/api/v1/reservations\",\n        \"per_page\": 15,\n        \"to\": 1,\n        \"total\": 1\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "CANCEL Reservation",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "5|1WSM4H0Se1EkYcVGBIcqTV8VDUPe1HTei0t3jDhHb607c7c6",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/reservations/:id/cancel",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reservations",
+								":id",
+								"cancel"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "4"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "APPROVE Reservation",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "6|qED8PX4tAPxj31fhAdhjnmD0SqY2BVltmDQ8nzUjc2c9eee4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/reservations/:id/approve",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reservations",
+								":id",
+								"approve"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "REJECT Reservation",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "6|qED8PX4tAPxj31fhAdhjnmD0SqY2BVltmDQ8nzUjc2c9eee4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"reason\": \"No tienes permitido resevar ese dia\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/reservations/:id/reject",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reservations",
+								":id",
+								"reject"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "6"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check Availability",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "4|QTxvMxkejHAZjSTQP8r2Y0QkNR6xY1X9BYonm49Adeb6cb39",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/reservations/availability?area_id=2&from=2025-10-04&",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reservations",
+								"availability"
+							],
+							"query": [
+								{
+									"key": "area_id",
+									"value": "2"
+								},
+								{
+									"key": "from",
+									"value": "2025-10-04"
+								},
+								{
+									"key": "",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Notifications",
+			"item": [
+				{
+					"name": "Mark as read",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "1|ryjdYJL3wOuZsrScDkUkuq09o0aKkKs6kgh6Y7Y5e4cbe2d8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Piscina Actualizada\",\r\n  \"description\": \"Área acuática actualizada con nuevos horarios\",\r\n  \"capacity\": 20,\r\n  \"is_reservable\": true,\r\n  \"is_active\": true,\r\n  \"schedules\": [\r\n    {\r\n      \"day_of_week\": 1,\r\n      \"start_time\": \"06:00\",\r\n      \"end_time\": \"20:00\",\r\n      \"is_open\": true\r\n    },\r\n    {\r\n      \"day_of_week\": 2,\r\n      \"start_time\": \"06:00\",\r\n      \"end_time\": \"20:00\",\r\n      \"is_open\": true\r\n    },\r\n    {\r\n      \"day_of_week\": 3,\r\n      \"start_time\": \"06:00\",\r\n      \"end_time\": \"20:00\",\r\n      \"is_open\": true\r\n    },\r\n    {\r\n      \"day_of_week\": 4,\r\n      \"start_time\": \"06:00\",\r\n      \"end_time\": \"20:00\",\r\n      \"is_open\": true\r\n    },\r\n    {\r\n      \"day_of_week\": 5,\r\n      \"start_time\": \"06:00\",\r\n      \"end_time\": \"20:00\",\r\n      \"is_open\": true\r\n    },\r\n    {\r\n      \"day_of_week\": 6,\r\n      \"start_time\": \"08:00\",\r\n      \"end_time\": \"18:00\",\r\n      \"is_open\": true\r\n    },\r\n    {\r\n      \"day_of_week\": 7,\r\n      \"start_time\": \"08:00\",\r\n      \"end_time\": \"18:00\",\r\n      \"is_open\": true\r\n    }\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/notifications/:id/read",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"notifications",
+								":id",
+								"read"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Mark All as read",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "1|ryjdYJL3wOuZsrScDkUkuq09o0aKkKs6kgh6Y7Y5e4cbe2d8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Piscina Actualizada\",\r\n  \"description\": \"Área acuática actualizada con nuevos horarios\",\r\n  \"capacity\": 20,\r\n  \"is_reservable\": true,\r\n  \"is_active\": true,\r\n  \"schedules\": [\r\n    {\r\n      \"day_of_week\": 1,\r\n      \"start_time\": \"06:00\",\r\n      \"end_time\": \"20:00\",\r\n      \"is_open\": true\r\n    },\r\n    {\r\n      \"day_of_week\": 2,\r\n      \"start_time\": \"06:00\",\r\n      \"end_time\": \"20:00\",\r\n      \"is_open\": true\r\n    },\r\n    {\r\n      \"day_of_week\": 3,\r\n      \"start_time\": \"06:00\",\r\n      \"end_time\": \"20:00\",\r\n      \"is_open\": true\r\n    },\r\n    {\r\n      \"day_of_week\": 4,\r\n      \"start_time\": \"06:00\",\r\n      \"end_time\": \"20:00\",\r\n      \"is_open\": true\r\n    },\r\n    {\r\n      \"day_of_week\": 5,\r\n      \"start_time\": \"06:00\",\r\n      \"end_time\": \"20:00\",\r\n      \"is_open\": true\r\n    },\r\n    {\r\n      \"day_of_week\": 6,\r\n      \"start_time\": \"08:00\",\r\n      \"end_time\": \"18:00\",\r\n      \"is_open\": true\r\n    },\r\n    {\r\n      \"day_of_week\": 7,\r\n      \"start_time\": \"08:00\",\r\n      \"end_time\": \"18:00\",\r\n      \"is_open\": true\r\n    }\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/notifications/read-all",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"notifications",
+								"read-all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Notifications",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "7|3ho20tqHCTh2IoPRfOjP42gnaPtBElhkVdQTsYoFed6b9bdc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/notifications",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"notifications"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Unread Notifications",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "1|ryjdYJL3wOuZsrScDkUkuq09o0aKkKs6kgh6Y7Y5e4cbe2d8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/notifications/unread",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"notifications",
+								"unread"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Count Notifications",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "1|ryjdYJL3wOuZsrScDkUkuq09o0aKkKs6kgh6Y7Y5e4cbe2d8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/notifications/count",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"notifications",
+								"count"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Area",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "4|QTxvMxkejHAZjSTQP8r2Y0QkNR6xY1X9BYonm49Adeb6cb39",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/areas/:id",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"areas",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "8"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Audit Logs",
+			"item": [
+				{
+					"name": "GET Audit Logs",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "4|JSFI3yNY7fNugkZ7RTsevspPENnBmGQfkSFw3F3gc3fb8504",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/audit-logs",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"audit-logs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Audit Log",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "2|xPFImC80VVe8n7hvZ7hYwK2geQpnMjiKhxrcz7jicb7e984f",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/audit-logs/1",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"audit-logs",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"admin@example.com\",\r\n    \"password\": \"12345678\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{cpu_url}}/api/v1/login",
+					"host": [
+						"{{cpu_url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logout",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "1|sI4DuTTb9bipd0qfVWCWJXpQe0MS341ohRR0ggnhb16992d1",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"edaurdo@unet.edu.ve\",\r\n    \"password\": \"00000000\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{cpu_url}}/api/v1/logout",
+					"host": [
+						"{{cpu_url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Verify Email",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "1|sI4DuTTb9bipd0qfVWCWJXpQe0MS341ohRR0ggnhb16992d1",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"2\",\r\n    \"hash\": \"\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{cpu_url}}/api/v1/email/verify",
+					"host": [
+						"{{cpu_url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"email",
+						"verify"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

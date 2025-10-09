@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Http\Requests\UpdateMeRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Services\UserService;
@@ -103,6 +104,28 @@ final class UserController extends Controller
             'success' => true,
             'data' => new UserResource($updatedUser),
             'message' => 'Usuario actualizado exitosamente.',
+            'meta' => [
+                'version' => 'v1',
+            ],
+        ]);
+    }
+
+    /**
+     * Update the authenticated user's own profile.
+     * Only allows updating basic information (name, email, password).
+     * Role and status cannot be modified through this endpoint.
+     */
+    public function updateMe(UpdateMeRequest $request): JsonResponse
+    {
+        $updatedUser = $this->userService->updateMe(
+            $request->user(),
+            $request->validated()
+        );
+
+        return response()->json([
+            'success' => true,
+            'data' => new UserResource($updatedUser),
+            'message' => 'Perfil actualizado exitosamente.',
             'meta' => [
                 'version' => 'v1',
             ],

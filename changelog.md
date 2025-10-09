@@ -7,6 +7,30 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
 
 ---
 
+### [2025-01-27 11:15:00] - FEAT: Implementar endpoint para actualización de perfil personal
+*   **Acción:** Creado método `updateMe` que permite a los usuarios autenticados actualizar su propio perfil con restricciones de seguridad.
+*   **Archivos Modificados:**
+    *   `CREATE: app/Http/Requests/UpdateMeRequest.php` - Form Request para validar datos de actualización personal
+    *   `UPDATE: app/Http/Controllers/Api/V1/UserController.php` - Agregado método updateMe() y importación de UpdateMeRequest
+    *   `UPDATE: app/Services/UserService.php` - Agregado método updateMe() con validaciones de seguridad
+*   **Características de seguridad:**
+    *   Solo permite actualizar campos básicos: name, email, password
+    *   Prohíbe modificar role y status (solo administradores pueden hacerlo)
+    *   Requiere contraseña actual para cambiar contraseña
+    *   Registra auditoría de cambios en audit_logs
+    *   Endpoint: PUT /api/v1/users/me (ya configurado en rutas)
+
+### [2025-01-27 10:45:00] - FIX: Corregir error "Attempt to read property 'id' on array" en Chat Resources
+*   **Acción:** Solucionado el error en DelegatesToResource.php línea 139 que ocurría al intentar usar ConversationMessageResource con arrays en lugar de modelos de Eloquent.
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Services/ChatService.php` - Cambiado getMessages() para devolver colección de modelos en lugar de array
+    *   `UPDATE: app/Http/Controllers/Api/V1/Chat/ChatController.php` - Removido collect() innecesario en getMessages()
+*   **Detalles del problema:**
+    *   El método `getMessages()` en ChatService devolvía `$messages->toArray()` convirtiendo los modelos a arrays
+    *   El controlador intentaba usar `ConversationMessageResource::collection()` con estos arrays
+    *   Los Resources de Laravel esperan modelos de Eloquent, no arrays
+    *   Solución: devolver la colección de modelos directamente sin convertir a array
+
 ### [2025-10-03 15:30:00] - FEAT: Permitir que administradores puedan hacer reservaciones
 *   **Acción:** Modificado el sistema de reservaciones para permitir que usuarios con rol de administrador puedan crear reservaciones.
 *   **Archivos Modificados:**
@@ -804,4 +828,83 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
 *   **Acción:** Se agregó el enlace de establecimiento de contraseña en texto plano antes del botón en el email de invitación, para que los usuarios puedan copiarlo si el botón no funciona por problemas de spam.
 *   **Archivos Modificados:**
     *   `UPDATE: app/Services/SendPulseService.php` - Agregado enlace en texto plano con estilo destacado antes del botón en generateInvitationApprovedHtml()
+
+### [2025-01-28 15:00:00] - FEAT: Implementación completa del sistema de chat 1:1
+*   **Acción:** Se implementó un sistema completo de chat 1:1 con todas las funcionalidades especificadas: conversaciones, mensajes, estado de lectura, bloqueos de usuarios, búsqueda de usuarios y polling para actualizaciones en tiempo real.
+*   **Archivos Modificados:**
+    *   `CREATE: database/migrations/2025_10_07_014034_create_conversations_table.php` - Tabla para conversaciones 1:1 con índice único para pares de usuarios
+    *   `CREATE: database/migrations/2025_10_07_014042_create_conversation_messages_table.php` - Tabla para mensajes con índices optimizados para paginación y conteo de no leídos
+    *   `CREATE: database/migrations/2025_10_07_014049_create_conversation_reads_table.php` - Tabla para estado de lectura por usuario y conversación
+    *   `CREATE: database/migrations/2025_10_07_014055_create_user_blocks_table.php` - Tabla para bloqueos unidireccionales entre usuarios
+    *   `CREATE: app/Models/Conversation.php` - Modelo con relaciones, scopes y helpers para conversaciones
+    *   `CREATE: app/Models/ConversationMessage.php` - Modelo para mensajes con scopes para paginación y filtros
+    *   `CREATE: app/Models/ConversationRead.php` - Modelo para estado de lectura
+    *   `CREATE: app/Models/UserBlock.php` - Modelo para bloqueos con validación de expiración
+    *   `UPDATE: app/Models/User.php` - Agregadas relaciones para chat (conversaciones, mensajes, bloqueos)
+    *   `CREATE: app/Http/Requests/Chat/CreateConversationRequest.php` - Validación para crear conversaciones
+    *   `CREATE: app/Http/Requests/Chat/SendMessageRequest.php` - Validación para envío de mensajes
+    *   `CREATE: app/Http/Requests/Chat/MarkAsReadRequest.php` - Validación para marcar como leído
+    *   `CREATE: app/Http/Requests/Chat/CreateBlockRequest.php` - Validación para crear bloqueos
+    *   `CREATE: app/Http/Requests/Chat/SearchUsersRequest.php` - Validación para búsqueda de usuarios
+    *   `CREATE: app/Policies/ConversationPolicy.php` - Políticas de autorización para conversaciones
+    *   `CREATE: app/Policies/UserBlockPolicy.php` - Políticas de autorización para bloqueos
+    *   `CREATE: app/Http/Resources/Chat/ConversationResource.php` - Resource básico para conversaciones
+    *   `CREATE: app/Http/Resources/Chat/ConversationWithDetailsResource.php` - Resource con detalles completos para listado
+    *   `CREATE: app/Http/Resources/Chat/ConversationMessageResource.php` - Resource para mensajes
+    *   `CREATE: app/Http/Resources/Chat/UserSearchResource.php` - Resource para búsqueda de usuarios
+    *   `CREATE: app/Http/Resources/Chat/UserBlockResource.php` - Resource para bloqueos
+    *   `CREATE: app/Http/Resources/Chat/UnreadSummaryResource.php` - Resource para resumen de no leídos
+    *   `CREATE: app/Services/ChatService.php` - Servicio con toda la lógica de dominio del chat
+    *   `CREATE: app/Http/Controllers/Api/V1/Chat/ChatController.php` - Controlador principal del chat
+    *   `CREATE: app/Http/Controllers/Api/V1/Chat/UserBlockController.php` - Controlador para gestión de bloqueos
+    *   `UPDATE: routes/api.php` - Agregadas rutas del chat bajo /api/v1/chat con middleware de autenticación
+    *   `CREATE: tests/Feature/ChatTest.php` - Tests unitarios para ChatService
+    *   `CREATE: tests/Feature/ChatApiTest.php` - Tests de integración para endpoints de API
+    *   `CREATE: docs/chat-backend.md` - Documentación completa para el frontend
+*   **Funcionalidades:**
+    *   Chat 1:1 solo texto con inicio por email o ID de usuario
+    *   Listado de conversaciones con conteo de no leídos y último mensaje
+    *   Envío/recepción con paginación ascendente (infinite scroll hacia arriba)
+    *   Marcar como leído con opción de marcar hasta mensaje específico
+    *   Sistema de bloqueos unidireccionales con razón y expiración opcional
+    *   Búsqueda de usuarios por nombre o email para iniciar chat
+    *   Endpoints REST bajo /api/v1/chat/* con autenticación Sanctum
+    *   Rate limiting: 60 mensajes/minuto global, 30 por conversación
+    *   Resumen de no leídos optimizado para polling cada ~10 segundos
+    *   Validaciones completas y manejo de errores robusto
+    *   Tests completos para todas las funcionalidades
+    *   Documentación detallada con ejemplos de uso para el frontend
+
+### [2025-10-07 01:40:00] - FIX: Corrección de migraciones del chat con fechas correctas
+*   **Acción:** Se corrigieron las migraciones del chat que fueron creadas con fechas incorrectas, reemplazándolas con migraciones creadas correctamente usando los comandos de Artisan para asegurar el orden correcto de ejecución.
+*   **Archivos Modificados:**
+    *   `DELETE: database/migrations/2025_01_28_150000_create_conversations_table.php` - Migración con fecha incorrecta eliminada
+    *   `DELETE: database/migrations/2025_01_28_150100_create_conversation_messages_table.php` - Migración con fecha incorrecta eliminada
+    *   `DELETE: database/migrations/2025_01_28_150200_create_conversation_reads_table.php` - Migración con fecha incorrecta eliminada
+    *   `DELETE: database/migrations/2025_01_28_150300_create_user_blocks_table.php` - Migración con fecha incorrecta eliminada
+    *   `CREATE: database/migrations/2025_10_07_014034_create_conversations_table.php` - Migración con fecha correcta creada via Artisan
+    *   `CREATE: database/migrations/2025_10_07_014042_create_conversation_messages_table.php` - Migración con fecha correcta creada via Artisan
+    *   `CREATE: database/migrations/2025_10_07_014049_create_conversation_reads_table.php` - Migración con fecha correcta creada via Artisan
+    *   `CREATE: database/migrations/2025_10_07_014055_create_user_blocks_table.php` - Migración con fecha correcta creada via Artisan
+*   **Proceso:**
+    *   Eliminación de migraciones con fechas incorrectas
+    *   Creación de nuevas migraciones usando `php artisan make:migration`
+    *   Eliminación manual de tablas existentes
+    *   Ejecución de nuevas migraciones en orden correcto
+    *   Verificación de que todos los tests siguen pasando
+
+### [2025-10-07 01:45:00] - DOCS: Documentación completa de endpoints de chat para frontend
+*   **Acción:** Se creó documentación exhaustiva respondiendo a todas las preguntas del frontend sobre endpoints de chat, incluyendo URLs exactas, parámetros, respuestas, validaciones, rate limiting y ejemplos de uso.
+*   **Archivos Modificados:**
+    *   `CREATE: docs/chat-endpoints-complete-answers.md` - Documentación completa con respuestas a todas las preguntas del frontend sobre endpoints de chat
+*   **Contenido:**
+    *   Confirmación de que todos los endpoints de chat existen y están funcionales
+    *   URLs exactas y parámetros para cada endpoint
+    *   Estructura de respuestas con ejemplos JSON
+    *   Códigos de error HTTP y mensajes específicos
+    *   Validaciones y filtros aplicados
+    *   Rate limiting implementado (60 global, 30 por conversación)
+    *   Ejemplos de uso con curl para todos los endpoints
+    *   Corrección del código frontend problemático
+    *   Recomendaciones de implementación para polling y manejo de errores
 

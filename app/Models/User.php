@@ -64,4 +64,68 @@ class User extends Authenticatable
         ];
     }
 
+    /**
+     * Get conversations where this user is the first participant.
+     */
+    public function conversationsAsUserOne()
+    {
+        return $this->hasMany(Conversation::class, 'user_one_id');
+    }
+
+    /**
+     * Get conversations where this user is the second participant.
+     */
+    public function conversationsAsUserTwo()
+    {
+        return $this->hasMany(Conversation::class, 'user_two_id');
+    }
+
+    /**
+     * Get all conversations for this user.
+     */
+    public function conversations()
+    {
+        return $this->conversationsAsUserOne->merge($this->conversationsAsUserTwo);
+    }
+
+    /**
+     * Get messages sent by this user.
+     */
+    public function sentMessages()
+    {
+        return $this->hasMany(ConversationMessage::class, 'sender_id');
+    }
+
+    /**
+     * Get messages received by this user.
+     */
+    public function receivedMessages()
+    {
+        return $this->hasMany(ConversationMessage::class, 'receiver_id');
+    }
+
+    /**
+     * Get read statuses for this user.
+     */
+    public function conversationReads()
+    {
+        return $this->hasMany(ConversationRead::class);
+    }
+
+    /**
+     * Get blocks created by this user.
+     */
+    public function blocksCreated()
+    {
+        return $this->hasMany(UserBlock::class, 'blocker_id');
+    }
+
+    /**
+     * Get blocks where this user is blocked.
+     */
+    public function blocksReceived()
+    {
+        return $this->hasMany(UserBlock::class, 'blocked_id');
+    }
+
 }

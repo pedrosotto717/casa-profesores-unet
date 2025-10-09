@@ -84,20 +84,6 @@ final class ReservationService
     {
         return DB::transaction(function () use ($reservationId, $data, $userId) {
             $reservation = Reservation::findOrFail($reservationId);
-
-            // Validate ownership and status
-            if ($reservation->requester_id !== $userId) {
-                throw ValidationException::withMessages([
-                    'reservation' => 'No tienes permisos para modificar esta reserva.'
-                ]);
-            }
-
-            if (!$reservation->isPending()) {
-                throw ValidationException::withMessages([
-                    'reservation' => 'Solo se pueden modificar reservas pendientes.'
-                ]);
-            }
-
             $user = User::findOrFail($userId);
             $this->validateUserCanReserve($user);
 
