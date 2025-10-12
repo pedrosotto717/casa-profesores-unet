@@ -12,8 +12,7 @@ final class StoreAcademyStudentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        $academy = $this->route('academy');
-        return Gate::allows('create', [get_class($academy), $academy]);
+        return true;
     }
 
     /**
