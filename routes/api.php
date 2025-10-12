@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 
 use App\Http\Controllers\Api\V1\AcademyController;
+use App\Http\Controllers\Api\V1\AcademyStudentController;
 use App\Http\Controllers\Api\V1\AreaController;
 use App\Http\Controllers\Api\V1\AuditLogController;
 use App\Http\Controllers\Api\V1\AuthenticationController;
@@ -72,6 +73,14 @@ Route::prefix('v1')->group(function () {
         Route::delete('/uploads/{id}', [UploadController::class, 'destroy']);
         Route::post('/uploads/presign', [UploadController::class, 'presign']);
         Route::put('/users/me', [UserController::class, 'updateMe']);
+        
+        // Academy students management (instructor and admin only)
+        Route::prefix('academies/{academy}')->group(function () {
+            Route::get('/students', [AcademyStudentController::class, 'index']);
+            Route::post('/students', [AcademyStudentController::class, 'store']);
+            Route::put('/students/{student}', [AcademyStudentController::class, 'update']);
+            Route::delete('/students/{student}', [AcademyStudentController::class, 'destroy']);
+        });
         
         // Admin-only routes (authentication + admin role required)
         Route::middleware('admin')->group(function () {

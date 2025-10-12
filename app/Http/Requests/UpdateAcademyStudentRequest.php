@@ -1,0 +1,49 @@
+<?php declare(strict_types=1);
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
+
+final class UpdateAcademyStudentRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        $student = $this->route('student');
+        return Gate::allows('update', $student);
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
+    {
+        return [
+            'name' => ['nullable', 'string', 'max:200'],
+            'age' => ['nullable', 'integer', 'min:1', 'max:120'],
+            'status' => ['nullable', 'string', 'in:solvente,insolvente'],
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'name.max' => 'The student name may not exceed 200 characters.',
+            'age.integer' => 'The age must be a valid number.',
+            'age.min' => 'The age must be at least 1.',
+            'age.max' => 'The age may not exceed 120.',
+            'status.in' => 'The status must be either solvente or insolvente.',
+        ];
+    }
+}
+
