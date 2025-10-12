@@ -75,6 +75,7 @@ Route::prefix('v1')->group(function () {
         Route::put('/users/me', [UserController::class, 'updateMe']);
         
         // Academy students management (instructor and admin only)
+        //TEST>...
         Route::prefix('academies/{academy}')->group(function () {
             Route::get('/students', [AcademyStudentController::class, 'index']);
             Route::post('/students', [AcademyStudentController::class, 'store']);
