@@ -9,19 +9,30 @@ use Illuminate\Support\Facades\Log;
 
 class SendPulseService
 {
-    private ApiClient $client;
+    private ?ApiClient $client = null;
 
     public function __construct(?string $apiUserId = null, ?string $apiSecret = null)
     {
         $apiUserId = $apiUserId ?? env('SENDPULSE_API_USER_ID');
         $apiSecret = $apiSecret ?? env('SENDPULSE_API_SECRET');
 
+        // Only initialize if credentials are provided
+        if (!$apiUserId || !$apiSecret) {
+            Log::warning('SendPulse credentials not configured. Service will be disabled.');
+            return;
+        }
+
         // Token cache en storage/app/sendpulse (carpeta debe existir)
         $storagePath = storage_path('app/sendpulse');
         if (!is_dir($storagePath)) {
             @mkdir($storagePath, 0775, true);
         }
-        $this->client = new ApiClient($apiUserId, $apiSecret, new FileStorage($storagePath));
+        
+        try {
+            $this->client = new ApiClient($apiUserId, $apiSecret, new FileStorage($storagePath));
+        } catch (\Exception $e) {
+            Log::error('Failed to initialize SendPulse client: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -30,6 +41,12 @@ class SendPulseService
      */
     public function sendBasic(array $to, string $subject, string $html, ?string $text = null, ?array $opts = []): array
     {
+        // Check if client is initialized
+        if (!$this->client) {
+            Log::warning('SendPulse client not initialized. Email not sent.');
+            return ['ok' => false, 'error' => 'SendPulse service not configured'];
+        }
+
         $fromEmail = $opts['from_email'] ?? env('MAIL_FROM_ADDRESS', 'pedro.soto@unet.edu.ve');
         $fromName  = $opts['from_name']  ?? env('MAIL_FROM_NAME', 'CPU UNET');
 

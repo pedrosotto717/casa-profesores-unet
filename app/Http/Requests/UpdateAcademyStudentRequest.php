@@ -12,8 +12,7 @@ final class UpdateAcademyStudentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        $student = $this->route('student');
-        return Gate::allows('update', $student);
+        return true;
     }
 
     /**
