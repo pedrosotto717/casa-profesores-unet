@@ -62,13 +62,8 @@ final class R2Storage
             'description' => $description,
         ]);
         
-        // Log audit trail for PDF and Word files
-        $mimeType = $file->getMimeType();
-        if ($mimeType === 'application/pdf' || 
-            $mimeType === 'application/msword' || 
-            $mimeType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
-            self::logFileUpload($userId, $fileRecord, $file);
-        }
+        // Log audit trail for all file uploads
+        self::logFileUpload($userId, $fileRecord, $file);
         
         return $fileRecord;
     }
@@ -178,13 +173,8 @@ final class R2Storage
      */
     public static function deleteFile(File $file): bool
     {
-        // Log audit trail for PDF and Word files before deletion
-        $mimeType = $file->mime_type;
-        if ($mimeType === 'application/pdf' || 
-            $mimeType === 'application/msword' || 
-            $mimeType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
-            self::logFileDeletion($file->uploaded_by, $file);
-        }
+        // Log audit trail for all file deletions
+        self::logFileDeletion($file->uploaded_by, $file);
         
         // Delete file from storage
         $fileDeleted = $file->deleteFile();
@@ -241,11 +231,24 @@ final class R2Storage
      * 
      * @param int $userId The ID of the user uploading the file
      * @param File $fileRecord The created file record
-     * @param UploadedFile $file The uploaded file
+     * @param UploadedFile|array $file The uploaded file or file data array
      * @return void
      */
-    private static function logFileUpload(int $userId, File $fileRecord, UploadedFile $file)
+    public static function logFileUpload(int $userId, File $fileRecord, $file)
     {
+        // Handle both UploadedFile objects and array data
+        if (is_array($file)) {
+            $originalFilename = basename($fileRecord->file_path);
+            $mimeType = $file['mime_type'] ?? $fileRecord->mime_type;
+            $fileSize = $file['file_size'] ?? $fileRecord->file_size;
+            $uploadMethod = $file['upload_method'] ?? 'presign';
+        } else {
+            $originalFilename = $file->getClientOriginalName();
+            $mimeType = $file->getMimeType();
+            $fileSize = $file->getSize();
+            $uploadMethod = 'api';
+        }
+
         AuditLog::create([
             'user_id' => $userId,
             'entity_type' => 'File',
@@ -254,15 +257,15 @@ final class R2Storage
             'before' => null,
             'after' => [
                 'file_id' => $fileRecord->id,
-                'original_filename' => $file->getClientOriginalName(),
+                'original_filename' => $originalFilename,
                 'file_path' => $fileRecord->file_path,
-                'mime_type' => $file->getMimeType(),
-                'file_size' => $file->getSize(),
+                'mime_type' => $mimeType,
+                'file_size' => $fileSize,
                 'file_type' => $fileRecord->file_type,
                 'title' => $fileRecord->title,
                 'description' => $fileRecord->description,
-                'visibility' => $fileRecord->visibility,
-                'upload_method' => 'api',
+                'visibility' => $fileRecord->visibility->value,
+                'upload_method' => $uploadMethod,
                 'user_agent' => request()->userAgent(),
                 'ip_address' => request()->ip(),
                 'upload_timestamp' => now()->toISOString(),

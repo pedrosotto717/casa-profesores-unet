@@ -9,6 +9,7 @@ use App\Support\DebugLog;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
@@ -36,28 +37,60 @@ final class UploadController extends Controller
         }
         // --- END DEBUG INSTRUMENTATION ---
 
+        // Check if user is admin
+        $user = Auth::user();
+        if (!$user || $user->role->value !== 'administrador') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Access denied. Administrator privileges required.'
+            ], 403);
+        }
+
         $request->validate([
             'file' => ['required', 'file', 'max:10240'], // 10MB max
             'title' => ['nullable', 'string', 'max:200'],
             'description' => ['nullable', 'string', 'max:1000'],
-            'file_type' => ['nullable', 'string', 'in:document,image,receipt,other'],
+            'file_type' => ['required', 'string', 'in:document,image,receipt,other'],
+            'visibility' => ['nullable', 'string', 'in:publico,privado,restringido'],
         ]);
 
         try {
             $file = $request->file('file');
-            $userId = auth()->user()?->id;
+            $userId = $user->id;
             $title = $request->input('title');
             $description = $request->input('description');
-            $fileType = $request->input('file_type', 'other');
+            $fileType = $request->input('file_type');
+            $visibility = $request->input('visibility', 'privado');
             
-            // Determine file type based on MIME type if not specified
-            if (!$request->has('file_type')) {
-                $mimeType = $file->getMimeType();
-                if (str_starts_with($mimeType, 'image/')) {
-                    $fileType = 'image';
-                } elseif (in_array($mimeType, ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])) {
-                    $fileType = 'document';
-                }
+            // Validate MIME type based on file_type
+            $mimeType = $file->getMimeType();
+            $allowedMimes = [
+                'document' => [
+                    'application/pdf',
+                    'application/msword',
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                ],
+                'image' => [
+                    'image/jpeg',
+                    'image/png',
+                    'image/gif',
+                    'image/webp'
+                ],
+                'receipt' => [
+                    'image/jpeg',
+                    'image/png',
+                    'image/gif',
+                    'image/webp',
+                    'application/pdf'
+                ],
+                'other' => [] // Allow any MIME type
+            ];
+            
+            if (!empty($allowedMimes[$fileType]) && !in_array($mimeType, $allowedMimes[$fileType])) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "File type '{$fileType}' does not match the uploaded file format."
+                ], 422);
             }
             
             $fileRecord = R2Storage::putPublicWithRecord(
@@ -67,6 +100,11 @@ final class UploadController extends Controller
                 $title,
                 $description
             );
+
+            // Update visibility if different from default
+            if ($visibility !== 'publico') {
+                $fileRecord->update(['visibility' => $visibility]);
+            }
             
             return response()->json([
                 'success' => true,
@@ -188,7 +226,7 @@ final class UploadController extends Controller
 
             $uploadResult['status'] = 'SUCCESS';
             $uploadResult['path'] = $path;
-            $uploadResult['url'] = Storage::disk('r2')->url($path);
+            $uploadResult['url'] = R2Storage::url($path);
 
             $debugInfo['flysystem_upload'] = $uploadResult;
 
@@ -236,11 +274,12 @@ final class UploadController extends Controller
                 ], 404);
             }
 
-            // Check if user can delete this file
-            if ($file->uploaded_by !== auth()->user()?->id && !auth()->user()?->can('delete', $file)) {
+            // Check if user is admin
+            $user = Auth::user();
+            if (!$user || $user->role->value !== 'administrador') {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Unauthorized to delete this file'
+                    'message' => 'Access denied. Administrator privileges required.'
                 ], 403);
             }
 
@@ -372,8 +411,28 @@ final class UploadController extends Controller
                 ], 404);
             }
 
-            // For public endpoints, allow access to all files
-            // Authorization is handled at the route level
+            $user = Auth::user();
+            
+            // Check visibility access
+            if (!$user) {
+                // No auth: only public files
+                if ($file->visibility->value !== 'publico') {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Access denied. Authentication required.'
+                    ], 401);
+                }
+            } elseif ($user->role->value !== 'administrador') {
+                // Authenticated but not admin: reject restricted files
+                if ($file->visibility->value === 'restringido') {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Access denied. Insufficient privileges.'
+                    ], 403);
+                }
+            }
+            // Admin: can access all files
+            
             return response()->json([
                 'success' => true,
                 'data' => new FileResource($file),
@@ -398,13 +457,77 @@ final class UploadController extends Controller
     {
         try {
             $fileType = $request->input('file_type');
+            $searchTerm = $request->input('q');
             $perPage = $request->input('per_page', 15);
+            $user = Auth::user();
             
-            // Get all files without filtering by user
+            // Get files with visibility filtering
             $query = File::query();
             
             if ($fileType) {
                 $query->ofType($fileType);
+            }
+            
+            if ($searchTerm) {
+                $query->search($searchTerm);
+            }
+            
+            // Apply visibility filters based on authentication and role
+            if (!$user) {
+                // No auth: only public files
+                $query->where('visibility', 'publico');
+            } elseif ($user->role->value !== 'administrador') {
+                // Authenticated but not admin: public + private (exclude restricted)
+                $query->whereIn('visibility', ['publico', 'privado']);
+            }
+            // Admin: no visibility filter (can see all)
+            
+            $files = $query->orderBy('created_at', 'desc')->paginate($perPage);
+            
+            return response()->json([
+                'success' => true,
+                'data' => FileResource::collection($files),
+                'meta' => [
+                    'pagination' => [
+                        'current_page' => $files->currentPage(),
+                        'last_page' => $files->lastPage(),
+                        'per_page' => $files->perPage(),
+                        'total' => $files->total(),
+                    ],
+                    'user' => $user,
+                ],
+                'message' => 'Files retrieved successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error retrieving files: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get only public files (no authentication required).
+     * 
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function publicIndex(Request $request): JsonResponse
+    {
+        try {
+            $fileType = $request->input('file_type');
+            $searchTerm = $request->input('q');
+            $perPage = $request->input('per_page', 15);
+            
+            // Get only public files
+            $query = File::where('visibility', 'publico');
+            
+            if ($fileType) {
+                $query->ofType($fileType);
+            }
+            
+            if ($searchTerm) {
+                $query->search($searchTerm);
             }
             
             $files = $query->orderBy('created_at', 'desc')->paginate($perPage);
@@ -418,14 +541,14 @@ final class UploadController extends Controller
                         'last_page' => $files->lastPage(),
                         'per_page' => $files->perPage(),
                         'total' => $files->total(),
-                    ]
+                    ],
                 ],
-                'message' => 'Files retrieved successfully'
+                'message' => 'Public files retrieved successfully'
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error retrieving files: ' . $e->getMessage()
+                'message' => 'Error retrieving public files: ' . $e->getMessage()
             ], 500);
         }
     }

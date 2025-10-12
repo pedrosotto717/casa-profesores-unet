@@ -5,6 +5,6 @@ namespace App\Enums;
 enum DocumentVisibility: string
 {
     case Publico = 'publico';
-    case Interno = 'interno';
-    case SoloAdmin = 'solo_admin';
+    case Privado = 'privado';
+    case Restringido = 'restringido';
 }
