@@ -7,6 +7,21 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
 
 ---
 
+### [2025-10-12 21:00:00] - FEAT: Restringir endpoints de estudiantes a roles admin e instructor
+*   **Acción:** Aplicado middleware 'role:administrador,instructor' a todas las rutas de gestión de estudiantes de academias.
+*   **Archivos Modificados:**
+    *   `UPDATE: routes/api.php` - Agregado middleware role a rutas de students
+*   **Restricción aplicada:**
+    *   `GET /api/v1/academies/{academy}/students` - Solo admin e instructor
+    *   `POST /api/v1/academies/{academy}/students` - Solo admin e instructor
+    *   `PUT /api/v1/academies/{academy}/students/{student}` - Solo admin e instructor
+    *   `DELETE /api/v1/academies/{academy}/students/{student}` - Solo admin e instructor
+*   **Middleware usado:** `role:administrador,instructor` (roles del enum UserRole)
+*   **Comportamiento:** Usuarios con otros roles recibirán 403 Forbidden
+*   **Propósito:** Garantizar que solo administradores e instructores puedan gestionar las listas de estudiantes de las academias.
+
+---
+
 ### [2025-10-12 20:50:00] - FIX: Hacer SendPulse opcional para prevenir fallos en deploy
 *   **Acción:** Modificado SendPulseService para que no falle cuando las credenciales no están configuradas (especialmente en Railway).
 *   **Archivos Modificados:**
