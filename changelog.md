@@ -7,6 +7,53 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
 
 ---
 
+### [2025-10-12 20:05:00] - FEAT: Sistema de gestión de estudiantes externos para academias
+*   **Acción:** Implementado sistema completo para que instructores y administradores gestionen listas de estudiantes externos (no usuarios del sistema) inscritos en academias.
+*   **Archivos Modificados:**
+    *   `CREATE: database/migrations/2025_10_12_200011_drop_academy_enrollments_table.php` - Migración para eliminar tabla obsoleta
+    *   `CREATE: database/migrations/2025_10_12_200019_create_academy_students_table.php` - Nueva tabla academy_students
+    *   `CREATE: app/Models/AcademyStudent.php` - Modelo para estudiantes de academia
+    *   `CREATE: app/Policies/AcademyStudentPolicy.php` - Política de autorización instructor/admin
+    *   `CREATE: app/Http/Requests/StoreAcademyStudentRequest.php` - Validación para crear estudiante
+    *   `CREATE: app/Http/Requests/UpdateAcademyStudentRequest.php` - Validación para actualizar estudiante
+    *   `CREATE: app/Http/Resources/AcademyStudentResource.php` - Resource para formatear respuestas
+    *   `CREATE: app/Http/Controllers/Api/V1/AcademyStudentController.php` - Controlador CRUD completo
+    *   `CREATE: docs/academy-students-api.md` - Documentación completa para frontend
+    *   `UPDATE: routes/api.php` - Agregadas rutas para gestión de estudiantes
+    *   `DELETE: app/Models/AcademyEnrollment.php` - Eliminado modelo obsoleto
+    *   `DELETE: app/Enums/EnrollmentStatus.php` - Eliminado enum obsoleto
+*   **Nueva tabla `academy_students`:**
+    *   `id` - Identificador único
+    *   `academy_id` - FK a academias (cascade on delete)
+    *   `name` - Nombre completo del estudiante (max 200)
+    *   `age` - Edad del estudiante (1-120)
+    *   `status` - Estado: solvente/insolvente (default: solvente)
+    *   `timestamps` - created_at, updated_at
+*   **Endpoints implementados:**
+    *   `GET /api/v1/academies/{academy}/students` - Listar estudiantes (paginado, filtro por status)
+    *   `POST /api/v1/academies/{academy}/students` - Crear estudiante
+    *   `PUT /api/v1/academies/{academy}/students/{student}` - Actualizar estudiante
+    *   `DELETE /api/v1/academies/{academy}/students/{student}` - Eliminar estudiante
+*   **Autorización:**
+    *   Instructor: Solo puede gestionar estudiantes de su propia academia
+    *   Administrador: Puede gestionar estudiantes de todas las academias
+*   **Validaciones:**
+    *   Nombre: requerido, max 200 caracteres
+    *   Edad: requerida, entero entre 1 y 120
+    *   Status: opcional, valores: solvente o insolvente
+*   **Características:**
+    *   Estudiantes externos (no usuarios del sistema, sin acceso al sistema)
+    *   Control de solvencia por estudiante
+    *   Filtrado por status en listado
+    *   Paginación configurable
+    *   Documentación completa con ejemplos para frontend
+*   **Tabla deprecada:**
+    *   `academy_enrollments` eliminada (reemplazada por academy_students)
+    *   Modelo `AcademyEnrollment` eliminado
+    *   Enum `EnrollmentStatus` eliminado
+
+---
+
 ### [2025-01-27 17:15:00] - FIX: Corregir error "Attempt to assign property 'pivot' on null" en Resources
 *   **Acción:** Agregada validación para evitar error cuando entityFile->file es null en AcademyResource y AreaResource.
 *   **Archivos Modificados:**
