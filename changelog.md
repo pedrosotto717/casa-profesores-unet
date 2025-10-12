@@ -7,6 +7,56 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
 
 ---
 
+### [2025-01-27 15:45:00] - FEAT: Implementar filtro de búsqueda 'q' en endpoints de archivos
+*   **Acción:** Agregado filtro de búsqueda por parámetro 'q' en los endpoints de listado de archivos para permitir búsqueda por título, nombre original y descripción.
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Models/File.php` - Agregado scope search() para búsqueda en title, original_filename y description
+    *   `UPDATE: app/Http/Controllers/UploadController.php` - Implementado filtro 'q' en métodos index() y publicIndex()
+*   **Funcionalidad agregada:**
+    *   Parámetro `q` disponible en `GET /api/v1/uploads` y `GET /api/v1/uploads/public`
+    *   Búsqueda por coincidencia parcial (LIKE) en campos: title, original_filename, description
+    *   Compatible con filtros existentes (file_type, per_page)
+
+### [2025-01-27 15:30:00] - REFACTOR: Reorganizar endpoints de archivos para separar acceso público y autenticado
+*   **Acción:** Reorganización de endpoints de archivos para separar el acceso público del autenticado, moviendo endpoints principales dentro del middleware auth:sanctum y creando endpoint específico para archivos públicos.
+*   **Archivos Modificados:**
+    *   `UPDATE: routes/api.php` - Reorganizadas rutas de archivos: movidas GET /uploads y GET /uploads/{id} dentro de auth:sanctum, creada nueva ruta GET /uploads/public
+    *   `UPDATE: app/Http/Controllers/UploadController.php` - Agregado nuevo método publicIndex() para consultar solo archivos públicos sin autenticación
+*   **Endpoints reorganizados:**
+    *   `GET /api/v1/uploads/public` - Nuevo endpoint público para archivos con visibilidad 'publico' (sin autenticación)
+    *   `GET /api/v1/uploads` - Movido dentro de auth:sanctum, acceso completo según rol del usuario
+    *   `GET /api/v1/uploads/{id}` - Movido dentro de auth:sanctum, control de visibilidad por archivo
+*   **Lógica de acceso:**
+    *   Endpoint público: solo archivos con visibility='publico'
+    *   Endpoint autenticado: archivos según rol (admin=all, user=public+private, no auth=public)
+
+### [2025-10-11 23:45:00] - FEAT: Implementar repositorio institucional simplificado con control de visibilidad
+*   **Acción:** Implementación simplificada del repositorio institucional usando endpoints existentes de UploadController con ajustes mínimos de autorización y visibilidad.
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Http/Controllers/UploadController.php` - Ajustados 4 métodos con control de visibilidad y autorización
+    *   `CREATE: database/migrations/2025_10_11_232605_drop_documents_table.php` - Migración para eliminar tabla documents
+    *   `CREATE: database/migrations/2025_10_11_232624_update_files_visibility_default.php` - Migración para cambiar default de visibility a 'privado'
+    *   `UPDATE: routes/api.php` - Limpiadas rutas innecesarias, mantenidas solo las existentes
+*   **Endpoints ajustados:**
+    *   `GET /api/v1/uploads` - Filtrado por visibilidad según autenticación
+    *   `GET /api/v1/uploads/{id}` - Control de visibilidad por archivo
+    *   `POST /api/v1/uploads` - Solo admin, validación MIME types específicos
+    *   `DELETE /api/v1/uploads/{id}` - Solo admin
+*   **Reglas de acceso implementadas:**
+    *   **Sin auth:** Solo archivos `visibility=publico`
+    *   **Con auth (no admin):** Archivos `publico` + `privado` (excluye `restringido`)
+    *   **Admin:** Acceso a todos los archivos
+    *   **Solo admin:** Puede crear/eliminar archivos
+*   **Validaciones:**
+    *   MIME types por file_type: documentos (PDF/DOC/DOCX), imágenes (JPEG/PNG/GIF/WebP)
+    *   Parámetro `visibility` opcional (default: `privado`)
+    *   Autorización admin requerida para operaciones de escritura
+*   **Base de datos:**
+    *   Tabla documents deprecada y eliminada
+    *   Default de visibility cambiado de 'publico' a 'privado'
+
+---
+
 ### [2025-01-27 11:15:00] - FEAT: Implementar endpoint para actualización de perfil personal
 *   **Acción:** Creado método `updateMe` que permite a los usuarios autenticados actualizar su propio perfil con restricciones de seguridad.
 *   **Archivos Modificados:**

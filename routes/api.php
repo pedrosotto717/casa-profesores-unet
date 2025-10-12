@@ -37,9 +37,8 @@ Route::prefix('v1')->group(function () {
     Route::get('/academies/{academy}', [AcademyController::class, 'show']);
     
     
-    // File upload public routes
-    Route::get('/uploads', [UploadController::class, 'index']);
-    Route::get('/uploads/{id}', [UploadController::class, 'show']);
+    // File upload public routes (only public files)
+    Route::get('/uploads/public', [UploadController::class, 'publicIndex']);
     
     // Public availability endpoint
     Route::get('/reservations/availability', [ReservationController::class, 'availability']);
@@ -67,6 +66,8 @@ Route::prefix('v1')->group(function () {
         Route::post('/reservations/{id}/cancel', [ReservationController::class, 'cancel']);
         
         // File upload protected routes
+        Route::get('/uploads', [UploadController::class, 'index']);
+        Route::get('/uploads/{id}', [UploadController::class, 'show']);
         Route::post('/uploads', [UploadController::class, 'store']);
         Route::delete('/uploads/{id}', [UploadController::class, 'destroy']);
         Route::post('/uploads/presign', [UploadController::class, 'presign']);

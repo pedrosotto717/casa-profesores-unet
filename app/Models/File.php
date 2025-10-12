@@ -51,7 +51,7 @@ final class File extends Model
             return '';
         }
         
-        return Storage::disk($this->storage_disk)->url($this->file_path);
+        return \App\Support\R2Storage::url($this->file_path);
     }
 
     /**
@@ -119,6 +119,18 @@ final class File extends Model
     public function scopeOnDisk($query, string $disk)
     {
         return $query->where('storage_disk', $disk);
+    }
+
+    /**
+     * Scope for searching files by title, original filename, or description.
+     */
+    public function scopeSearch($query, string $searchTerm)
+    {
+        return $query->where(function ($q) use ($searchTerm) {
+            $q->where('title', 'LIKE', "%{$searchTerm}%")
+              ->orWhere('original_filename', 'LIKE', "%{$searchTerm}%")
+              ->orWhere('description', 'LIKE', "%{$searchTerm}%");
+        });
     }
 
     /**
