@@ -7,6 +7,19 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
 
 ---
 
+### [2025-01-27 17:15:00] - FIX: Corregir error "Attempt to assign property 'pivot' on null" en Resources
+*   **Acción:** Agregada validación para evitar error cuando entityFile->file es null en AcademyResource y AreaResource.
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Http/Resources/AcademyResource.php` - Agregado filtro para excluir entityFiles con file null
+    *   `UPDATE: app/Http/Resources/AreaResource.php` - Agregado filtro para excluir entityFiles con file null
+*   **Cambios realizados:**
+    *   Filtro `->filter(function ($entityFile) { return $entityFile->file !== null; })` antes del map
+    *   Previene error "Attempt to assign property 'pivot' on null"
+    *   Solo procesa entityFiles que tienen archivos válidos asociados
+*   **Propósito:** Resolver error crítico que ocurría cuando se intentaba acceder a archivos eliminados o con relaciones rotas.
+
+---
+
 ### [2025-01-27 17:00:00] - CLEANUP: Limpieza de logs excesivos en servicios
 *   **Acción:** Eliminados logs excesivos de debugging en AreaService y AcademyService, manteniendo solo la funcionalidad esencial sin saturar los logs del sistema.
 *   **Archivos Modificados:**
