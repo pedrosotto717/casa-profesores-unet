@@ -52,27 +52,11 @@ final class AcademyService
     public function create(array $data, array $images = [], array $schedules = [], int $userId = null): Academy
     {
         return DB::transaction(function () use ($data, $images, $schedules, $userId) {
-            Log::info('AcademyService - Creating academy:', [
-                'data' => $data,
-                'images_count' => count($images),
-                'schedules_count' => count($schedules),
-                'user_id' => $userId,
-            ]);
-
             $academy = Academy::create($data);
 
             // Handle image uploads
             if (!empty($images) && $userId) {
-                Log::info('AcademyService - Attaching images:', [
-                    'academy_id' => $academy->id,
-                    'images_count' => count($images),
-                ]);
                 $this->attachImages($academy, $images, $userId);
-            } else {
-                Log::info('AcademyService - No images to attach:', [
-                    'images_empty' => empty($images),
-                    'user_id_provided' => $userId !== null,
-                ]);
             }
 
             // Handle schedules
@@ -155,19 +139,7 @@ final class AcademyService
     {
         $sortOrder = $academy->entityFiles()->max('sort_order') ?? 0;
 
-        Log::info('AcademyService - attachImages started:', [
-            'academy_id' => $academy->id,
-            'images_count' => count($images),
-            'sort_order' => $sortOrder,
-        ]);
-
         foreach ($images as $index => $image) {
-            Log::info('AcademyService - Processing image:', [
-                'index' => $index,
-                'is_uploaded_file' => $image instanceof UploadedFile,
-                'original_name' => $image instanceof UploadedFile ? $image->getClientOriginalName() : 'N/A',
-            ]);
-
             if ($image instanceof UploadedFile) {
                 $fileRecord = R2Storage::putPublicWithRecord(
                     $image,
@@ -177,26 +149,12 @@ final class AcademyService
                     "Image for academy: {$academy->name}"
                 );
 
-                Log::info('AcademyService - File record created:', [
-                    'file_id' => $fileRecord->getKey(),
-                    'file_title' => $fileRecord->title,
-                ]);
-
                 $entityFile = EntityFile::create([
                     'entity_type' => 'Academy',
                     'entity_id' => $academy->getKey(),
                     'file_id' => $fileRecord->getKey(),
                     'sort_order' => $sortOrder + $index + 1,
                     'is_cover' => $index === 0 && $academy->entityFiles()->count() === 0, // First image is cover if no existing images
-                ]);
-
-                Log::info('AcademyService - EntityFile created:', [
-                    'entity_file_id' => $entityFile->id,
-                    'entity_type' => $entityFile->entity_type,
-                    'entity_id' => $entityFile->entity_id,
-                    'file_id' => $entityFile->file_id,
-                    'sort_order' => $entityFile->sort_order,
-                    'is_cover' => $entityFile->is_cover,
                 ]);
             }
         }

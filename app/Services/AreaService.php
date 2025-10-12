@@ -11,6 +11,7 @@ use App\Support\R2Storage;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 final class AreaService
@@ -152,7 +153,7 @@ final class AreaService
                     "Image for area: {$area->name}"
                 );
 
-                EntityFile::create([
+                $entityFile = EntityFile::create([
                     'entity_type' => 'Area',
                     'entity_id' => $area->getKey(),
                     'file_id' => $fileRecord->getKey(),

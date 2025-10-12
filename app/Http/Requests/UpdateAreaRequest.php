@@ -23,7 +23,7 @@ final class UpdateAreaRequest extends FormRequest
         $areaId = $this->route('area')->id;
 
         return [
-            'name' => ['required', 'string', 'max:150', Rule::unique('areas', 'name')->ignore($areaId)],
+            'name' => ['string', 'max:150'],
             'slug' => ['nullable', 'string', 'max:180', Rule::unique('areas', 'slug')->ignore($areaId)],
             'description' => ['nullable', 'string'],
             'capacity' => ['nullable', 'integer', 'min:1'],
