@@ -7,6 +7,64 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
 
 ---
 
+### [2025-01-27 17:00:00] - CLEANUP: Limpieza de logs excesivos en servicios
+*   **Acción:** Eliminados logs excesivos de debugging en AreaService y AcademyService, manteniendo solo la funcionalidad esencial sin saturar los logs del sistema.
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Services/AreaService.php` - Removidos logs detallados de update(), attachImages(), detachImages() y deleteAllImages()
+    *   `UPDATE: app/Services/AcademyService.php` - Removidos logs detallados de create() y attachImages()
+*   **Cambios realizados:**
+    *   Eliminados Log::info() excesivos que generaban ruido en los logs
+    *   Mantenida funcionalidad completa sin logs de debugging
+    *   Código más limpio y legible
+    *   Mejor rendimiento al reducir operaciones de logging
+*   **Propósito:** Limpiar el código de logs innecesarios para mejorar la mantenibilidad y reducir el ruido en los logs del sistema.
+
+---
+
+### [2025-01-27 16:45:00] - FIX: Ajustar rutas de actualización para compatibilidad con frontend
+*   **Acción:** Corregido desajuste entre rutas del backend y frontend, cambiando a POST directo en la ruta del recurso y agregando endpoint de prueba.
+*   **Archivos Modificados:**
+    *   `UPDATE: routes/api.php` - Ajustadas rutas de actualización para ser más RESTful y compatibles
+    *   `UPDATE: app/Http/Controllers/Api/V1/AreaController.php` - Agregados logs de autenticación y endpoint de prueba
+*   **Cambios realizados:**
+    *   Rutas finales: `POST /api/v1/areas/{area}` para actualización
+    *   Rutas finales: `POST /api/v1/academies/{academy}` para actualización
+    *   Agregado endpoint de prueba: `POST /api/v1/areas/{area}/test`
+    *   Logs adicionales: user_id, user_authenticated, user_role
+    *   Cache de rutas limpiado para aplicar cambios
+*   **Propósito:** Resolver error "The POST method is not supported for route api/v1/areas/20" del frontend, asegurando compatibilidad total.
+
+---
+
+### [2025-01-27 16:30:00] - FIX: Corregir endpoints de actualización y cambiar verbo HTTP a POST
+*   **Acción:** Cambiado verbo HTTP de PUT a POST para endpoints de actualización y agregados logs detallados para diagnosticar problemas con datos vacíos.
+*   **Archivos Modificados:**
+    *   `UPDATE: routes/api.php` - Cambiadas rutas de PUT a POST para actualización de áreas y academias
+    *   `UPDATE: app/Http/Controllers/Api/V1/AreaController.php` - Agregados logs detallados en método update() para debug
+    *   `UPDATE: app/Http/Controllers/Api/V1/AcademyController.php` - Agregados logs detallados en método update() para debug
+*   **Cambios realizados:**
+    *   Rutas cambiadas: `PUT /areas/{area}` → `POST /areas/{area}/update`
+    *   Rutas cambiadas: `PUT /academies/{academy}` → `POST /academies/{academy}/update`
+    *   Logs de request method, content-type, has_files, all_input y validated_data
+    *   Logs de datos extraídos (data, images_count, remove_file_ids, schedules_count)
+*   **Propósito:** Resolver problema donde los datos llegaban vacíos al endpoint de actualización, posiblemente relacionado con el manejo de multipart/form-data en PUT requests.
+
+### [2025-01-27 16:15:00] - ENHANCEMENT: Agregar logs detallados para el sistema de imágenes en áreas
+*   **Acción:** Implementado sistema de logging completo para el guardado, actualización y recuperación de imágenes en el sistema de áreas, similar al ya existente en academias.
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Services/AreaService.php` - Agregados logs detallados en métodos create(), update(), attachImages(), detachImages() y deleteAllImages()
+    *   `UPDATE: app/Http/Controllers/Api/V1/AreaController.php` - Agregados logs de debug en método show() para verificar carga de imágenes
+*   **Funcionalidad agregada:**
+    *   Logs de creación de áreas con conteo de imágenes y schedules
+    *   Logs detallados del proceso de adjuntar imágenes (archivo por archivo)
+    *   Logs de creación de registros File y EntityFile
+    *   Logs de eliminación de imágenes con verificación de referencias
+    *   Logs de debug en recuperación de imágenes para diagnóstico
+    *   Importación de Log facade en ambos archivos
+*   **Propósito:** Facilitar el diagnóstico de problemas con el guardado y recuperación de imágenes en áreas, permitiendo rastrear cada paso del proceso.
+
+---
+
 ### [2025-01-27 15:45:00] - FEAT: Implementar filtro de búsqueda 'q' en endpoints de archivos
 *   **Acción:** Agregado filtro de búsqueda por parámetro 'q' en los endpoints de listado de archivos para permitir búsqueda por título, nombre original y descripción.
 *   **Archivos Modificados:**

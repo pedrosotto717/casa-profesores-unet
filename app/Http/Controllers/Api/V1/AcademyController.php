@@ -29,12 +29,6 @@ final class AcademyController extends Controller
         $filters = $request->only(['search', 'status', 'lead_instructor_id']);
         $academies = $this->academyService->getAll($filters);
         
-        // Debug logging for index
-        Log::info('Academy index - Service returned:', [
-            'academies_count' => $academies->count(),
-            'first_academy_entity_files' => $academies->first() ? $academies->first()->entityFiles->count() : 0,
-        ]);
-
         return response()->json([
             'data' => AcademyResource::collection($academies),
             'meta' => [
@@ -100,10 +94,26 @@ final class AcademyController extends Controller
      */
     public function update(UpdateAcademyRequest $request, Academy $academy): JsonResponse
     {
+        Log::info('AcademyController - update method called:', [
+            'academy_id' => $academy->id,
+            'request_method' => $request->method(),
+            'content_type' => $request->header('Content-Type'),
+            'has_files' => $request->hasFile('images'),
+            'all_input' => $request->all(),
+            'validated_data' => $request->validated(),
+        ]);
+
         $data = $request->validated();
         $images = $request->file('images', []);
         $removeFileIds = $request->input('remove_file_ids', []);
         $schedules = $request->input('schedules', []);
+
+        Log::info('AcademyController - extracted data:', [
+            'data' => $data,
+            'images_count' => count($images),
+            'remove_file_ids' => $removeFileIds,
+            'schedules_count' => count($schedules),
+        ]);
 
         $academy = $this->academyService->update($academy, $data, $images, $removeFileIds, $schedules, $request->user()->id);
 

@@ -93,12 +93,13 @@ Route::prefix('v1')->group(function () {
             
             // Areas CRUD
             Route::post('/areas', [AreaController::class, 'store']);
-            Route::put('/areas/{area}', [AreaController::class, 'update']);
+            Route::post('/areas/{area}', [AreaController::class, 'update']);
+            Route::post('/areas/{area}/test', [AreaController::class, 'testUpdate']);
             Route::delete('/areas/{area}', [AreaController::class, 'destroy']);
             
             // Academies CRUD
             Route::post('/academies', [AcademyController::class, 'store']);
-            Route::put('/academies/{academy}', [AcademyController::class, 'update']);
+            Route::post('/academies/{academy}', [AcademyController::class, 'update']);
             Route::delete('/academies/{academy}', [AcademyController::class, 'destroy']);
             
             // Reservations management (admin only)
