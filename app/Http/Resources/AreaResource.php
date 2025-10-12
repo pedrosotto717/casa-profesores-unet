@@ -21,7 +21,9 @@ final class AreaResource extends JsonResource
             'is_reservable' => $this->is_reservable,
             'is_active' => $this->is_active,
             'images' => ImageResource::collection($this->whenLoaded('entityFiles', function () {
-                return $this->entityFiles->map(function ($entityFile) {
+                return $this->entityFiles->filter(function ($entityFile) {
+                    return $entityFile->file !== null;
+                })->map(function ($entityFile) {
                     $file = $entityFile->file;
                     $file->pivot = $entityFile; // Attach pivot data to file
                     return $file;
