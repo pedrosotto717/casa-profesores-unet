@@ -18,6 +18,13 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
     *   `DELETE /api/v1/academies/{academy}/students/{student}` - Solo admin e instructor
 *   **Middleware usado:** `role:administrador,instructor` (roles del enum UserRole)
 *   **Comportamiento:** Usuarios con otros roles recibirán 403 Forbidden
+
+### [2024-12-19 16:45:00] - CONFIG: CORS Configuration File
+*   **Acción:** Creación del archivo de configuración CORS para personalizar las políticas de Cross-Origin Resource Sharing.
+*   **Archivos Modificados:**
+    *   `CREATE: config/cors.php` - Configuración personalizada de CORS con valores por defecto seguros
+    *   `UPDATE: config/cors.php` - Configuración de orígenes CORS desde variables de entorno
+    *   `CREATE: docs/cors-configuration.md` - Documentación de configuración CORS con variables de entorno
 *   **Propósito:** Garantizar que solo administradores e instructores puedan gestionar las listas de estudiantes de las academias.
 
 ---
