@@ -76,6 +76,7 @@ Route::prefix('v1')->group(function () {
         // Users listing (administrador and profesor only)
         Route::middleware('role:administrador,profesor')->group(function () {
             Route::get('/users', [UserController::class, 'index']);
+            Route::get('/invitations', [InvitationController::class, 'index']);
         });
         
         // Academy students management (instructor and admin only)
@@ -99,7 +100,6 @@ Route::prefix('v1')->group(function () {
             Route::get('/admin/pending-registrations', [UserController::class, 'pendingRegistrations']);
             
             // Invitations management (admin only)
-            Route::get('/invitations', [InvitationController::class, 'index']);
             Route::get('/invitations/pending', [InvitationController::class, 'pending']);
             Route::put('/invitations/{id}/approve', [InvitationController::class, 'approve']);
             Route::put('/invitations/{id}/reject', [InvitationController::class, 'reject']);

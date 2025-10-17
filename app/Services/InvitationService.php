@@ -215,13 +215,19 @@ final class InvitationService
     }
 
     /**
-     * Get all invitations (admin only).
+     * Get all invitations (admin sees all, professor sees only their own).
      */
-    public function getAllInvitations(): \Illuminate\Database\Eloquent\Collection
+    public function getAllInvitations(User $user): \Illuminate\Database\Eloquent\Collection
     {
-        return Invitation::with(['inviterUser', 'reviewedBy'])
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $query = Invitation::with(['inviterUser', 'reviewedBy'])
+            ->orderBy('created_at', 'desc');
+
+        // If user is not an admin, only show invitations they created
+        if ($user->role !== UserRole::Administrador) {
+            $query->where('inviter_user_id', $user->id);
+        }
+
+        return $query->get();
     }
 
     /**

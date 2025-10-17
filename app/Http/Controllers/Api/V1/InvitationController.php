@@ -37,11 +37,11 @@ final class InvitationController extends Controller
     }
 
     /**
-     * Get all invitations (admin only).
+     * Get all invitations (admin sees all, professor sees only their own).
      */
     public function index(Request $request): JsonResponse
     {
-        $invitations = $this->invitationService->getAllInvitations();
+        $invitations = $this->invitationService->getAllInvitations($request->user());
 
         return response()->json([
             'success' => true,
