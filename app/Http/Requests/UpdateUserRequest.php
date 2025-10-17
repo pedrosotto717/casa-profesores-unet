@@ -39,8 +39,6 @@ final class UpdateUserRequest extends FormRequest
             'role' => ['sometimes', 'string', Rule::in($validRoles)],
             'status' => ['sometimes', 'string', Rule::in($validStatuses)],
             'password' => ['nullable', 'string', 'min:8', 'max:255'],
-            'is_solvent' => ['nullable', 'boolean'],
-            'solvent_until' => ['nullable', 'date', 'after_or_equal:today'],
             'responsible_email' => ['sometimes', 'nullable', 'email', 'max:180'],
         ];
     }
@@ -60,11 +58,8 @@ final class UpdateUserRequest extends FormRequest
             'role.in' => 'El rol seleccionado no es válido.',
             'status.in' => 'El estado seleccionado no es válido.',
             'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
-            'solvent_until.date' => 'La fecha de solvencia debe ser una fecha válida.',
-            'solvent_until.after_or_equal' => 'La fecha de solvencia no puede ser anterior a hoy.',
             'responsible_email.email' => 'El formato del correo electrónico responsable no es válido.',
             'responsible_email.max' => 'El correo electrónico responsable no puede exceder los 180 caracteres.',
-            'responsible_email.exists' => 'El correo electrónico responsable debe corresponder a un usuario existente.',
         ];
     }
 
@@ -81,8 +76,6 @@ final class UpdateUserRequest extends FormRequest
             'role' => 'rol',
             'status' => 'estado',
             'password' => 'contraseña',
-            'is_solvent' => 'estado de solvencia',
-            'solvent_until' => 'fecha de solvencia',
             'responsible_email' => 'correo electrónico responsable',
         ];
     }
