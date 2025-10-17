@@ -89,7 +89,7 @@ final class UserService
                 'role' => UserRole::from($data['role']),
                 'password' => isset($data['password']) ? Hash::make($data['password']) : null,
                 'status' => $status,
-                'solvent_until' => $data['solvent_until'] ?? null,
+                'responsible_email' => $data['responsible_email'] ?? null,
             ]);
 
             // Audit log for user creation
@@ -99,7 +99,7 @@ final class UserService
                 'email' => $user->email,
                 'role' => $user->role->value,
                 'status' => $user->status->value,
-                'solvent_until' => $user->solvent_until?->toDateString(),
+                'responsible_email' => $user->responsible_email,
                 'created_at' => $user->created_at->toIso8601String(),
                 'updated_at' => $user->updated_at->toIso8601String(),
             ]);
@@ -173,12 +173,6 @@ final class UserService
                 }
             }
 
-            // Handle solvency date
-            if (isset($data['solvent_until'])) {
-                $user->solvent_until = $data['solvent_until'];
-                $changes['solvent_until'] = $data['solvent_until'];
-            }
-
             $user->save();
             $after = $this->getUserSnapshot($user);
 
@@ -215,11 +209,11 @@ final class UserService
                     $this->logUserAction($adminUserId, $user->id, 'user_status_changed',
                         [
                             'status' => $before['status'],
-                            'solvent_until' => $before['solvent_until']
+                            'responsible_email' => $before['responsible_email']
                         ],
                         [
                             'status' => $after['status'],
-                            'solvent_until' => $after['solvent_until']
+                            'responsible_email' => $after['responsible_email']
                         ]
                     );
 
@@ -252,17 +246,12 @@ final class UserService
     }
 
     /**
-     * Calculate solvency based on provided values.
+     * Calculate solvency based on user status.
      */
-    private function calculateSolvency(?bool $isSolvent, ?string $solventUntil): bool
+    private function calculateSolvency(UserStatus $status): bool
     {
-        // If solvent_until is provided, calculate based on date
-        if ($solventUntil !== null) {
-            return now()->toDateString() <= $solventUntil;
-        }
-
-        // Otherwise, use the provided is_solvent value or default to false
-        return $isSolvent ?? false;
+        // User is solvent only if status is 'solvente'
+        return $status === UserStatus::Solvente;
     }
 
     /**
@@ -294,7 +283,6 @@ final class UserService
             'status' => $user->status->value,
             'aspired_role' => $user->aspired_role?->value,
             'responsible_email' => $user->responsible_email,
-            'solvent_until' => $user->solvent_until?->toDateString(),
             'updated_at' => $user->updated_at->toIso8601String(),
         ];
     }

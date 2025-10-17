@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\DocumentVisibility;
+use App\Enums\UserRole;
 use App\Http\Resources\FileResource;
 use App\Models\File;
 use App\Support\R2Storage;
@@ -473,14 +475,14 @@ final class UploadController extends Controller
             }
             
             // Apply visibility filters based on authentication and role
-            if (!$user) {
+            if (!$user 
+                || ($user->role !== UserRole::Administrador && $user->role !== UserRole::Profesor)) {
                 // No auth: only public files
-                $query->where('visibility', 'publico');
-            } elseif ($user->role->value !== 'administrador') {
+                $query->where('visibility', DocumentVisibility::Publico->value);
+            } else {
                 // Authenticated but not admin: public + private (exclude restricted)
-                $query->whereIn('visibility', ['publico', 'privado']);
+                $query->whereIn('visibility', [DocumentVisibility::Publico->value, DocumentVisibility::Privado->value]);
             }
-            // Admin: no visibility filter (can see all)
             
             $files = $query->orderBy('created_at', 'desc')->paginate($perPage);
             
