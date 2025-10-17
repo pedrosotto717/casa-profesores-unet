@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
@@ -24,7 +25,13 @@ final class UserController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        $authenticatedUser = $request->user();
+        
         $users = User::query()
+            // Filter by responsible_email for professors
+            ->when($authenticatedUser->role == UserRole::Profesor, function ($query) use ($authenticatedUser) {
+                $query->where('responsible_email', $authenticatedUser->email);
+            })
             ->when($request->has('search'), function ($query) use ($request) {
                 $search = $request->get('search');
                 $query->where(function ($q) use ($search) {

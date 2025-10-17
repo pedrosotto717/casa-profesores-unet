@@ -46,7 +46,6 @@ Route::prefix('v1')->group(function () {
     
     // Protected routes (authentication required)
     Route::middleware('auth:sanctum')->group(function () {
-        Route::get('/users', [UserController::class, 'index']);
         Route::get('/users/{user}', [UserController::class, 'show']);
         Route::post('/logout', [AuthenticationController::class, 'logout']);
         
@@ -73,6 +72,11 @@ Route::prefix('v1')->group(function () {
         Route::delete('/uploads/{id}', [UploadController::class, 'destroy']);
         Route::post('/uploads/presign', [UploadController::class, 'presign']);
         Route::put('/users/me', [UserController::class, 'updateMe']);
+        
+        // Users listing (administrador and profesor only)
+        Route::middleware('role:administrador,profesor')->group(function () {
+            Route::get('/users', [UserController::class, 'index']);
+        });
         
         // Academy students management (instructor and admin only)
         Route::middleware('role:administrador,instructor')->prefix('academies/{academy}')->group(function () {

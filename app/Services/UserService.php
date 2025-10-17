@@ -133,6 +133,11 @@ final class UserService
                 $changes['email'] = $data['email'];
             }
 
+            if (isset($data['responsible_email'])) {
+                $user->responsible_email = $data['responsible_email'];
+                $changes['responsible_email'] = $data['responsible_email'];
+            }
+
             if (isset($data['role'])) {
                 $oldRole = $user->role;
                 $user->role = UserRole::from($data['role']);
