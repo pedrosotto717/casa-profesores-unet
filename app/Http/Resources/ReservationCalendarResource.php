@@ -20,6 +20,14 @@ final class ReservationCalendarResource extends JsonResource
             'title' => $this->title,
             'starts_at' => $this->starts_at->toIso8601String(),
             'ends_at' => $this->ends_at->toIso8601String(),
+            'status' => $this->status->value,
+            'status_label' => $this->getStatusLabel($this->status->value),
+            'area' => [
+                'id' => $this->area->id,
+                'name' => $this->area->name,
+                'capacity' => $this->area->capacity,
+                'is_reservable' => $this->area->is_reservable,
+            ],
         ];
     }
 }

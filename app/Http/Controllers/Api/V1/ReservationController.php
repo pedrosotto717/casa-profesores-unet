@@ -82,15 +82,10 @@ final class ReservationController extends Controller
 
         // Order by creation date (newest first)
         $query->orderBy('created_at', 'desc');
-
         $reservations = $query->paginate($request->get('per_page', 15));
 
-        // Return different resources based on user role
-        if ($user->role->value === 'administrador') {
-            return ReservationResource::collection($reservations);
-        } else {
-            return ReservationCalendarResource::collection($reservations);
-        }
+
+        return ReservationResource::collection($reservations);
     }
 
     /**
