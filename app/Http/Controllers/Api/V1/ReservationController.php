@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CancelReservationRequest;
 use App\Http\Requests\GetAvailabilityRequest;
@@ -9,6 +10,7 @@ use App\Http\Requests\RejectReservationRequest;
 use App\Http\Requests\StoreReservationRequest;
 use App\Http\Requests\UpdateReservationRequest;
 use App\Http\Resources\ReservationResource;
+use App\Http\Resources\ReservationCalendarResource;
 use App\Models\Reservation;
 use App\Services\ReservationService;
 use Illuminate\Http\JsonResponse;
@@ -18,7 +20,7 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 final class ReservationController extends Controller
 {
     public function __construct(
-        private readonly ReservationService $reservationService
+        private ReservationService $reservationService
     ) {}
 
     /**
@@ -49,9 +51,7 @@ final class ReservationController extends Controller
         $query = Reservation::with(['requester', 'area', 'approver']);
 
         // If user is not admin, only show their own reservations
-        if ($user->role->value !== 'administrador') {
-            $query->byUser($user->id);
-        } else {
+        if ($user->role == UserRole::Administrador) {
             // Admin can apply filters
             if ($request->has('user_id')) {
                 $query->byUser($request->user_id);
@@ -85,7 +85,12 @@ final class ReservationController extends Controller
 
         $reservations = $query->paginate($request->get('per_page', 15));
 
-        return ReservationResource::collection($reservations);
+        // Return different resources based on user role
+        if ($user->role->value === 'administrador') {
+            return ReservationResource::collection($reservations);
+        } else {
+            return ReservationCalendarResource::collection($reservations);
+        }
     }
 
     /**
