@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "ce23aa5d-6ec8-4ea2-a39f-5596495fb82b",
 		"name": "CPU",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
 		"_exporter_id": "30755954",
 		"_collection_link": "https://team01-6016.postman.co/workspace/Pedro~c0ef9c01-f978-40d1-a834-6e855fc02d2d/collection/30755954-ce23aa5d-6ec8-4ea2-a39f-5596495fb82b?action=share&source=collection_link&creator=30755954"
 	},
@@ -15,13 +15,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "6|wtQCuD4R1RRRGWb1bT5TFlGi3NXGyqcCs9pU8qAX43bc7779",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "6|wtQCuD4R1RRRGWb1bT5TFlGi3NXGyqcCs9pU8qAX43bc7779"
+							}
 						},
 						"method": "POST",
 						"header": [
@@ -51,17 +47,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "{{cpu_url}}/api/v1/users",
-							"host": [
-								"{{cpu_url}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"users"
-							]
-						}
+						"url": "{{cpu_url}}/api/v1/users"
 					},
 					"response": []
 				},
@@ -70,13 +56,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "2|xPFImC80VVe8n7hvZ7hYwK2geQpnMjiKhxrcz7jicb7e984f",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "2|xPFImC80VVe8n7hvZ7hYwK2geQpnMjiKhxrcz7jicb7e984f"
+							}
 						},
 						"method": "PUT",
 						"header": [
@@ -99,7 +81,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    // \"name\": \"Pedro Soto\",\r\n    // \"email\": \"sotto18a2000@gmail.com\",\r\n    // \"password\": \"00000000\",\r\n    // \"role\": \"profesor\",\r\n    \"status\": \"solvente\"\r\n}",
+							"raw": "{\r\n    // \"name\": \"Pedro Soto\",\r\n    // \"email\": \"sotto18a2000@gmail.com\",\r\n    // \"password\": \"00000000\",\r\n    // \"role\": \"profesor\",\r\n    \"status\": \"solvente\"\r\n\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -120,7 +102,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "3"
+									"value": ""
 								}
 							]
 						}
@@ -128,10 +110,54 @@
 					"response": []
 				},
 				{
+					"name": "Update Me",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "2|xPFImC80VVe8n7hvZ7hYwK2geQpnMjiKhxrcz7jicb7e984f"
+							}
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Pedro Soto\",\r\n    \"email\": \"sotto18a2000@gmail.com\",\r\n    \"password\": \"00000000\",\r\n    \"current_password\": \"0000000000\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{cpu_url}}/api/v1/users/me"
+					},
+					"response": []
+				},
+				{
 					"name": "GET All Users",
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": {
+								"token": "6|USktAMKsiyVeoLhuufkinsLm0ZGxZvvtqsTmwXfD07b2b289"
+							}
 						},
 						"method": "GET",
 						"header": [
@@ -153,7 +179,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{cpu_url}}/api/v1/users?role=invitado",
+							"raw": "{{cpu_url}}/api/v1/users",
 							"host": [
 								"{{cpu_url}}"
 							],
@@ -170,7 +196,8 @@
 								},
 								{
 									"key": "role",
-									"value": "invitado"
+									"value": "invitado",
+									"disabled": true
 								}
 							]
 						}
@@ -198,17 +225,7 @@
 										"disabled": true
 									}
 								],
-								"url": {
-									"raw": "{{cpu_url}}/api/v1/users",
-									"host": [
-										"{{cpu_url}}"
-									],
-									"path": [
-										"api",
-										"v1",
-										"users"
-									]
-								}
+								"url": "{{cpu_url}}/api/v1/users"
 							},
 							"status": "OK",
 							"code": 200,
@@ -261,13 +278,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "2|xPFImC80VVe8n7hvZ7hYwK2geQpnMjiKhxrcz7jicb7e984f",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "2|xPFImC80VVe8n7hvZ7hYwK2geQpnMjiKhxrcz7jicb7e984f"
+							}
 						},
 						"method": "GET",
 						"header": [
@@ -335,17 +348,7 @@
 										"disabled": true
 									}
 								],
-								"url": {
-									"raw": "{{cpu_url}}/api/v1/users",
-									"host": [
-										"{{cpu_url}}"
-									],
-									"path": [
-										"api",
-										"v1",
-										"users"
-									]
-								}
+								"url": "{{cpu_url}}/api/v1/users"
 							},
 							"status": "OK",
 							"code": 200,
@@ -521,18 +524,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "{{cpu_url}}/api/v1/auth/register",
-							"host": [
-								"{{cpu_url}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"auth",
-								"register"
-							]
-						}
+						"url": "{{cpu_url}}/api/v1/auth/register"
 					},
 					"response": []
 				}
@@ -546,13 +538,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "17|rERAf78KygSeBV0L6ZWkwMGsW9rE6cfSP3Oz8Qtmb0b1931c",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "17|rERAf78KygSeBV0L6ZWkwMGsW9rE6cfSP3Oz8Qtmb0b1931c"
+							}
 						},
 						"method": "POST",
 						"header": [
@@ -583,17 +571,7 @@
 								}
 							]
 						},
-						"url": {
-							"raw": "{{cpu_url}}/api/v1/uploads",
-							"host": [
-								"{{cpu_url}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"uploads"
-							]
-						}
+						"url": "{{cpu_url}}/api/v1/uploads"
 					},
 					"response": [
 						{
@@ -628,17 +606,7 @@
 										}
 									]
 								},
-								"url": {
-									"raw": "{{cpu_url}}/api/v1/uploads",
-									"host": [
-										"{{cpu_url}}"
-									],
-									"path": [
-										"api",
-										"v1",
-										"uploads"
-									]
-								}
+								"url": "{{cpu_url}}/api/v1/uploads"
 							},
 							"status": "Created",
 							"code": 201,
@@ -697,7 +665,10 @@
 					},
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": {
+								"token": "6|IbK3PJyMCa8v1QPwXPsvPGgLRsoXAHM57LcPCPTUeef04ee1"
+							}
 						},
 						"method": "GET",
 						"header": [
@@ -727,17 +698,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "{{cpu_url}}/api/v1/uploads",
-							"host": [
-								"{{cpu_url}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"uploads"
-							]
-						}
+						"url": "{{cpu_url}}/api/v1/uploads"
 					},
 					"response": []
 				},
@@ -892,13 +853,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "1|Gt1FdYZnzQBRQbMlr3H72Bw3hwX9fQfkJRI91XnT30b8f769",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "1|Gt1FdYZnzQBRQbMlr3H72Bw3hwX9fQfkJRI91XnT30b8f769"
+							}
 						},
 						"method": "DELETE",
 						"header": [
@@ -960,13 +917,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "2|B1KTQJXvGzveWFvWjeWqw9A7SVqtsw4bVkFNChSNbb1aa2c0",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "2|B1KTQJXvGzveWFvWjeWqw9A7SVqtsw4bVkFNChSNbb1aa2c0"
+							}
 						},
 						"method": "POST",
 						"header": [
@@ -1018,17 +971,7 @@
 								}
 							]
 						},
-						"url": {
-							"raw": "{{cpu_url}}/api/v1/academies",
-							"host": [
-								"{{cpu_url}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"academies"
-							]
-						}
+						"url": "{{cpu_url}}/api/v1/academies"
 					},
 					"response": []
 				},
@@ -1037,13 +980,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "4|XpYXIUxXiv010Mg83Lb29xvm68uQO2QvAPS67qsTa16c2f9c",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "4|XpYXIUxXiv010Mg83Lb29xvm68uQO2QvAPS67qsTa16c2f9c"
+							}
 						},
 						"method": "PUT",
 						"header": [
@@ -1264,17 +1203,7 @@
 								"disabled": true
 							}
 						],
-						"url": {
-							"raw": "{{cpu_url}}/api/v1/academies",
-							"host": [
-								"{{cpu_url}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"academies"
-							]
-						}
+						"url": "{{cpu_url}}/api/v1/academies"
 					},
 					"response": []
 				},
@@ -1283,13 +1212,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "4|QTxvMxkejHAZjSTQP8r2Y0QkNR6xY1X9BYonm49Adeb6cb39",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "4|QTxvMxkejHAZjSTQP8r2Y0QkNR6xY1X9BYonm49Adeb6cb39"
+							}
 						},
 						"method": "DELETE",
 						"header": [
@@ -1341,13 +1266,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "2|B1KTQJXvGzveWFvWjeWqw9A7SVqtsw4bVkFNChSNbb1aa2c0",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "2|B1KTQJXvGzveWFvWjeWqw9A7SVqtsw4bVkFNChSNbb1aa2c0"
+							}
 						},
 						"method": "POST",
 						"header": [
@@ -1403,17 +1324,7 @@
 								}
 							]
 						},
-						"url": {
-							"raw": "{{cpu_url}}/api/v1/areas",
-							"host": [
-								"{{cpu_url}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"areas"
-							]
-						}
+						"url": "{{cpu_url}}/api/v1/areas"
 					},
 					"response": []
 				},
@@ -1422,13 +1333,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "2|B1KTQJXvGzveWFvWjeWqw9A7SVqtsw4bVkFNChSNbb1aa2c0",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "2|B1KTQJXvGzveWFvWjeWqw9A7SVqtsw4bVkFNChSNbb1aa2c0"
+							}
 						},
 						"method": "PUT",
 						"header": [
@@ -1526,17 +1433,42 @@
 					"response": []
 				},
 				{
+					"name": "GET Areas",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": "{{cpu_url}}/api/v1/areas"
+					},
+					"response": []
+				},
+				{
 					"name": "DELETE Area",
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "4|QTxvMxkejHAZjSTQP8r2Y0QkNR6xY1X9BYonm49Adeb6cb39",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "4|QTxvMxkejHAZjSTQP8r2Y0QkNR6xY1X9BYonm49Adeb6cb39"
+							}
 						},
 						"method": "DELETE",
 						"header": [
@@ -1588,13 +1520,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "5|VfiuUZWUTkzpIQVWmQPTwwAhaiFhePXqUe7QcVKoc7c86cd9",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "5|VfiuUZWUTkzpIQVWmQPTwwAhaiFhePXqUe7QcVKoc7c86cd9"
+							}
 						},
 						"method": "POST",
 						"header": [
@@ -1619,8 +1547,72 @@
 							"mode": "raw",
 							"raw": "{\r\n    \"peer_email\": \"pedro.soto@unet.edu.ve\"\r\n}"
 						},
+						"url": "{{cpu_url}}/api/v1/chat/conversations"
+					},
+					"response": []
+				},
+				{
+					"name": "GET Conversations",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "5|VfiuUZWUTkzpIQVWmQPTwwAhaiFhePXqUe7QcVKoc7c86cd9"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": "{{cpu_url}}/api/v1/chat/conversations"
+					},
+					"response": []
+				},
+				{
+					"name": "GET Messages",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "5|VfiuUZWUTkzpIQVWmQPTwwAhaiFhePXqUe7QcVKoc7c86cd9"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
 						"url": {
-							"raw": "{{cpu_url}}/api/v1/chat/conversations",
+							"raw": "{{cpu_url}}/api/v1/chat/conversations/:id/messages?limit=25",
 							"host": [
 								"{{cpu_url}}"
 							],
@@ -1628,7 +1620,141 @@
 								"api",
 								"v1",
 								"chat",
-								"conversations"
+								"conversations",
+								":id",
+								"messages"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "25"
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CREATE Message",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "5|VfiuUZWUTkzpIQVWmQPTwwAhaiFhePXqUe7QcVKoc7c86cd9"
+							}
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"body\": \"hello!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/chat/conversations/:id/messages",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"chat",
+								"conversations",
+								":id",
+								"messages"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "MARK Conversation as read",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "5|VfiuUZWUTkzpIQVWmQPTwwAhaiFhePXqUe7QcVKoc7c86cd9"
+							}
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"body\": \"hello!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/chat/conversations/:id/read",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"chat",
+								"conversations",
+								":id",
+								"read"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2"
+								}
 							]
 						}
 					},
@@ -1639,13 +1765,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "5|VfiuUZWUTkzpIQVWmQPTwwAhaiFhePXqUe7QcVKoc7c86cd9",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "5|VfiuUZWUTkzpIQVWmQPTwwAhaiFhePXqUe7QcVKoc7c86cd9"
+							}
 						},
 						"method": "GET",
 						"header": [
@@ -1687,6 +1809,170 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "GET Unread Conversations",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "5|VfiuUZWUTkzpIQVWmQPTwwAhaiFhePXqUe7QcVKoc7c86cd9"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": "{{cpu_url}}/api/v1/chat/unread/summary"
+					},
+					"response": []
+				},
+				{
+					"name": "GET Block Users",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "5|VfiuUZWUTkzpIQVWmQPTwwAhaiFhePXqUe7QcVKoc7c86cd9"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": "{{cpu_url}}/api/v1/chat/blocks"
+					},
+					"response": []
+				},
+				{
+					"name": "Block User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "5|VfiuUZWUTkzpIQVWmQPTwwAhaiFhePXqUe7QcVKoc7c86cd9"
+							}
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"blocked_user_id\": 3,\r\n    \"reason\": \"asasa\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{cpu_url}}/api/v1/chat/blocks"
+					},
+					"response": []
+				},
+				{
+					"name": "Unblock User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "5|VfiuUZWUTkzpIQVWmQPTwwAhaiFhePXqUe7QcVKoc7c86cd9"
+							}
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"blocked_user_id\": 3,\r\n    \"reason\": \"asasa\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{cpu_url}}/api/v1/chat/blocks/:id",
+							"host": [
+								"{{cpu_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"chat",
+								"blocks",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -1698,13 +1984,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "7|3ho20tqHCTh2IoPRfOjP42gnaPtBElhkVdQTsYoFed6b9bdc",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "7|3ho20tqHCTh2IoPRfOjP42gnaPtBElhkVdQTsYoFed6b9bdc"
+							}
 						},
 						"method": "POST",
 						"header": [
@@ -1729,17 +2011,7 @@
 							"mode": "raw",
 							"raw": "{\r\n  \"name\": \"Eduardo Castillo\",\r\n  \"email\": \"pedrosotto717@gmail.com\",\r\n  \"message\": \"\"\r\n}"
 						},
-						"url": {
-							"raw": "{{cpu_url}}/api/v1/invitations",
-							"host": [
-								"{{cpu_url}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"invitations"
-							]
-						}
+						"url": "{{cpu_url}}/api/v1/invitations"
 					},
 					"response": [
 						{
@@ -1768,17 +2040,7 @@
 									"mode": "raw",
 									"raw": "{\r\n  \"name\": \"Eduardo Castillo\",\r\n  \"email\": \"pedrosotto7177@gmail.com\",\r\n  \"message\": \"\"\r\n}"
 								},
-								"url": {
-									"raw": "{{cpu_url}}/api/v1/invitations",
-									"host": [
-										"{{cpu_url}}"
-									],
-									"path": [
-										"api",
-										"v1",
-										"invitations"
-									]
-								}
+								"url": "{{cpu_url}}/api/v1/invitations"
 							},
 							"status": "Created",
 							"code": 201,
@@ -1835,13 +2097,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "1|ryjdYJL3wOuZsrScDkUkuq09o0aKkKs6kgh6Y7Y5e4cbe2d8",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "1|ryjdYJL3wOuZsrScDkUkuq09o0aKkKs6kgh6Y7Y5e4cbe2d8"
+							}
 						},
 						"method": "PUT",
 						"header": [
@@ -1998,13 +2256,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "1|ryjdYJL3wOuZsrScDkUkuq09o0aKkKs6kgh6Y7Y5e4cbe2d8",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "1|ryjdYJL3wOuZsrScDkUkuq09o0aKkKs6kgh6Y7Y5e4cbe2d8"
+							}
 						},
 						"method": "PUT",
 						"header": [
@@ -2061,13 +2315,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "7|3ho20tqHCTh2IoPRfOjP42gnaPtBElhkVdQTsYoFed6b9bdc",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "7|3ho20tqHCTh2IoPRfOjP42gnaPtBElhkVdQTsYoFed6b9bdc"
+							}
 						},
 						"method": "GET",
 						"header": [
@@ -2088,17 +2338,7 @@
 								"disabled": true
 							}
 						],
-						"url": {
-							"raw": "{{cpu_url}}/api/v1/invitations",
-							"host": [
-								"{{cpu_url}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"invitations"
-							]
-						}
+						"url": "{{cpu_url}}/api/v1/invitations"
 					},
 					"response": [
 						{
@@ -2123,17 +2363,7 @@
 										"disabled": true
 									}
 								],
-								"url": {
-									"raw": "{{cpu_url}}/api/v1/invitations",
-									"host": [
-										"{{cpu_url}}"
-									],
-									"path": [
-										"api",
-										"v1",
-										"invitations"
-									]
-								}
+								"url": "{{cpu_url}}/api/v1/invitations"
 							},
 							"status": "OK",
 							"code": 200,
@@ -2190,13 +2420,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "1|ryjdYJL3wOuZsrScDkUkuq09o0aKkKs6kgh6Y7Y5e4cbe2d8",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "1|ryjdYJL3wOuZsrScDkUkuq09o0aKkKs6kgh6Y7Y5e4cbe2d8"
+							}
 						},
 						"method": "GET",
 						"header": [
@@ -2217,18 +2443,7 @@
 								"disabled": true
 							}
 						],
-						"url": {
-							"raw": "{{cpu_url}}/api/v1/invitations/pending",
-							"host": [
-								"{{cpu_url}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"invitations",
-								"pending"
-							]
-						}
+						"url": "{{cpu_url}}/api/v1/invitations/pending"
 					},
 					"response": [
 						{
@@ -2253,18 +2468,7 @@
 										"disabled": true
 									}
 								],
-								"url": {
-									"raw": "{{cpu_url}}/api/v1/invitations/pending",
-									"host": [
-										"{{cpu_url}}"
-									],
-									"path": [
-										"api",
-										"v1",
-										"invitations",
-										"pending"
-									]
-								}
+								"url": "{{cpu_url}}/api/v1/invitations/pending"
 							},
 							"status": "OK",
 							"code": 200,
@@ -2326,13 +2530,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "3|wBRCzxlsKWr2dAMLBysPuVt0a47QyepU6uekg3t5d3771cd3",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "3|wBRCzxlsKWr2dAMLBysPuVt0a47QyepU6uekg3t5d3771cd3"
+							}
 						},
 						"method": "POST",
 						"header": [
@@ -2357,17 +2557,7 @@
 							"mode": "raw",
 							"raw": "{\r\n  \"area_id\": 1,\r\n  \"starts_at\": \"2025-10-05T10:09:00Z\",\r\n  \"ends_at\": \"2025-10-05T12:10:00Z\",\r\n  \"title\": \"Sesión de natación matutina\",\r\n  \"notes\": \"Entrenamiento personal de natación\"\r\n}"
 						},
-						"url": {
-							"raw": "{{cpu_url}}/api/v1/reservations",
-							"host": [
-								"{{cpu_url}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"reservations"
-							]
-						}
+						"url": "{{cpu_url}}/api/v1/reservations"
 					},
 					"response": [
 						{
@@ -2396,17 +2586,7 @@
 									"mode": "raw",
 									"raw": "{\r\n  \"area_id\": 1,\r\n  \"starts_at\": \"2025-10-05T10:09:00Z\",\r\n  \"ends_at\": \"2025-10-05T12:10:00Z\",\r\n  \"title\": \"Sesión de natación matutina\",\r\n  \"notes\": \"Entrenamiento personal de natación\"\r\n}"
 								},
-								"url": {
-									"raw": "{{cpu_url}}/api/v1/reservations",
-									"host": [
-										"{{cpu_url}}"
-									],
-									"path": [
-										"api",
-										"v1",
-										"reservations"
-									]
-								}
+								"url": "{{cpu_url}}/api/v1/reservations"
 							},
 							"status": "Created",
 							"code": 201,
@@ -2463,13 +2643,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "5|1WSM4H0Se1EkYcVGBIcqTV8VDUPe1HTei0t3jDhHb607c7c6",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "5|1WSM4H0Se1EkYcVGBIcqTV8VDUPe1HTei0t3jDhHb607c7c6"
+							}
 						},
 						"method": "PUT",
 						"header": [
@@ -2624,13 +2800,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "5|1WSM4H0Se1EkYcVGBIcqTV8VDUPe1HTei0t3jDhHb607c7c6",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "5|1WSM4H0Se1EkYcVGBIcqTV8VDUPe1HTei0t3jDhHb607c7c6"
+							}
 						},
 						"method": "GET",
 						"header": [
@@ -2651,17 +2823,7 @@
 								"disabled": true
 							}
 						],
-						"url": {
-							"raw": "{{cpu_url}}/api/v1/reservations",
-							"host": [
-								"{{cpu_url}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"reservations"
-							]
-						}
+						"url": "{{cpu_url}}/api/v1/reservations"
 					},
 					"response": [
 						{
@@ -2686,17 +2848,7 @@
 										"disabled": true
 									}
 								],
-								"url": {
-									"raw": "{{cpu_url}}/api/v1/reservations",
-									"host": [
-										"{{cpu_url}}"
-									],
-									"path": [
-										"api",
-										"v1",
-										"reservations"
-									]
-								}
+								"url": "{{cpu_url}}/api/v1/reservations"
 							},
 							"status": "OK",
 							"code": 200,
@@ -2753,13 +2905,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "5|1WSM4H0Se1EkYcVGBIcqTV8VDUPe1HTei0t3jDhHb607c7c6",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "5|1WSM4H0Se1EkYcVGBIcqTV8VDUPe1HTei0t3jDhHb607c7c6"
+							}
 						},
 						"method": "POST",
 						"header": [
@@ -2807,13 +2955,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "6|qED8PX4tAPxj31fhAdhjnmD0SqY2BVltmDQ8nzUjc2c9eee4",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "6|qED8PX4tAPxj31fhAdhjnmD0SqY2BVltmDQ8nzUjc2c9eee4"
+							}
 						},
 						"method": "POST",
 						"header": [
@@ -2861,13 +3005,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "6|qED8PX4tAPxj31fhAdhjnmD0SqY2BVltmDQ8nzUjc2c9eee4",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "6|qED8PX4tAPxj31fhAdhjnmD0SqY2BVltmDQ8nzUjc2c9eee4"
+							}
 						},
 						"method": "POST",
 						"header": [
@@ -2924,13 +3064,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "4|QTxvMxkejHAZjSTQP8r2Y0QkNR6xY1X9BYonm49Adeb6cb39",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "4|QTxvMxkejHAZjSTQP8r2Y0QkNR6xY1X9BYonm49Adeb6cb39"
+							}
 						},
 						"method": "GET",
 						"header": [
@@ -2990,13 +3126,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "1|ryjdYJL3wOuZsrScDkUkuq09o0aKkKs6kgh6Y7Y5e4cbe2d8",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "1|ryjdYJL3wOuZsrScDkUkuq09o0aKkKs6kgh6Y7Y5e4cbe2d8"
+							}
 						},
 						"method": "PUT",
 						"header": [
@@ -3053,13 +3185,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "1|ryjdYJL3wOuZsrScDkUkuq09o0aKkKs6kgh6Y7Y5e4cbe2d8",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "1|ryjdYJL3wOuZsrScDkUkuq09o0aKkKs6kgh6Y7Y5e4cbe2d8"
+							}
 						},
 						"method": "PUT",
 						"header": [
@@ -3089,18 +3217,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "{{cpu_url}}/api/v1/notifications/read-all",
-							"host": [
-								"{{cpu_url}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"notifications",
-								"read-all"
-							]
-						}
+						"url": "{{cpu_url}}/api/v1/notifications/read-all"
 					},
 					"response": []
 				},
@@ -3109,13 +3226,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "7|3ho20tqHCTh2IoPRfOjP42gnaPtBElhkVdQTsYoFed6b9bdc",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "7|3ho20tqHCTh2IoPRfOjP42gnaPtBElhkVdQTsYoFed6b9bdc"
+							}
 						},
 						"method": "GET",
 						"header": [
@@ -3136,17 +3249,7 @@
 								"disabled": true
 							}
 						],
-						"url": {
-							"raw": "{{cpu_url}}/api/v1/notifications",
-							"host": [
-								"{{cpu_url}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"notifications"
-							]
-						}
+						"url": "{{cpu_url}}/api/v1/notifications"
 					},
 					"response": []
 				},
@@ -3155,13 +3258,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "1|ryjdYJL3wOuZsrScDkUkuq09o0aKkKs6kgh6Y7Y5e4cbe2d8",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "1|ryjdYJL3wOuZsrScDkUkuq09o0aKkKs6kgh6Y7Y5e4cbe2d8"
+							}
 						},
 						"method": "GET",
 						"header": [
@@ -3182,18 +3281,7 @@
 								"disabled": true
 							}
 						],
-						"url": {
-							"raw": "{{cpu_url}}/api/v1/notifications/unread",
-							"host": [
-								"{{cpu_url}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"notifications",
-								"unread"
-							]
-						}
+						"url": "{{cpu_url}}/api/v1/notifications/unread"
 					},
 					"response": []
 				},
@@ -3202,13 +3290,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "1|ryjdYJL3wOuZsrScDkUkuq09o0aKkKs6kgh6Y7Y5e4cbe2d8",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "1|ryjdYJL3wOuZsrScDkUkuq09o0aKkKs6kgh6Y7Y5e4cbe2d8"
+							}
 						},
 						"method": "GET",
 						"header": [
@@ -3229,18 +3313,7 @@
 								"disabled": true
 							}
 						],
-						"url": {
-							"raw": "{{cpu_url}}/api/v1/notifications/count",
-							"host": [
-								"{{cpu_url}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"notifications",
-								"count"
-							]
-						}
+						"url": "{{cpu_url}}/api/v1/notifications/count"
 					},
 					"response": []
 				},
@@ -3249,13 +3322,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "4|QTxvMxkejHAZjSTQP8r2Y0QkNR6xY1X9BYonm49Adeb6cb39",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "4|QTxvMxkejHAZjSTQP8r2Y0QkNR6xY1X9BYonm49Adeb6cb39"
+							}
 						},
 						"method": "DELETE",
 						"header": [
@@ -3307,13 +3376,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "4|JSFI3yNY7fNugkZ7RTsevspPENnBmGQfkSFw3F3gc3fb8504",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "4|JSFI3yNY7fNugkZ7RTsevspPENnBmGQfkSFw3F3gc3fb8504"
+							}
 						},
 						"method": "GET",
 						"header": [
@@ -3334,17 +3399,7 @@
 								"disabled": true
 							}
 						],
-						"url": {
-							"raw": "{{cpu_url}}/api/v1/audit-logs",
-							"host": [
-								"{{cpu_url}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"audit-logs"
-							]
-						}
+						"url": "{{cpu_url}}/api/v1/audit-logs"
 					},
 					"response": []
 				},
@@ -3353,13 +3408,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "2|xPFImC80VVe8n7hvZ7hYwK2geQpnMjiKhxrcz7jicb7e984f",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "2|xPFImC80VVe8n7hvZ7hYwK2geQpnMjiKhxrcz7jicb7e984f"
+							}
 						},
 						"method": "GET",
 						"header": [
@@ -3380,18 +3431,7 @@
 								"disabled": true
 							}
 						],
-						"url": {
-							"raw": "{{cpu_url}}/api/v1/audit-logs/1",
-							"host": [
-								"{{cpu_url}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"audit-logs",
-								"1"
-							]
-						}
+						"url": "{{cpu_url}}/api/v1/audit-logs/1"
 					},
 					"response": []
 				}
@@ -3428,17 +3468,7 @@
 						}
 					}
 				},
-				"url": {
-					"raw": "{{cpu_url}}/api/v1/login",
-					"host": [
-						"{{cpu_url}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"login"
-					]
-				}
+				"url": "{{cpu_url}}/api/v1/login"
 			},
 			"response": []
 		},
@@ -3447,13 +3477,9 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "1|sI4DuTTb9bipd0qfVWCWJXpQe0MS341ohRR0ggnhb16992d1",
-							"type": "string"
-						}
-					]
+					"bearer": {
+						"token": "1|sI4DuTTb9bipd0qfVWCWJXpQe0MS341ohRR0ggnhb16992d1"
+					}
 				},
 				"method": "POST",
 				"header": [
@@ -3483,17 +3509,7 @@
 						}
 					}
 				},
-				"url": {
-					"raw": "{{cpu_url}}/api/v1/logout",
-					"host": [
-						"{{cpu_url}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"logout"
-					]
-				}
+				"url": "{{cpu_url}}/api/v1/logout"
 			},
 			"response": []
 		},
@@ -3502,13 +3518,9 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "1|sI4DuTTb9bipd0qfVWCWJXpQe0MS341ohRR0ggnhb16992d1",
-							"type": "string"
-						}
-					]
+					"bearer": {
+						"token": "1|sI4DuTTb9bipd0qfVWCWJXpQe0MS341ohRR0ggnhb16992d1"
+					}
 				},
 				"method": "POST",
 				"header": [
@@ -3538,18 +3550,7 @@
 						}
 					}
 				},
-				"url": {
-					"raw": "{{cpu_url}}/api/v1/email/verify",
-					"host": [
-						"{{cpu_url}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"email",
-						"verify"
-					]
-				}
+				"url": "{{cpu_url}}/api/v1/email/verify"
 			},
 			"response": []
 		}
