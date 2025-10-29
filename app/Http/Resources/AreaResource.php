@@ -40,6 +40,12 @@ final class AreaResource extends JsonResource
                     ];
                 });
             }),
+            'pricing' => [
+                'monto_hora_externo' => $this->monto_hora_externo,
+                'porcentaje_descuento_agremiado' => $this->porcentaje_descuento_agremiado,
+                'moneda' => $this->moneda,
+                'es_gratis_agremiados' => $this->es_gratis_agremiados,
+            ],
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

@@ -34,6 +34,10 @@ final class StoreAreaRequest extends FormRequest
             'schedules.*.start_time' => ['required_with:schedules', 'date_format:H:i'],
             'schedules.*.end_time' => ['required_with:schedules', 'date_format:H:i', 'after:schedules.*.start_time'],
             'schedules.*.is_open' => ['required_with:schedules', 'boolean'],
+            'monto_hora_externo' => ['nullable', 'numeric', 'min:0'],
+            'porcentaje_descuento_agremiado' => ['nullable', 'integer', 'min:0', 'max:100'],
+            'moneda' => ['nullable', 'string', 'in:USD,VES,COP,EUR'],
+            'es_gratis_agremiados' => ['nullable', 'boolean'],
         ];
     }
 
@@ -61,6 +65,12 @@ final class StoreAreaRequest extends FormRequest
             'schedules.*.end_time.date_format' => 'End time must be in HH:MM format.',
             'schedules.*.end_time.after' => 'End time must be after start time.',
             'schedules.*.is_open.required_with' => 'Is open status is required when schedules are provided.',
+            'monto_hora_externo.numeric' => 'El monto por hora debe ser un número válido.',
+            'monto_hora_externo.min' => 'El monto por hora no puede ser negativo.',
+            'porcentaje_descuento_agremiado.integer' => 'El porcentaje de descuento debe ser un número entero.',
+            'porcentaje_descuento_agremiado.min' => 'El porcentaje de descuento no puede ser negativo.',
+            'porcentaje_descuento_agremiado.max' => 'El porcentaje de descuento no puede ser mayor a 100.',
+            'moneda.in' => 'La moneda debe ser USD, VES, COP o EUR.',
         ];
     }
 }

@@ -56,6 +56,12 @@ final class AreaService
                 $data['slug'] = Str::slug($data['name']);
             }
 
+            // Set default pricing values if not provided
+            $data['monto_hora_externo'] = $data['monto_hora_externo'] ?? 0.00;
+            $data['porcentaje_descuento_agremiado'] = $data['porcentaje_descuento_agremiado'] ?? 0;
+            $data['moneda'] = $data['moneda'] ?? 'USD';
+            $data['es_gratis_agremiados'] = $data['es_gratis_agremiados'] ?? false;
+
             $area = Area::create($data);
 
             // Handle image uploads

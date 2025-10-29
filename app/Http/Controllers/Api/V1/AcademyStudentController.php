@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAcademyStudentRequest;
 use App\Http\Requests\UpdateAcademyStudentRequest;
@@ -10,7 +11,7 @@ use App\Models\Academy;
 use App\Models\AcademyStudent;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Auth;
 
 final class AcademyStudentController extends Controller
 {
@@ -19,8 +20,10 @@ final class AcademyStudentController extends Controller
      */
     public function index(Request $request, Academy $academy): JsonResponse
     {
-        // Authorization check
-        if (Gate::denies('viewAny', [AcademyStudent::class, $academy])) {
+        // Authorization check - Admin can see all, Instructor only their own academies
+        $user = Auth::user();
+        if (!$user || ($user->role !== UserRole::Administrador && 
+            ($user->role !== UserRole::Instructor || $academy->instructor_id !== $user->id))) {
             return response()->json([
                 'success' => false,
                 'message' => 'Access denied. You do not have permission to view students for this academy.'
@@ -121,8 +124,10 @@ final class AcademyStudentController extends Controller
      */
     public function destroy(Academy $academy, AcademyStudent $student): JsonResponse
     {
-        // Authorization check
-        if (Gate::denies('delete', $student)) {
+        // Authorization check - Admin can delete any, Instructor only their own academy students
+        $user = Auth::user();
+        if (!$user || ($user->role !== UserRole::Administrador && 
+            ($user->role !== UserRole::Instructor || $student->academy->instructor_id !== $user->id))) {
             return response()->json([
                 'success' => false,
                 'message' => 'Access denied. You do not have permission to delete this student.'

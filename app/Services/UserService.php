@@ -30,8 +30,7 @@ final class UserService
             'email'    => $data['email'],
             // SSO users won't have password; this is local registration
             'password' => Hash::make($data['password']),
-            // Auto-registration creates user with 'usuario' role and 'aprobacion_pendiente' status
-            'role'     => UserRole::Usuario,
+            'role'     => isset($data['aspired_role']) ? UserRole::from($data['aspired_role']) : UserRole::Usuario,
             'status'   => UserStatus::AprobacionPendiente,
             'aspired_role' => isset($data['aspired_role']) ? AspiredRole::from($data['aspired_role']) : null,
             'responsible_email' => $data['responsible_email'] ?? null,

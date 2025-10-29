@@ -19,7 +19,8 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => array_filter(explode(',', env('CORS_ALLOWED_ORIGINS', 'https://casa-profesor-universita-def92.web.app'))),
+    // 'allowed_origins' => array_filter(explode(',', env('CORS_ALLOWED_ORIGINS', 'https://casa-profesor-universita-def92.web.app'))),
+    'allowed_origins' => ['*'],
 
     'allowed_origins_patterns' => [],
 

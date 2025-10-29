@@ -6,6 +6,7 @@ use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CancelReservationRequest;
 use App\Http\Requests\GetAvailabilityRequest;
+use App\Http\Requests\MarkReservationAsPaidRequest;
 use App\Http\Requests\RejectReservationRequest;
 use App\Http\Requests\StoreReservationRequest;
 use App\Http\Requests\UpdateReservationRequest;
@@ -177,6 +178,24 @@ final class ReservationController extends Controller
         return response()->json([
             'success' => true,
             'data' => $availability
+        ]);
+    }
+
+    /**
+     * Mark a reservation as paid.
+     * Only admins can mark reservations as paid.
+     */
+    public function markAsPaid(int $id, MarkReservationAsPaidRequest $request): JsonResponse
+    {
+        $reservation = $this->reservationService->markReservationAsPaid(
+            $id,
+            $request->validated()
+        );
+
+        return response()->json([
+            'success' => true,
+            'data' => new ReservationResource($reservation->load(['factura', 'area', 'requester'])),
+            'message' => 'Reserva marcada como pagada exitosamente.'
         ]);
     }
 }
