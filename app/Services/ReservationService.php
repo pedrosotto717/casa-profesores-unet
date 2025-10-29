@@ -5,22 +5,32 @@ namespace App\Services;
 use App\Enums\ReservationStatus;
 use App\Enums\UserRole;
 use App\Enums\UserStatus;
+use App\Enums\TipoFactura;
+use App\Enums\EstatusFactura;
+use App\Enums\EstatusPago;
 use App\Models\AcademySchedule;
 use App\Models\Area;
 use App\Models\AreaSchedule;
 use App\Models\AuditLog;
+use App\Models\Factura;
 use App\Models\Reservation;
 use App\Models\User;
 use App\Services\NotificationService;
+use App\Services\PricingService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 final class ReservationService
 {
-    public function __construct(
-        private readonly NotificationService $notificationService
-    ) {}
+    private NotificationService $notificationService;
+    private PricingService $pricingService;
+
+    public function __construct(NotificationService $notificationService, PricingService $pricingService)
+    {
+        $this->notificationService = $notificationService;
+        $this->pricingService = $pricingService;
+    }
 
     /**
      * Create a new reservation.
@@ -43,16 +53,44 @@ final class ReservationService
             // Check for conflicts with approved reservations and academy schedules
             $this->validateNoConflicts($data['area_id'], $data['starts_at'], $data['ends_at']);
 
+            // Check if area is free for agremiados and user is a professor
+            $isFreeForAgremiados = $area->es_gratis_agremiados && $user->role === UserRole::Profesor;
+            
+            // Determine payment status (always pending for approval, but payment status varies)
+            $estatusPago = $isFreeForAgremiados ? EstatusPago::Gratis : EstatusPago::Pendiente;
+
             // Create the reservation
             $reservation = Reservation::create([
                 'requester_id' => $userId,
                 'area_id' => $data['area_id'],
                 'starts_at' => $data['starts_at'],
                 'ends_at' => $data['ends_at'],
-                'status' => ReservationStatus::Pendiente,
+                'status' => ReservationStatus::Pendiente, // Always pending for admin approval
+                'estatus_pago' => $estatusPago,
                 'title' => $data['title'] ?? null,
                 'notes' => $data['notes'] ?? null,
             ]);
+
+            // If area is free for agremiados, create automatic factura (but still needs approval)
+            if ($isFreeForAgremiados) {
+                $factura = Factura::create([
+                    'user_id' => $userId,
+                    'tipo' => TipoFactura::PagoReserva,
+                    'monto' => 0.00,
+                    'moneda' => $area->moneda,
+                    'fecha_emision' => now(),
+                    'fecha_pago' => now(),
+                    'estatus_pago' => EstatusFactura::Pagado,
+                    'descripcion' => sprintf(
+                        'Reserva gratuita %s - %s (Agremiado)',
+                        $area->name,
+                        $reservation->starts_at->format('d/m/Y')
+                    ),
+                ]);
+
+                // Update reservation with factura_id
+                $reservation->update(['factura_id' => $factura->id]);
+            }
 
             // Log audit
             $this->logReservationAction($userId, $reservation->id, 'reservation_created', null, [
@@ -61,10 +99,12 @@ final class ReservationService
                 'starts_at' => $reservation->starts_at->toIso8601String(),
                 'ends_at' => $reservation->ends_at->toIso8601String(),
                 'status' => $reservation->status->value,
+                'estatus_pago' => $reservation->estatus_pago->value,
                 'title' => $reservation->title,
+                'is_free_for_agremiados' => $isFreeForAgremiados,
             ]);
 
-            // Notify admins
+            // Always notify admins (all reservations need approval)
             $this->notificationService->notifyAdminsOfPendingReservation(
                 $reservation->id,
                 $user->name,
@@ -612,5 +652,62 @@ final class ReservationService
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
         ]);
+    }
+
+    /**
+     * Mark a reservation as paid and create associated factura.
+     */
+    public function markReservationAsPaid(int $reservationId, array $paymentData): Reservation
+    {
+        return DB::transaction(function () use ($reservationId, $paymentData) {
+            $reservation = Reservation::with(['area', 'requester'])->findOrFail($reservationId);
+
+            // Verify reservation is approved
+            if (!$reservation->isApproved()) {
+                throw ValidationException::withMessages([
+                    'reservation' => ['La reserva debe estar aprobada antes de marcarla como pagada.'],
+                ]);
+            }
+
+            // Calculate cost
+            $costData = $this->pricingService->calculateReservationCost($reservation);
+
+            // Create factura
+            $factura = Factura::create([
+                'user_id' => $reservation->requester_id,
+                'tipo' => TipoFactura::PagoReserva,
+                'monto' => $costData['costo_final'],
+                'moneda' => $paymentData['moneda'] ?? $costData['moneda'],
+                'fecha_emision' => now(),
+                'fecha_pago' => Carbon::parse($paymentData['fecha_pago']),
+                'estatus_pago' => EstatusFactura::Pagado,
+                'descripcion' => sprintf(
+                    'Pago reserva %s - %s',
+                    $reservation->area->name,
+                    $reservation->starts_at->format('d/m/Y')
+                ),
+            ]);
+
+            // Update reservation
+            $reservation->update([
+                'factura_id' => $factura->id,
+                'estatus_pago' => EstatusPago::Pagado,
+            ]);
+
+            // Log the action
+            AuditLog::create([
+                'user_id' => 1, // System user for automatic operations
+                'entity_type' => Reservation::class,
+                'entity_id' => $reservation->id,
+                'action' => 'reservation_marked_as_paid',
+                'after' => [
+                    'factura_id' => $factura->id,
+                    'monto' => $costData['costo_final'],
+                    'moneda' => $paymentData['moneda'] ?? $costData['moneda'],
+                ],
+            ]);
+
+            return $reservation->fresh(['factura', 'area', 'requester']);
+        });
     }
 }

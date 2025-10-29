@@ -33,6 +33,9 @@ final class ReservationResource extends JsonResource
             'ends_at' => $this->ends_at->toIso8601String(),
             'status' => $this->status->value,
             'status_label' => $this->getStatusLabel($this->status->value),
+            'estatus_pago' => $this->estatus_pago?->value ?? 'Pendiente',
+            'estatus_pago_label' => $this->getPaymentStatusLabel($this->estatus_pago?->value ?? 'Pendiente'),
+            'fecha_cancelacion' => $this->fecha_cancelacion?->toIso8601String(),
             'title' => $this->title,
             'notes' => $this->notes,
             'decision_reason' => $this->decision_reason,
@@ -43,6 +46,15 @@ final class ReservationResource extends JsonResource
             'reviewed_at' => $this->reviewed_at?->toIso8601String(),
             'duration_minutes' => $this->getDurationInMinutes(),
             'can_be_canceled' => $this->canBeCanceledByUser(),
+            'factura' => $this->whenLoaded('factura', function () {
+                return [
+                    'id' => $this->factura->id,
+                    'monto' => $this->factura->monto,
+                    'moneda' => $this->factura->moneda,
+                    'fecha_pago' => $this->factura->fecha_pago?->toIso8601String(),
+                    'estatus_pago' => $this->factura->estatus_pago?->value ?? 'Pagado',
+                ];
+            }),
             'created_at' => $this->created_at->toIso8601String(),
             'updated_at' => $this->updated_at->toIso8601String(),
         ];
@@ -77,6 +89,19 @@ final class ReservationResource extends JsonResource
             'cancelada' => 'Cancelada',
             'completada' => 'Completada',
             'expirada' => 'Expirada',
+            default => ucfirst($status),
+        };
+    }
+
+    /**
+     * Get human-readable payment status label.
+     */
+    private function getPaymentStatusLabel(string $status): string
+    {
+        return match ($status) {
+            'Pendiente' => 'Pendiente',
+            'Pagado' => 'Pagado',
+            'Gratis' => 'Gratis',
             default => ucfirst($status),
         };
     }

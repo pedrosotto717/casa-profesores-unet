@@ -37,6 +37,11 @@ final class AuthenticationController extends Controller
             ]);
         }
 
+        // Check if user's solvency has expired
+        if ($user->solvent_until && $user->solvent_until->isPast()) {
+            $user->update(['status' => UserStatus::Insolvente]);
+        }
+
         $token = $user->createToken('api-token')->plainTextToken;
 
         return response()->json([

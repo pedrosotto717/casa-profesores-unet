@@ -128,4 +128,20 @@ class User extends Authenticatable
         return $this->hasMany(UserBlock::class, 'blocked_id');
     }
 
+    /**
+     * Get aportes made by this user.
+     */
+    public function aportes()
+    {
+        return $this->hasMany(Aporte::class);
+    }
+
+    /**
+     * Get facturas of this user.
+     */
+    public function facturas()
+    {
+        return $this->hasMany(Factura::class);
+    }
+
 }

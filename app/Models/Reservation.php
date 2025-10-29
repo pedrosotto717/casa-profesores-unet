@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ReservationStatus;
+use App\Enums\EstatusPago;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -23,6 +24,9 @@ final class Reservation extends Model
         'decision_reason',
         'approved_by',
         'reviewed_at',
+        'factura_id',
+        'estatus_pago',
+        'fecha_cancelacion',
     ];
 
     protected $casts = [
@@ -30,6 +34,8 @@ final class Reservation extends Model
         'ends_at' => 'datetime',
         'status' => ReservationStatus::class,
         'reviewed_at' => 'datetime',
+        'estatus_pago' => EstatusPago::class,
+        'fecha_cancelacion' => 'datetime',
     ];
 
     /**
@@ -54,6 +60,14 @@ final class Reservation extends Model
     public function approver(): BelongsTo
     {
         return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    /**
+     * Get the factura associated with this reservation.
+     */
+    public function factura(): BelongsTo
+    {
+        return $this->belongsTo(Factura::class);
     }
 
     /**

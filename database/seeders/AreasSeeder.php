@@ -28,6 +28,10 @@ final class AreasSeeder extends Seeder
                 'capacity' => null, // Variable capacity based on usage
                 'description' => 'Área acuática para recreación y deportes. Requiere traje de baño y ducha previa.',
                 'is_reservable' => true,
+                'monto_hora_externo' => 0.00, // Gratis para agremiados
+                'porcentaje_descuento_agremiado' => 0,
+                'moneda' => 'USD',
+                'es_gratis_agremiados' => true, // Excepción especial para piscina
             ],
             'Salón Orquídea (Restaurant)' => [
                 'capacity' => null, // Managed by concessionaire
@@ -38,41 +42,73 @@ final class AreasSeeder extends Seeder
                 'capacity' => 100, // From cpu_reglamento_negocio.md §5
                 'description' => 'Terraza techada para eventos y celebraciones.',
                 'is_reservable' => true,
+                'monto_hora_externo' => 25.00,
+                'porcentaje_descuento_agremiado' => 20,
+                'moneda' => 'USD',
+                'es_gratis_agremiados' => false,
             ],
             'Salón Pradera' => [
                 'capacity' => 150, // From cpu_reglamento_negocio.md §5
                 'description' => 'Terraza techada para eventos y celebraciones.',
                 'is_reservable' => true,
+                'monto_hora_externo' => 35.00,
+                'porcentaje_descuento_agremiado' => 20,
+                'moneda' => 'USD',
+                'es_gratis_agremiados' => false,
             ],
             'Auditorio Paramillo' => [
                 'capacity' => 100, // From cpu_reglamento_negocio.md §5
                 'description' => 'Auditorio para presentaciones y eventos formales.',
                 'is_reservable' => true,
+                'monto_hora_externo' => 30.00,
+                'porcentaje_descuento_agremiado' => 20,
+                'moneda' => 'USD',
+                'es_gratis_agremiados' => false,
             ],
             'Kiosco Tuquerena' => [
                 'capacity' => 30, // From cpu_reglamento_negocio.md §5
                 'description' => 'Kiosco para eventos al aire libre.',
                 'is_reservable' => true,
+                'monto_hora_externo' => 15.00,
+                'porcentaje_descuento_agremiado' => 20,
+                'moneda' => 'USD',
+                'es_gratis_agremiados' => false,
             ],
             'Kiosco Morusca' => [
                 'capacity' => 30, // From cpu_reglamento_negocio.md §5
                 'description' => 'Kiosco para eventos al aire libre.',
                 'is_reservable' => true,
+                'monto_hora_externo' => 15.00,
+                'porcentaje_descuento_agremiado' => 20,
+                'moneda' => 'USD',
+                'es_gratis_agremiados' => false,
             ],
             'Sauna' => [
                 'capacity' => 6, // From cpu_reglamento_negocio.md §4.1 (máx. 6 personas por turno)
                 'description' => 'Área de relajación con turnos de 15 minutos. Exclusivo para docentes.',
                 'is_reservable' => true,
+                'monto_hora_externo' => 0.00, // Gratis para agremiados (exclusivo para docentes)
+                'porcentaje_descuento_agremiado' => 0,
+                'moneda' => 'USD',
+                'es_gratis_agremiados' => true,
             ],
             'Cancha de usos múltiples' => [
                 'capacity' => null, // Variable based on sport
                 'description' => 'Cancha deportiva para múltiples actividades.',
                 'is_reservable' => true,
+                'monto_hora_externo' => 20.00,
+                'porcentaje_descuento_agremiado' => 20,
+                'moneda' => 'USD',
+                'es_gratis_agremiados' => false,
             ],
             'Cancha de bolas criollas' => [
                 'capacity' => null, // Variable based on game
                 'description' => 'Cancha especializada para bolas criollas.',
                 'is_reservable' => true,
+                'monto_hora_externo' => 15.00,
+                'porcentaje_descuento_agremiado' => 20,
+                'moneda' => 'USD',
+                'es_gratis_agremiados' => false,
             ],
             'Parque infantil' => [
                 'capacity' => null, // Variable based on supervision
@@ -83,16 +119,28 @@ final class AreasSeeder extends Seeder
                 'capacity' => 4, // Typical for billiards
                 'description' => 'Mesa de billar para recreación.',
                 'is_reservable' => true,
+                'monto_hora_externo' => 10.00,
+                'porcentaje_descuento_agremiado' => 20,
+                'moneda' => 'USD',
+                'es_gratis_agremiados' => false,
             ],
             'Mesa de ping pong' => [
                 'capacity' => 4, // Typical for ping pong
                 'description' => 'Mesa de ping pong para recreación.',
                 'is_reservable' => true,
+                'monto_hora_externo' => 8.00,
+                'porcentaje_descuento_agremiado' => 20,
+                'moneda' => 'USD',
+                'es_gratis_agremiados' => false,
             ],
             'Peluquería (con previa cita)' => [
                 'capacity' => 2, // Typical for salon
                 'description' => 'Servicio de peluquería con cita previa.',
                 'is_reservable' => true,
+                'monto_hora_externo' => 12.00,
+                'porcentaje_descuento_agremiado' => 20,
+                'moneda' => 'USD',
+                'es_gratis_agremiados' => false,
             ],
         ];
 
@@ -105,6 +153,10 @@ final class AreasSeeder extends Seeder
                     'capacity' => $areaData['capacity'],
                     'is_reservable' => $areaData['is_reservable'],
                     'is_active' => true,
+                    'monto_hora_externo' => $areaData['monto_hora_externo'] ?? 0.00,
+                    'porcentaje_descuento_agremiado' => $areaData['porcentaje_descuento_agremiado'] ?? 0,
+                    'moneda' => $areaData['moneda'] ?? 'USD',
+                    'es_gratis_agremiados' => $areaData['es_gratis_agremiados'] ?? false,
                 ]
             );
 

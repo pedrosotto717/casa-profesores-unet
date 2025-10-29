@@ -107,7 +107,7 @@ final class InvitationService
                 'email' => $invitation->email,
                 'role' => UserRole::Invitado, // New users start as "invitado"
                 'password' => null, // No password for invited users initially
-                'status' => UserStatus::Insolvente, // Default to insolvente (active but not up to date with contributions)
+                'status' => UserStatus::Solvente, // Default to solvente (active and up to date with contributions)
                 'responsible_email' => $invitation->inviterUser->email,
                 'auth_code' => $authCode,
                 'auth_code_expires_at' => now()->addDays(30), // Auth code expires in 30 days

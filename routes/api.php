@@ -2,16 +2,19 @@
 
 use App\Http\Controllers\Api\V1\AcademyController;
 use App\Http\Controllers\Api\V1\AcademyStudentController;
+use App\Http\Controllers\Api\V1\AporteController;
 use App\Http\Controllers\Api\V1\AreaController;
 use App\Http\Controllers\Api\V1\AuditLogController;
 use App\Http\Controllers\Api\V1\AuthenticationController;
 use App\Http\Controllers\Api\V1\Auth\RegisterController;
 use App\Http\Controllers\Api\V1\Chat\ChatController;
 use App\Http\Controllers\Api\V1\Chat\UserBlockController;
+use App\Http\Controllers\Api\V1\FacturaController;
 use App\Http\Controllers\Api\V1\InvitationController;
 use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\PasswordResetController;
 use App\Http\Controllers\Api\V1\ReservationController;
+use App\Http\Controllers\Api\V1\ReservationCostPreviewController;
 use App\Http\Controllers\Api\V1\SetPasswordController;
 use App\Http\Controllers\Api\V1\TestEmailController;
 use App\Http\Controllers\Api\V1\UserController;
@@ -73,6 +76,13 @@ Route::prefix('v1')->group(function () {
         Route::post('/uploads/presign', [UploadController::class, 'presign']);
         Route::put('/users/me', [UserController::class, 'updateMe']);
         
+        // Aportes routes (authenticated users)
+        Route::apiResource('aportes', AporteController::class);
+        
+        // Facturas routes (authenticated users)
+        Route::get('/me/facturas', [FacturaController::class, 'myFacturas']);
+        Route::get('/facturas/{id}', [FacturaController::class, 'show']);
+        
         // Users listing (administrador and profesor only)
         Route::middleware('role:administrador,profesor')->group(function () {
             Route::get('/users', [UserController::class, 'index']);
@@ -118,6 +128,12 @@ Route::prefix('v1')->group(function () {
             // Reservations management (admin only)
             Route::post('/reservations/{id}/approve', [ReservationController::class, 'approve']);
             Route::post('/reservations/{id}/reject', [ReservationController::class, 'reject']);
+            Route::post('/reservations/{id}/mark-as-paid', [ReservationController::class, 'markAsPaid']);
+            Route::get('/reservations/{id}/cost-preview', [ReservationCostPreviewController::class, 'show']);
+            
+            // Facturas management (admin only)
+            Route::get('/facturas', [FacturaController::class, 'index']);
+            Route::get('/users/{userId}/facturas', [FacturaController::class, 'byUser']);
             
             // Audit logs (admin only)
             Route::get('/audit-logs', [AuditLogController::class, 'index']);

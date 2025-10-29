@@ -19,12 +19,19 @@ final class Area extends Model
         'capacity',
         'is_reservable',
         'is_active',
+        'monto_hora_externo',
+        'porcentaje_descuento_agremiado',
+        'moneda',
+        'es_gratis_agremiados',
     ];
 
     protected $casts = [
         'capacity' => 'integer',
         'is_reservable' => 'boolean',
         'is_active' => 'boolean',
+        'monto_hora_externo' => 'decimal:2',
+        'porcentaje_descuento_agremiado' => 'integer',
+        'es_gratis_agremiados' => 'boolean',
     ];
 
     /**

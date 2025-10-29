@@ -7,6 +7,78 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
 
 ---
 
+### [2025-01-29 02:45:00] - COMPLETE: Implementación sistema financiero completo
+*   **Acción:** Finalizar implementación completa del sistema financiero con facturas, aportes y pagos de reservas.
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Http/Resources/AreaResource.php` - Agregar sección pricing con todos los campos
+    *   `UPDATE: app/Http/Resources/ReservationResource.php` - Agregar estatus_pago, fecha_cancelacion y factura
+    *   `UPDATE: app/Http/Resources/AporteResource.php` - Agregar factura_id y relación factura completa
+    *   `UPDATE: app/Http/Resources/FacturaResource.php` - Completar con labels y relación user
+    *   `UPDATE: app/Http/Controllers/Api/V1/ReservationController.php` - Agregar import y método markAsPaid
+    *   `UPDATE: routes/api.php` - Registrar todas las rutas de facturas y pagos
+    *   `UPDATE: database/seeders/AreasSeeder.php` - Agregar precios de ejemplo para todas las áreas
+    *   `CREATE: FRONTEND_FINANCIAL_SYSTEM_IMPLEMENTATION.md` - Guía completa para implementación frontend
+
+### [2025-01-29 03:58:57] - FEAT: Agregar campo moneda a aportes
+*   **Acción:** Agregar soporte para múltiples monedas en aportes (USD, VES, COP, EUR).
+*   **Archivos Modificados:**
+    *   `CREATE: database/migrations/2025_10_29_035857_add_moneda_to_aportes_table.php` - Migración para agregar campo moneda
+    *   `UPDATE: app/Models/Aporte.php` - Agregar moneda a fillable
+    *   `UPDATE: app/Http/Requests/StoreAporteRequest.php` - Validación de moneda requerida
+    *   `UPDATE: app/Http/Requests/UpdateAporteRequest.php` - Validación de moneda opcional
+    *   `UPDATE: app/Services/AporteService.php` - Manejar moneda en createAporte y updateAporte
+    *   `UPDATE: app/Http/Controllers/Api/V1/AporteController.php` - Pasar moneda al servicio
+    *   `UPDATE: app/Http/Resources/AporteResource.php` - Incluir moneda en respuesta
+
+### [2025-01-29 04:15:00] - FEAT: Agregar campos pricing a áreas y endpoint preview costos
+*   **Acción:** Implementar soporte completo para campos de pricing en áreas y endpoint para preview de costos de reservaciones.
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Http/Requests/StoreAreaRequest.php` - Validación de campos pricing opcionales
+    *   `UPDATE: app/Http/Requests/UpdateAreaRequest.php` - Validación de campos pricing opcionales
+    *   `UPDATE: app/Services/AreaService.php` - Valores por defecto para campos pricing
+    *   `CREATE: app/Http/Controllers/Api/V1/ReservationCostPreviewController.php` - Controller para preview de costos
+    *   `UPDATE: routes/api.php` - Ruta GET /reservations/{id}/cost-preview
+    *   **Verificaciones completadas:**
+        *   Modelo Reservation con campos de pago ✓
+        *   ReservationService con markReservationAsPaid ✓
+        *   ReservationController con método markAsPaid ✓
+        *   MarkReservationAsPaidRequest con validaciones ✓
+
+### [2025-01-29 04:20:00] - FIX: Corregir error null pointer en ReservationResource
+*   **Acción:** Agregar verificaciones de null para evitar errores al acceder a propiedades de enums que pueden ser null.
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Http/Resources/ReservationResource.php` - Agregar null coalescing para estatus_pago
+
+### [2025-01-29 04:25:00] - FEAT: Facturación automática para reservaciones gratuitas de agremiados
+*   **Acción:** Implementar lógica para que las reservaciones en áreas gratuitas para agremiados generen factura automáticamente, pero mantengan el flujo de aprobación.
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Services/ReservationService.php` - Lógica de facturación automática en createReservation()
+    *   **Funcionalidad:**
+        *   Si área es gratuita para agremiados Y usuario es profesor → Factura automática con monto 0.00
+        *   Estatus de pago automático como "Gratis" (pero status sigue "Pendiente")
+        *   **Todas las reservaciones requieren aprobación del admin** (incluyendo las gratuitas)
+        *   Notificaciones siempre se envían a admins para todas las reservaciones
+
+### [2025-01-29 04:40:00] - FEAT: Agregar estatus de pago "Gratis" para reservaciones de agremiados
+*   **Acción:** Implementar nuevo estatus de pago "Gratis" para distinguir reservaciones gratuitas de agremiados en el frontend.
+*   **Archivos Modificados:**
+    *   `CREATE: database/migrations/2025_10_29_044008_add_gratis_to_estatus_pago_enum.php` - Migración para agregar 'Gratis' al ENUM de la DB
+    *   `UPDATE: app/Enums/EstatusPago.php` - Agregar case Gratis = 'Gratis'
+    *   `UPDATE: app/Services/ReservationService.php` - Usar EstatusPago::Gratis para reservaciones gratuitas
+    *   `UPDATE: app/Http/Resources/ReservationResource.php` - Agregar label "Gratis" en getPaymentStatusLabel
+    *   **Funcionalidad:**
+        *   Nuevo valor `estatus_pago: 'Gratis'` para reservaciones gratuitas de agremiados
+        *   Frontend puede distinguir entre pagado y gratis para ocultar botón "Marcar como Pagado"
+        *   Badge "Gratis" en azul para el frontend
+
+---
+
+### [2025-01-28 10:30:00] - REFACTOR: Simplificar autorización en AcademyStudentController
+*   **Acción:** Reemplazado Gate::denies() con validación directa de roles para simplificar la lógica de autorización.
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Http/Controllers/Api/V1/AcademyStudentController.php`
+*   **Detalles:** La validación ahora es más directa: Administrador puede ver todo, Instructor solo sus propias academias. Se eliminó la dependencia de Gate y se agregó import de UserRole.
+
 ### [2025-10-12 21:00:00] - FEAT: Restringir endpoints de estudiantes a roles admin e instructor
 *   **Acción:** Aplicado middleware 'role:administrador,instructor' a todas las rutas de gestión de estudiantes de academias.
 *   **Archivos Modificados:**
