@@ -144,4 +144,12 @@ class User extends Authenticatable
         return $this->hasMany(Factura::class);
     }
 
+    /**
+     * Get beneficiarios of this user (agremiado).
+     */
+    public function beneficiarios()
+    {
+        return $this->hasMany(Beneficiario::class, 'agremiado_id');
+    }
+
 }

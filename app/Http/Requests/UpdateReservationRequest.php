@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\FutureDateTime;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class UpdateReservationRequest extends FormRequest
@@ -22,7 +23,7 @@ final class UpdateReservationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'starts_at' => ['sometimes', 'required', 'date', 'after:now'],
+            'starts_at' => ['sometimes', 'required', 'date', new FutureDateTime()],
             'ends_at' => ['sometimes', 'required', 'date', 'after:starts_at'],
             'title' => ['sometimes', 'nullable', 'string', 'max:180'],
             'notes' => ['sometimes', 'nullable', 'string', 'max:500'],

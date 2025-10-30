@@ -4,6 +4,8 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Services\PricingService;
+use App\Enums\EstatusPago;
 
 final class ReservationResource extends JsonResource
 {
@@ -55,6 +57,29 @@ final class ReservationResource extends JsonResource
                     'estatus_pago' => $this->factura->estatus_pago?->value ?? 'Pagado',
                 ];
             }),
+            'pricing' => $this->when(
+                $this->isApproved() && $this->estatus_pago === EstatusPago::Pendiente,
+                function () {
+                    $pricingService = app(PricingService::class);
+                    $costData = $pricingService->calculateReservationCost($this->resource);
+                    
+                    return [
+                        'monto_calculado' => $costData['costo_final'],
+                        'moneda_calculo' => $costData['moneda'],
+                        'precio_por_hora' => $this->area->monto_hora_externo,
+                        'descuento_aplicado' => $this->requester->role->value === 'profesor' && $this->area->porcentaje_descuento_agremiado > 0 
+                            ? $this->area->porcentaje_descuento_agremiado 
+                            : 0,
+                        'es_gratis' => $costData['costo_final'] === 0.0,
+                        'desglose_precio' => [
+                            'duracion_horas' => $costData['horas'],
+                            'precio_base' => $costData['costo_base'],
+                            'descuento' => $costData['descuento'],
+                            'total' => $costData['costo_final'],
+                        ],
+                    ];
+                }
+            ),
             'created_at' => $this->created_at->toIso8601String(),
             'updated_at' => $this->updated_at->toIso8601String(),
         ];

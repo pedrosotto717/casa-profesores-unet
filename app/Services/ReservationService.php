@@ -444,11 +444,24 @@ final class ReservationService
         }
 
         // Check academy schedules
+        $startDate = Carbon::parse($startsAt);
+        $endDate = Carbon::parse($endsAt);
+        
+        // Convert Carbon day of week (0=Sunday) to database format (1=Monday)
+        $carbonDayOfWeek = $startDate->dayOfWeek; // 0=Sunday, 1=Monday, etc.
+        $dbDayOfWeek = $carbonDayOfWeek === 0 ? 7 : $carbonDayOfWeek; // Convert Sunday from 0 to 7
+        
+        // Convert to time format for comparison
+        $startTime = $startDate->format('H:i:s');
+        $endTime = $endDate->format('H:i:s');
+        
         $conflictingAcademies = AcademySchedule::where('area_id', $areaId)
-            ->where(function ($query) use ($startsAt, $endsAt) {
-                $query->where(function ($q) use ($startsAt, $endsAt) {
-                    $q->where('start_time', '<', $endsAt)
-                      ->where('end_time', '>', $startsAt);
+            ->where('day_of_week', $dbDayOfWeek)
+            ->where(function ($query) use ($startTime, $endTime) {
+                $query->where(function ($q) use ($startTime, $endTime) {
+                    // Check for time overlap: start_time < endTime AND end_time > startTime
+                    $q->where('start_time', '<', $endTime)
+                      ->where('end_time', '>', $startTime);
                 });
             })
             ->exists();
@@ -672,19 +685,46 @@ final class ReservationService
             // Calculate cost
             $costData = $this->pricingService->calculateReservationCost($reservation);
 
+            // Determine final amount and currency
+            $finalAmount = $costData['costo_final'];
+            $finalCurrency = $costData['moneda'];
+            $isManualOverride = false;
+
+            // Check if custom amount is provided
+            if (isset($paymentData['monto']) && $paymentData['monto'] !== null) {
+                $customAmount = (float) $paymentData['monto'];
+                $maxAllowedAmount = $costData['costo_final'] * 2; // 200% of calculated amount
+                
+                if ($customAmount > $maxAllowedAmount) {
+                    throw ValidationException::withMessages([
+                        'monto' => ['El monto personalizado no puede exceder el 200% del monto calculado.'],
+                    ]);
+                }
+                
+                $finalAmount = $customAmount;
+                $isManualOverride = true;
+            }
+
+            // Check if custom currency is provided
+            if (isset($paymentData['moneda']) && $paymentData['moneda'] !== null) {
+                $finalCurrency = $paymentData['moneda'];
+                $isManualOverride = true;
+            }
+
             // Create factura
             $factura = Factura::create([
                 'user_id' => $reservation->requester_id,
                 'tipo' => TipoFactura::PagoReserva,
-                'monto' => $costData['costo_final'],
-                'moneda' => $paymentData['moneda'] ?? $costData['moneda'],
+                'monto' => $finalAmount,
+                'moneda' => $finalCurrency,
                 'fecha_emision' => now(),
                 'fecha_pago' => Carbon::parse($paymentData['fecha_pago']),
                 'estatus_pago' => EstatusFactura::Pagado,
                 'descripcion' => sprintf(
-                    'Pago reserva %s - %s',
+                    'Pago reserva %s - %s%s',
                     $reservation->area->name,
-                    $reservation->starts_at->format('d/m/Y')
+                    $reservation->starts_at->format('d/m/Y'),
+                    $isManualOverride ? ' (monto personalizado)' : ''
                 ),
             ]);
 
@@ -702,8 +742,11 @@ final class ReservationService
                 'action' => 'reservation_marked_as_paid',
                 'after' => [
                     'factura_id' => $factura->id,
-                    'monto' => $costData['costo_final'],
-                    'moneda' => $paymentData['moneda'] ?? $costData['moneda'],
+                    'monto_calculado' => $costData['costo_final'],
+                    'monto_final' => $finalAmount,
+                    'moneda_calculada' => $costData['moneda'],
+                    'moneda_final' => $finalCurrency,
+                    'manual_override' => $isManualOverride,
                 ],
             ]);
 

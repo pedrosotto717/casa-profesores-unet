@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\AreaController;
 use App\Http\Controllers\Api\V1\AuditLogController;
 use App\Http\Controllers\Api\V1\AuthenticationController;
 use App\Http\Controllers\Api\V1\Auth\RegisterController;
+use App\Http\Controllers\Api\V1\BeneficiarioController;
 use App\Http\Controllers\Api\V1\Chat\ChatController;
 use App\Http\Controllers\Api\V1\Chat\UserBlockController;
 use App\Http\Controllers\Api\V1\FacturaController;
@@ -79,6 +80,10 @@ Route::prefix('v1')->group(function () {
         // Aportes routes (authenticated users)
         Route::apiResource('aportes', AporteController::class);
         
+        // Beneficiarios routes (authenticated users)
+        Route::get('/me/beneficiarios', [BeneficiarioController::class, 'myBeneficiarios']);
+        Route::apiResource('beneficiarios', BeneficiarioController::class);
+        
         // Facturas routes (authenticated users)
         Route::get('/me/facturas', [FacturaController::class, 'myFacturas']);
         Route::get('/facturas/{id}', [FacturaController::class, 'show']);
@@ -134,6 +139,10 @@ Route::prefix('v1')->group(function () {
             // Facturas management (admin only)
             Route::get('/facturas', [FacturaController::class, 'index']);
             Route::get('/users/{userId}/facturas', [FacturaController::class, 'byUser']);
+            
+            // Beneficiarios approval routes (admin only)
+            Route::post('/beneficiarios/{beneficiario}/approve', [BeneficiarioController::class, 'approve']);
+            Route::post('/beneficiarios/{beneficiario}/reject', [BeneficiarioController::class, 'reject']);
             
             // Audit logs (admin only)
             Route::get('/audit-logs', [AuditLogController::class, 'index']);
