@@ -7,6 +7,52 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
 
 ---
 
+### [2025-10-30 00:00:00] - FIX: Habilitar authorize() en controladores
+*   **Acción:** Se añadió el trait `AuthorizesRequests` al controlador base para permitir el uso de `$this->authorize()` en controladores.
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Http/Controllers/Controller.php`
+
+### [2025-10-30 00:10:00] - FIX: Corregir auditoría en BeneficiarioService
+*   **Acción:** Se alineó la creación de `audit_logs` a la estructura del modelo (`entity_type`, `entity_id`, `before`, `after`).
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Services/BeneficiarioService.php`
+
+### [2025-01-02 12:00:00] - FEAT: Implementación completa del módulo de Beneficiarios
+*   **Acción:** Implementado módulo completo de gestión de beneficiarios para profesores (agremiados) con flujo de aprobación administrativa.
+*   **Funcionalidades:**
+    *   Enums para parentesco (conyuge, hijo, madre, padre) y estatus (pendiente, aprobado, inactivo)
+    *   Modelo Beneficiario con relaciones a User (agremiado)
+    *   Service layer con lógica de negocio y auditoría completa
+    *   Form Requests para validación de datos de entrada
+    *   Policy para control de acceso Admin/Profesor
+    *   API Resource para transformación de respuestas JSON
+    *   Controlador con endpoints CRUD y flujo de aprobación
+    *   Rutas API protegidas con middleware de autenticación
+    *   Auditoría completa de operaciones (crear, actualizar, aprobar, rechazar)
+*   **Endpoints API:**
+    *   `GET /api/v1/me/beneficiarios` - Profesor: lista sus beneficiarios
+    *   `GET /api/v1/beneficiarios` - Admin: lista todos con filtros
+    *   `POST /api/v1/beneficiarios` - Profesor: crear beneficiario (estatus pendiente)
+    *   `GET /api/v1/beneficiarios/{id}` - Admin/Profesor: ver detalle
+    *   `PUT /api/v1/beneficiarios/{id}` - Admin/Profesor: actualizar
+    *   `DELETE /api/v1/beneficiarios/{id}` - Admin/Profesor: eliminar
+    *   `POST /api/v1/beneficiarios/{id}/approve` - Admin: aprobar pendiente
+    *   `POST /api/v1/beneficiarios/{id}/reject` - Admin: rechazar pendiente
+*   **Archivos Creados:**
+    *   `CREATE: app/Enums/BeneficiarioParentesco.php`
+    *   `CREATE: app/Enums/BeneficiarioEstatus.php`
+    *   `CREATE: database/migrations/2025_01_02_120000_create_beneficiarios_table.php`
+    *   `CREATE: app/Models/Beneficiario.php`
+    *   `CREATE: app/Services/BeneficiarioService.php`
+    *   `CREATE: app/Http/Requests/StoreBeneficiarioRequest.php`
+    *   `CREATE: app/Http/Requests/UpdateBeneficiarioRequest.php`
+    *   `CREATE: app/Policies/BeneficiarioPolicy.php`
+    *   `CREATE: app/Http/Resources/BeneficiarioResource.php`
+    *   `CREATE: app/Http/Controllers/Api/V1/BeneficiarioController.php`
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Models/User.php` - Agregada relación hasMany beneficiarios
+    *   `UPDATE: routes/api.php` - Registradas rutas de beneficiarios
+
 ### [2025-01-29 04:00:00] - FEAT: Agregar información de pricing a reservaciones
 *   **Acción:** Implementado sistema de información de costos calculados en endpoint GET /reservations y permitir override manual de monto/moneda en markAsPaid.
 *   **Funcionalidades:**
