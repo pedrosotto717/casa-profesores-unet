@@ -7,6 +7,34 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
 
 ---
 
+### [2025-01-29 04:00:00] - FEAT: Agregar información de pricing a reservaciones
+*   **Acción:** Implementado sistema de información de costos calculados en endpoint GET /reservations y permitir override manual de monto/moneda en markAsPaid.
+*   **Funcionalidades:**
+    *   Campo 'pricing' en ReservationResource con desglose completo de costos (solo para reservaciones aprobadas pendientes de pago)
+    *   Campos opcionales 'monto' y 'moneda' en MarkReservationAsPaidRequest
+    *   Validación de monto personalizado con rango 0-200% del monto calculado
+    *   Auditoría mejorada que registra si hubo override manual
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Http/Resources/ReservationResource.php`
+    *   `UPDATE: app/Http/Requests/MarkReservationAsPaidRequest.php`
+    *   `UPDATE: app/Services/ReservationService.php`
+
+### [2025-01-29 03:30:00] - FIX: Corrección detección conflictos con academias
+*   **Acción:** Solucionado problema de detección de conflictos con horarios de academias que rechazaba reservas válidas.
+*   **Causa:** La lógica de validación comparaba directamente campos TIME con DATETIME, y no consideraba el día de la semana correctamente.
+*   **Solución:** Modificada la lógica para extraer el día de la semana y la hora de las fechas de reserva, y comparar correctamente con los horarios de academias.
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Services/ReservationService.php`
+
+### [2025-01-29 03:15:00] - FIX: Corrección validación fechas futuras en reservas
+*   **Acción:** Solucionado problema de validación de fechas futuras que rechazaba fechas válidas de octubre 2025.
+*   **Causa:** La validación `after:now` de Laravel tenía problemas con el manejo de zonas horarias al comparar fechas UTC.
+*   **Solución:** Creada regla de validación personalizada `FutureDateTime` que maneja correctamente las comparaciones de fechas en UTC.
+*   **Archivos Modificados:**
+    *   `CREATE: app/Rules/FutureDateTime.php`
+    *   `UPDATE: app/Http/Requests/StoreReservationRequest.php`
+    *   `UPDATE: app/Http/Requests/UpdateReservationRequest.php`
+
 ### [2025-01-29 02:45:00] - COMPLETE: Implementación sistema financiero completo
 *   **Acción:** Finalizar implementación completa del sistema financiero con facturas, aportes y pagos de reservas.
 *   **Archivos Modificados:**
@@ -48,6 +76,11 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
 *   **Acción:** Agregar verificaciones de null para evitar errores al acceder a propiedades de enums que pueden ser null.
 *   **Archivos Modificados:**
     *   `UPDATE: app/Http/Resources/ReservationResource.php` - Agregar null coalescing para estatus_pago
+
+### [2025-01-29 04:30:00] - FIX: Corregir error "Call to a member function getKey() on null" en AcademyService
+*   **Acción:** Agregar verificaciones de null para la relación file en métodos detachImages y deleteAllImages para evitar errores cuando el archivo no existe.
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Services/AcademyService.php` - Agregar null checks en detachImages() y deleteAllImages()
 
 ### [2025-01-29 04:25:00] - FEAT: Facturación automática para reservaciones gratuitas de agremiados
 *   **Acción:** Implementar lógica para que las reservaciones en áreas gratuitas para agremiados generen factura automáticamente, pero mantengan el flujo de aprobación.

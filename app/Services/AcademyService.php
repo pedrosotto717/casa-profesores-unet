@@ -175,12 +175,15 @@ final class AcademyService
             // Delete the entity file relationship
             $entityFile->delete();
 
-            // Check if file is still referenced by other entities
-            $remainingReferences = EntityFile::where('file_id', $file->getKey())->count();
-            
-            if ($remainingReferences === 0) {
-                // No other references, delete the file completely
-                R2Storage::deleteFile($file);
+            // Only proceed if file exists and is not null
+            if ($file !== null) {
+                // Check if file is still referenced by other entities
+                $remainingReferences = EntityFile::where('file_id', $file->getKey())->count();
+                
+                if ($remainingReferences === 0) {
+                    // No other references, delete the file completely
+                    R2Storage::deleteFile($file);
+                }
             }
         }
     }
@@ -198,12 +201,15 @@ final class AcademyService
             // Delete the entity file relationship
             $entityFile->delete();
 
-            // Check if file is still referenced by other entities
-            $remainingReferences = EntityFile::where('file_id', $file->getKey())->count();
-            
-            if ($remainingReferences === 0) {
-                // No other references, delete the file completely
-                R2Storage::deleteFile($file);
+            // Only proceed if file exists and is not null
+            if ($file !== null) {
+                // Check if file is still referenced by other entities
+                $remainingReferences = EntityFile::where('file_id', $file->getKey())->count();
+                
+                if ($remainingReferences === 0) {
+                    // No other references, delete the file completely
+                    R2Storage::deleteFile($file);
+                }
             }
         }
     }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\FutureDateTime;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class StoreReservationRequest extends FormRequest
@@ -23,7 +24,7 @@ final class StoreReservationRequest extends FormRequest
     {
         return [
             'area_id' => ['required', 'integer', 'exists:areas,id'],
-            'starts_at' => ['required', 'date', 'after:now'],
+            'starts_at' => ['required', 'date', new FutureDateTime()],
             'ends_at' => ['required', 'date', 'after:starts_at'],
             'title' => ['nullable', 'string', 'max:180'],
             'notes' => ['nullable', 'string', 'max:500'],

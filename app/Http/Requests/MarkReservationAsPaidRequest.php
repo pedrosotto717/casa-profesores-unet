@@ -23,7 +23,8 @@ class MarkReservationAsPaidRequest extends FormRequest
     {
         return [
             'fecha_pago' => ['required', 'date'],
-            'moneda' => ['required', 'string', 'in:USD,VES,COP,EUR'],
+            'moneda' => ['nullable', 'string', 'in:USD,VES,COP,EUR'],
+            'monto' => ['nullable', 'numeric', 'min:0'],
         ];
     }
 
@@ -35,8 +36,9 @@ class MarkReservationAsPaidRequest extends FormRequest
         return [
             'fecha_pago.required' => 'La fecha de pago es requerida.',
             'fecha_pago.date' => 'La fecha de pago debe ser una fecha válida.',
-            'moneda.required' => 'La moneda es requerida.',
             'moneda.in' => 'La moneda debe ser USD, VES, COP o EUR.',
+            'monto.numeric' => 'El monto debe ser un número válido.',
+            'monto.min' => 'El monto debe ser mayor o igual a 0.',
         ];
     }
 }
