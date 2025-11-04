@@ -1263,3 +1263,70 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
     *   Corrección del código frontend problemático
     *   Recomendaciones de implementación para polling y manejo de errores
 
+### [2025-11-03 23:53:55] - FEAT: Implementación completa de API de Configuración Institucional
+*   **Acción:** Implementado sistema completo para gestión dinámica de información institucional (Misión, Visión, Junta Administradora) que será consumida por el frontend en las páginas "Sobre Nosotros", "Repositorio" y "Preguntas Frecuentes".
+*   **Funcionalidades:**
+    *   Tabla `settings` para almacenar configuración en formato JSON
+    *   Modelo `Setting` con cast automático de `value` a array
+    *   Service layer (`InstitutionConfigService`) con lógica de negocio para obtener y actualizar configuración
+    *   Procesamiento automático de imágenes de miembros de la junta (almacenamiento local en `storage/app/public/board_members/`)
+    *   Eliminación automática de imágenes antiguas al reemplazarlas
+    *   Form Request para validación completa de datos de entrada
+    *   API Resource para transformación consistente de respuestas JSON
+    *   Controlador delgado que delega toda la lógica al Service
+*   **Endpoints API:**
+    *   `GET /api/v1/institution/config` - Público: obtener configuración institucional (Misión, Visión, Junta)
+    *   `POST /api/v1/admin/institution/config` - Admin: actualizar configuración institucional (requiere autenticación + rol admin)
+*   **Estructura de Datos:**
+    *   Configuración almacenada en JSON con estructura: `{mission, vision, members: [{id, name, role, image_url}]}`
+    *   Imágenes de miembros almacenadas en storage local `public` con ruta `board_members/{hash}.{ext}`
+    *   Valores por defecto retornados si no existe configuración
+*   **Archivos Creados:**
+    *   `CREATE: database/migrations/2025_11_03_235029_create_settings_table.php` - Migración para tabla settings
+    *   `CREATE: app/Models/Setting.php` - Modelo con cast a array y tipado explícito
+    *   `CREATE: app/Http/Requests/UpdateInstitutionConfigRequest.php` - Form Request con validación completa
+    *   `CREATE: app/Services/InstitutionConfigService.php` - Service con lógica de negocio y gestión de imágenes
+    *   `CREATE: app/Http/Resources/InstitutionConfigResource.php` - Resource para formatear respuestas
+    *   `CREATE: app/Http/Controllers/Api/V1/InstitutionConfigController.php` - Controlador con endpoints público y admin
+*   **Archivos Modificados:**
+    *   `UPDATE: routes/api.php` - Añadidas rutas públicas y de admin para configuración institucional
+
+### [2025-11-04 01:25:05] - REFACTOR: Migración de almacenamiento de imágenes a R2Storage
+*   **Acción:** Refactorizado `InstitutionConfigService` para usar R2Storage (Cloudflare R2) en lugar de almacenamiento local. Las imágenes ahora se suben a R2 y se almacena el `file_id` en la configuración JSON junto con la URL para compatibilidad.
+*   **Cambios:**
+    *   Eliminado uso de storage local (`public` disk) para imágenes de miembros
+    *   Implementado uso de `R2Storage::putPublicWithRecord()` para subir imágenes a R2
+    *   Almacenamiento de `file_id` en el JSON de configuración (preferido) y `image_url` (compatibilidad)
+    *   Eliminación automática de archivos antiguos cuando se reemplazan o eliminan miembros
+    *   Enriquecimiento automático de URLs desde `file_id` al obtener configuración
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Services/InstitutionConfigService.php` - Refactorizado para usar R2Storage, añadidos métodos para gestión de file_id y URLs
+    *   `UPDATE: app/Http/Controllers/Api/V1/InstitutionConfigController.php` - Añadido parámetro `$userId` para tracking de uploads
+    *   `UPDATE: app/Http/Requests/UpdateInstitutionConfigRequest.php` - Añadida validación para `members.*.file_id`
+
+### [2025-11-04 01:35:00] - FIX: Corrección de pérdida de file_id al actualizar configuración institucional
+*   **Acción:** Corregido bug crítico donde los `file_id` de miembros se perdían al actualizar la configuración institucional cuando no se subía una imagen nueva. El problema era que se tomaba el `file_id` del request (vacío/null) en lugar del que ya existía en la base de datos.
+*   **Cambios:**
+    *   Añadido método `getRawConfig()` para obtener configuración sin enriquecimiento de URLs
+    *   Refactorizado `processMembers()` para construir un mapa de miembros existentes por ID y mantener `file_id` de la BD
+    *   Ahora cuando NO se sube imagen nueva, se preserva el `file_id` existente de la base de datos
+    *   Uso de `getRawConfig()` en `updateConfig()` para obtener `file_id` originales
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Services/InstitutionConfigService.php` - Fix de lógica de preservación de file_id al actualizar
+
+
+### [2025-11-04 03:00:04] - FEAT: Agregar gestión de redes sociales y correo institucional
+*   **Acción:** Implementada funcionalidad para gestionar redes sociales (Facebook, Instagram, Twitter) y correo institucional de la Casa del Profesor Universitario. La información se almacena en una key separada (`social_media_config`) en la tabla `settings` y se gestiona mediante el mismo endpoint de configuración institucional.
+*   **Cambios:**
+    *   Redes sociales soportadas: Facebook, Instagram, Twitter (3 redes sociales)
+    *   Campo adicional: Correo institucional (email)
+    *   Almacenamiento en key separada `social_media_config` en tabla `settings`
+    *   Endpoints existentes (`GET /api/v1/institution/config` y `POST /api/v1/admin/institution/config`) ahora incluyen campo `social_media`
+    *   Validación de URLs y email en Request
+    *   Logs de auditoría agregados al endpoint de actualización (registro en `audit_logs`)
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Http/Requests/UpdateInstitutionConfigRequest.php` - Añadida validación para `social_media` (facebook, instagram, twitter, email)
+    *   `UPDATE: app/Services/InstitutionConfigService.php` - Añadidos métodos para gestionar configuración de redes sociales en key separada
+    *   `UPDATE: app/Http/Resources/InstitutionConfigResource.php` - Añadido campo `social_media` a la respuesta de la API
+    *   `UPDATE: app/Http/Controllers/Api/V1/InstitutionConfigController.php` - Añadidos logs de auditoría usando `AuditLog::create()`
+

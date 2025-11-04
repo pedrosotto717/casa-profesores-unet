@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\V1\BeneficiarioController;
 use App\Http\Controllers\Api\V1\Chat\ChatController;
 use App\Http\Controllers\Api\V1\Chat\UserBlockController;
 use App\Http\Controllers\Api\V1\FacturaController;
+use App\Http\Controllers\Api\V1\InstitutionConfigController;
 use App\Http\Controllers\Api\V1\InvitationController;
 use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\PasswordResetController;
@@ -47,6 +48,9 @@ Route::prefix('v1')->group(function () {
     
     // Public availability endpoint
     Route::get('/reservations/availability', [ReservationController::class, 'availability']);
+    
+    // Public institution configuration endpoint
+    Route::get('/institution/config', [InstitutionConfigController::class, 'show']);
     
     // Protected routes (authentication required)
     Route::middleware('auth:sanctum')->group(function () {
@@ -147,6 +151,9 @@ Route::prefix('v1')->group(function () {
             // Audit logs (admin only)
             Route::get('/audit-logs', [AuditLogController::class, 'index']);
             Route::get('/audit-logs/{auditLog}', [AuditLogController::class, 'show']);
+            
+            // Institution configuration management (admin only)
+            Route::post('/admin/institution/config', [InstitutionConfigController::class, 'update']);
         });
     });
 
