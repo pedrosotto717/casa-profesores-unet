@@ -383,3 +383,5 @@ const Footer = () => {
 - `app/Http/Controllers/Api/V1/InstitutionConfigController.php` - Logs de auditoría
 - `changelog.md` - Registro de cambios
 
+
+

@@ -23,6 +23,7 @@ class AppServiceProvider extends ServiceProvider
         \Illuminate\Database\Eloquent\Relations\Relation::morphMap([
             'Academy' => \App\Models\Academy::class,
             'Area' => \App\Models\Area::class,
+            'NewsPost' => \App\Models\NewsPost::class,
         ]);
     }
 }
