@@ -49,10 +49,10 @@ final class ReservationController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $user = $request->user();
-        $query = Reservation::with(['requester', 'area', 'approver']);
+        $query = Reservation::with(['requester', 'area', 'approver', 'factura']);
 
         // If user is not admin, only show their own reservations
-        if ($user->role == UserRole::Administrador) {
+        if ($user->role === UserRole::Administrador) {
             // Admin can apply filters
             if ($request->has('user_id')) {
                 $query->byUser($request->user_id);
@@ -84,7 +84,6 @@ final class ReservationController extends Controller
         // Order by creation date (newest first)
         $query->orderBy('created_at', 'desc');
         $reservations = $query->paginate($request->get('per_page', 15));
-
 
         return ReservationResource::collection($reservations);
     }

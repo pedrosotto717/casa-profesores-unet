@@ -1263,3 +1263,146 @@ Este archivo es un registro cronológico de todos los cambios realizados en el s
     *   Corrección del código frontend problemático
     *   Recomendaciones de implementación para polling y manejo de errores
 
+### [2025-11-03 23:53:55] - FEAT: Implementación completa de API de Configuración Institucional
+*   **Acción:** Implementado sistema completo para gestión dinámica de información institucional (Misión, Visión, Junta Administradora) que será consumida por el frontend en las páginas "Sobre Nosotros", "Repositorio" y "Preguntas Frecuentes".
+*   **Funcionalidades:**
+    *   Tabla `settings` para almacenar configuración en formato JSON
+    *   Modelo `Setting` con cast automático de `value` a array
+    *   Service layer (`InstitutionConfigService`) con lógica de negocio para obtener y actualizar configuración
+    *   Procesamiento automático de imágenes de miembros de la junta (almacenamiento local en `storage/app/public/board_members/`)
+    *   Eliminación automática de imágenes antiguas al reemplazarlas
+    *   Form Request para validación completa de datos de entrada
+    *   API Resource para transformación consistente de respuestas JSON
+    *   Controlador delgado que delega toda la lógica al Service
+*   **Endpoints API:**
+    *   `GET /api/v1/institution/config` - Público: obtener configuración institucional (Misión, Visión, Junta)
+    *   `POST /api/v1/admin/institution/config` - Admin: actualizar configuración institucional (requiere autenticación + rol admin)
+*   **Estructura de Datos:**
+    *   Configuración almacenada en JSON con estructura: `{mission, vision, members: [{id, name, role, image_url}]}`
+    *   Imágenes de miembros almacenadas en storage local `public` con ruta `board_members/{hash}.{ext}`
+    *   Valores por defecto retornados si no existe configuración
+*   **Archivos Creados:**
+    *   `CREATE: database/migrations/2025_11_03_235029_create_settings_table.php` - Migración para tabla settings
+    *   `CREATE: app/Models/Setting.php` - Modelo con cast a array y tipado explícito
+    *   `CREATE: app/Http/Requests/UpdateInstitutionConfigRequest.php` - Form Request con validación completa
+    *   `CREATE: app/Services/InstitutionConfigService.php` - Service con lógica de negocio y gestión de imágenes
+    *   `CREATE: app/Http/Resources/InstitutionConfigResource.php` - Resource para formatear respuestas
+    *   `CREATE: app/Http/Controllers/Api/V1/InstitutionConfigController.php` - Controlador con endpoints público y admin
+*   **Archivos Modificados:**
+    *   `UPDATE: routes/api.php` - Añadidas rutas públicas y de admin para configuración institucional
+
+### [2025-11-04 01:25:05] - REFACTOR: Migración de almacenamiento de imágenes a R2Storage
+*   **Acción:** Refactorizado `InstitutionConfigService` para usar R2Storage (Cloudflare R2) en lugar de almacenamiento local. Las imágenes ahora se suben a R2 y se almacena el `file_id` en la configuración JSON junto con la URL para compatibilidad.
+*   **Cambios:**
+    *   Eliminado uso de storage local (`public` disk) para imágenes de miembros
+    *   Implementado uso de `R2Storage::putPublicWithRecord()` para subir imágenes a R2
+    *   Almacenamiento de `file_id` en el JSON de configuración (preferido) y `image_url` (compatibilidad)
+    *   Eliminación automática de archivos antiguos cuando se reemplazan o eliminan miembros
+    *   Enriquecimiento automático de URLs desde `file_id` al obtener configuración
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Services/InstitutionConfigService.php` - Refactorizado para usar R2Storage, añadidos métodos para gestión de file_id y URLs
+    *   `UPDATE: app/Http/Controllers/Api/V1/InstitutionConfigController.php` - Añadido parámetro `$userId` para tracking de uploads
+    *   `UPDATE: app/Http/Requests/UpdateInstitutionConfigRequest.php` - Añadida validación para `members.*.file_id`
+
+### [2025-11-04 01:35:00] - FIX: Corrección de pérdida de file_id al actualizar configuración institucional
+*   **Acción:** Corregido bug crítico donde los `file_id` de miembros se perdían al actualizar la configuración institucional cuando no se subía una imagen nueva. El problema era que se tomaba el `file_id` del request (vacío/null) en lugar del que ya existía en la base de datos.
+*   **Cambios:**
+    *   Añadido método `getRawConfig()` para obtener configuración sin enriquecimiento de URLs
+    *   Refactorizado `processMembers()` para construir un mapa de miembros existentes por ID y mantener `file_id` de la BD
+    *   Ahora cuando NO se sube imagen nueva, se preserva el `file_id` existente de la base de datos
+    *   Uso de `getRawConfig()` en `updateConfig()` para obtener `file_id` originales
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Services/InstitutionConfigService.php` - Fix de lógica de preservación de file_id al actualizar
+
+
+### [2025-11-04 03:00:04] - FEAT: Agregar gestión de redes sociales y correo institucional
+*   **Acción:** Implementada funcionalidad para gestionar redes sociales (Facebook, Instagram, Twitter) y correo institucional de la Casa del Profesor Universitario. La información se almacena en una key separada (`social_media_config`) en la tabla `settings` y se gestiona mediante el mismo endpoint de configuración institucional.
+*   **Cambios:**
+    *   Redes sociales soportadas: Facebook, Instagram, Twitter (3 redes sociales)
+    *   Campo adicional: Correo institucional (email)
+    *   Almacenamiento en key separada `social_media_config` en tabla `settings`
+    *   Endpoints existentes (`GET /api/v1/institution/config` y `POST /api/v1/admin/institution/config`) ahora incluyen campo `social_media`
+    *   Validación de URLs y email en Request
+    *   Logs de auditoría agregados al endpoint de actualización (registro en `audit_logs`)
+*   **Archivos Modificados:**
+    *   `UPDATE: app/Http/Requests/UpdateInstitutionConfigRequest.php` - Añadida validación para `social_media` (facebook, instagram, twitter, email)
+    *   `UPDATE: app/Services/InstitutionConfigService.php` - Añadidos métodos para gestionar configuración de redes sociales en key separada
+    *   `UPDATE: app/Http/Resources/InstitutionConfigResource.php` - Añadido campo `social_media` a la respuesta de la API
+    *   `UPDATE: app/Http/Controllers/Api/V1/InstitutionConfigController.php` - Añadidos logs de auditoría usando `AuditLog::create()`
+
+
+### [2025-11-04 13:35:37] - FEAT: News Module API Implementation
+*   **AcciÃ³n:** Implemented complete News Module with CRUD operations for managing news posts. Public endpoints for viewing published news and admin endpoints for full management.
+*   **Funcionalidades:**
+    *   Enum NewsPostStatus (draft, published)
+    *   Model NewsPost with UUID for public access and slug for SEO-friendly URLs
+    *   Featured images stored via R2Storage with EntityFile (polymorphic relationship)
+    *   Service layer with business logic, image management, and full audit logging
+    *   Form Requests for validation (Store and Update)
+    *   API Resource for JSON response formatting
+    *   Controller with 7 endpoints (3 public, 4 admin)
+    *   Public access by UUID or slug
+    *   Automatic slug generation from title
+    *   published_at timestamp management for draft/published workflow
+*   **Endpoints API:**
+    *   GET /api/v1/news - Public: List published news posts (paginated)
+    *   GET /api/v1/news/{uuid_or_slug} - Public: View single published news post
+    *   GET /api/v1/admin/news - Admin: List all news posts with drafts
+    *   POST /api/v1/admin/news - Admin: Create new news post
+    *   GET /api/v1/admin/news/{id} - Admin: Get news post for editing
+    *   POST /api/v1/admin/news/{id} - Admin: Update news post (uses POST with _method=PUT for FormData)
+    *   DELETE /api/v1/admin/news/{id} - Admin: Delete news post
+*   **Archivos Creados:**
+    *   CREATE: app/Enums/NewsPostStatus.php
+    *   CREATE: database/migrations/2025_11_04_133537_create_news_posts_table.php
+    *   CREATE: app/Models/NewsPost.php
+    *   CREATE: app/Http/Requests/StoreNewsPostRequest.php
+    *   CREATE: app/Http/Requests/UpdateNewsPostRequest.php
+    *   CREATE: app/Services/NewsPostService.php
+    *   CREATE: app/Http/Resources/NewsPostResource.php
+    *   CREATE: app/Http/Controllers/Api/V1/NewsPostController.php
+*   **Archivos Modificados:**
+    *   UPDATE: routes/api.php - Added public news routes and admin news management routes
+
+
+### [2025-11-04 14:00:00] - FIX: CorrecciÃ³n de campos faltantes en API de Noticias
+*   **AcciÃ³n:** Corregidos 3 bugs crÃ­ticos en el mÃ³dulo de noticias que impedÃ­an que el frontend recibiera datos completos.
+*   **Problemas Resueltos:**
+    *   **Bug 1 - Content ausente:** El campo content no aparecÃ­a porque las rutas no tenÃ­an nombre y la condiciÃ³n outeIs() nunca se cumplÃ­a. Ahora el content siempre se incluye.
+    *   **Bug 2 - author_name ausente:** El Resource solo devolvÃ­a un objeto uthor, pero el frontend esperaba uthor_name directamente. Se agregÃ³ el campo uthor_name al root del response.
+    *   **Bug 3 - featured_image_url ineficiente:** El accessor hacÃ­a una nueva query cada vez en lugar de usar la colecciÃ³n ya cargada con eager loading. Optimizado para usar elationLoaded().
+*   **Cambios TÃ©cnicos:**
+    *   Agregado campo uthor_name en NewsPostResource (lÃ­nea 33)
+    *   Content ahora siempre se incluye (eliminada condiciÃ³n condicional)
+    *   Accessor getFeaturedImageUrlAttribute() optimizado para usar colecciones cargadas
+    *   Agregados nombres a todas las rutas de news para mejor debugging y testing
+*   **Archivos Modificados:**
+    *   UPDATE: app/Http/Resources/NewsPostResource.php - Agregado author_name, content siempre visible
+    *   UPDATE: app/Models/NewsPost.php - Optimizado accessor featured_image_url
+    *   UPDATE: routes/api.php - Agregados nombres a rutas (news.index, news.show, admin.news.*)
+
+
+### [2025-11-04 14:15:00] - FIX: CorrecciÃ³n de relaciÃ³n polimÃ³rfica en NewsPost
+*   **AcciÃ³n:** Corregido bug en la relaciÃ³n entityFiles() del modelo NewsPost que impedÃ­a cargar imÃ¡genes correctamente.
+*   **Problema:** La relaciÃ³n morphMany tenÃ­a un ->where('entity_type', 'NewsPost') redundante que rompÃ­a el eager loading de Laravel.
+*   **SoluciÃ³n:** Eliminado el where() manual. Laravel maneja automÃ¡ticamente el filtrado por entity_type en relaciones polimÃ³rficas.
+*   **Debug:** Agregado logging temporal en publicShow para verificar carga de imÃ¡genes.
+*   **Archivos Modificados:**
+    *   UPDATE: app/Models/NewsPost.php - Eliminado where() de entityFiles()
+    *   UPDATE: app/Http/Controllers/Api/V1/NewsPostController.php - Agregado debug logging
+
+
+### [2025-11-04 15:15:00] - FIX: Agregar NewsPost al morphMap para relaciones polimÃ³rficas
+*   **AcciÃ³n:** Agregado NewsPost al morphMap en AppServiceProvider para que las relaciones polimÃ³rficas con entity_files funcionen correctamente.
+*   **Problema:** Las imÃ¡genes se guardaban correctamente pero no se recuperaban porque NewsPost no estaba registrado en el morphMap. Laravel buscaba 'App\Models\NewsPost' pero en BD estaba guardado como 'NewsPost'.
+*   **SoluciÃ³n:** Agregado 'NewsPost' => \App\Models\NewsPost::class al morphMap.
+*   **Resultado:** Ahora featured_image_url devuelve correctamente la URL de Cloudflare R2.
+*   **Archivos Modificados:**
+    *   UPDATE: app/Providers/AppServiceProvider.php - Agregado NewsPost al morphMap
+
+
+### [2025-11-04 15:18:00] - CLEANUP: Eliminado logging de debug temporal
+*   **AcciÃ³n:** Removido cÃ³digo de debugging temporal del NewsPostController que fue agregado para diagnosticar el problema de las imÃ¡genes.
+*   **Archivos Modificados:**
+    *   UPDATE: app/Http/Controllers/Api/V1/NewsPostController.php - Removidas lÃ­neas de Log::info de debug
+

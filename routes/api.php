@@ -11,7 +11,9 @@ use App\Http\Controllers\Api\V1\BeneficiarioController;
 use App\Http\Controllers\Api\V1\Chat\ChatController;
 use App\Http\Controllers\Api\V1\Chat\UserBlockController;
 use App\Http\Controllers\Api\V1\FacturaController;
+use App\Http\Controllers\Api\V1\InstitutionConfigController;
 use App\Http\Controllers\Api\V1\InvitationController;
+use App\Http\Controllers\Api\V1\NewsPostController;
 use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\PasswordResetController;
 use App\Http\Controllers\Api\V1\ReservationController;
@@ -47,6 +49,13 @@ Route::prefix('v1')->group(function () {
     
     // Public availability endpoint
     Route::get('/reservations/availability', [ReservationController::class, 'availability']);
+    
+    // Public institution configuration endpoint
+    Route::get('/institution/config', [InstitutionConfigController::class, 'show']);
+    
+    // Public news routes
+    Route::get('/news', [NewsPostController::class, 'publicIndex'])->name('news.index');
+    Route::get('/news/{identifier}', [NewsPostController::class, 'publicShow'])->name('news.show');
     
     // Protected routes (authentication required)
     Route::middleware('auth:sanctum')->group(function () {
@@ -147,6 +156,16 @@ Route::prefix('v1')->group(function () {
             // Audit logs (admin only)
             Route::get('/audit-logs', [AuditLogController::class, 'index']);
             Route::get('/audit-logs/{auditLog}', [AuditLogController::class, 'show']);
+            
+            // Institution configuration management (admin only)
+            Route::post('/admin/institution/config', [InstitutionConfigController::class, 'update']);
+            
+            // News posts management (admin only)
+            Route::get('/admin/news', [NewsPostController::class, 'adminIndex'])->name('admin.news.index');
+            Route::post('/admin/news', [NewsPostController::class, 'store'])->name('admin.news.store');
+            Route::get('/admin/news/{id}', [NewsPostController::class, 'adminShow'])->name('admin.news.show');
+            Route::post('/admin/news/{id}', [NewsPostController::class, 'update'])->name('admin.news.update');
+            Route::delete('/admin/news/{id}', [NewsPostController::class, 'destroy'])->name('admin.news.destroy');
         });
     });
 
