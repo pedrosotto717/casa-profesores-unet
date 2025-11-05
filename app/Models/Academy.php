@@ -41,13 +41,6 @@ final class Academy extends Model
         return $this->hasMany(AcademySchedule::class);
     }
 
-    /**
-     * Get the academy enrollments for the academy.
-     */
-    public function academyEnrollments(): HasMany
-    {
-        return $this->hasMany(AcademyEnrollment::class);
-    }
 
     /**
      * Get the entity files associated with the academy.

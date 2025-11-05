@@ -41,6 +41,8 @@ final class AcademyResource extends JsonResource
                     ];
                 });
             }),
+            'area_id' => $this->academySchedules->count() > 0 ? $this->academySchedules->first()->area_id : null,
+            'area_name' => $this->academySchedules->count() > 0 ? $this->academySchedules->first()->area->name : null,
             'schedules_count' => $this->whenCounted('academySchedules'),
             'enrollments_count' => $this->whenCounted('academyEnrollments'),
             'created_at' => $this->created_at,
